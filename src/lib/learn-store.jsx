@@ -49,8 +49,8 @@ function defaultState() {
   return {
     lang: "ar",
     theme: "ocean",
-    progress: { ar: sampleProgress("ar"), de: emptyProgress(), ja: emptyProgress() },
-    srs: { ar: {}, de: {}, ja: {} },
+    progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, code === "ar" ? sampleProgress("ar") : emptyProgress()])),
+    srs: Object.fromEntries(LANGUAGES.map(({ code }) => [code, {}])),
     reminders: { enabled: false, time: "19:00", days: [1, 2, 3, 4, 5, 6, 0] },
     lastReminderFired: null,
     hearts: MAX_HEARTS,
@@ -106,7 +106,10 @@ export function LearnProvider({ children }) {
     root.style.setProperty("--lang", dark ? lang.accentDark : lang.accent);
   }, [state.theme, state.lang]);
 
-  const setLang = useCallback((lang) => setState((s) => ({ ...s, lang })), []);
+  const setLang = useCallback((lang) => {
+    if (!LANGUAGES.some((item) => item.code === lang)) return;
+    setState((s) => ({ ...s, lang }));
+  }, []);
   const setTheme = useCallback((theme) => setState((s) => ({ ...s, theme })), []);
   const toggleTheme = useCallback(() => setState((s) => ({ ...s, theme: s.theme === "midnight" ? "ocean" : "midnight" })), []);
   const setReminders = useCallback(
@@ -189,8 +192,8 @@ export function LearnProvider({ children }) {
   const resetProgress = useCallback(() => {
     setState((s) => ({
       ...s,
-      progress: { ar: emptyProgress(), de: emptyProgress(), ja: emptyProgress() },
-      srs: { ar: {}, de: {}, ja: {} },
+      progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, emptyProgress()])),
+      srs: Object.fromEntries(LANGUAGES.map(({ code }) => [code, {}])),
     }));
   }, []);
 
