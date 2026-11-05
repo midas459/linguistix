@@ -26,7 +26,7 @@ export default function SideNav({ onNavigate }) {
           {language.emblem}
         </span>
         <span className="min-w-0">
-          <span className="block font-display text-xl leading-none tracking-tight">Lisan</span>
+          <span className="block font-display text-xl leading-none tracking-tight">Linguistix</span>
           <span className="mt-1 block truncate font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             {language.label}
           </span>
