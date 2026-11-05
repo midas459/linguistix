@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { BADGES, LANGUAGES, getLanguage } from "@/data/curriculum";
 import { dayKey } from "@/lib/dates";
