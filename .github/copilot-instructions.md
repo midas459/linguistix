@@ -5,7 +5,8 @@ Read this file and `AGENTS.md` before making changes. The application brand is *
 ## Current application state
 
 - This repository is currently a React 19 + TanStack Start application using JavaScript/JSX, Vite, Tailwind CSS and the existing Base44 integration.
-- A migration to Next.js App Router and Supabase is planned/in progress, but the repository is not yet fully converted. Do not write Next.js-only code into the current TanStack app unless the task explicitly includes that migration step.
+- The migration target is being built in `next-app/` as a separate Next.js App Router application using Supabase Auth/Postgres. The root remains the legacy TanStack Start + Base44 application until the replacement is feature-complete and approved for cutover.
+- For Next.js/Supabase work, read `next-app/README.md` and `next-app/AGENTS.md`; keep all new Next.js runtime code inside `next-app/` during the staged migration.
 - Preserve the existing working Base44 application while the replacement is developed and reviewed. Do not remove Base44 integration, switch production traffic, or delete legacy data as part of routine changes.
 - Supabase project is connected, but proposed SQL migrations are review artifacts. **Do not execute SQL, apply migrations, alter the live database, or merge this review branch into main without explicit user approval.**
 - Work on `supabase-migration-review` unless the user explicitly chooses another branch. Do not merge to `main` without approval.
