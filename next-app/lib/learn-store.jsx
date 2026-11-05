@@ -84,15 +84,23 @@ function loadState() {
 const LearnContext = createContext(null);
 
 export function LearnProvider({ children }) {
-  const [state, setState] = useState(loadState);
+  // Keep the first server and browser render identical; restore saved progress after hydration.
+  const [state, setState] = useState(defaultState);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setState(loadState());
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       /* storage full or blocked — the session still works */
     }
-  }, [state]);
+  }, [state, hydrated]);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
