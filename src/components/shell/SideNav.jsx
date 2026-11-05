@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export const NAV_ITEMS = [
   { to: "/", label: "Learn Map", icon: Map, hint: "Your path" },
-  { to: "/alphabet", label: "Alphabet Lab", icon: Type, hint: "Scripts & sounds" },
+  { to: "/alphabet", label: "Pronunciation Lab", icon: Type, hint: "Scripts & sounds" },
   { to: "/flashcards", label: "Flashcards", icon: Layers, hint: "Spaced repetition" },
   { to: "/tutor", label: "Kalam AI", icon: MessageCircle, hint: "Tutor & roleplay" },
   { to: "/badges", label: "Badges", icon: Award, hint: "Achievements" },
