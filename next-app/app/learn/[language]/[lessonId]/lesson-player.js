@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useLearn } from "../../../lib/learn-store";
+import { useLearn } from "../../../../lib/learn-store";
 
 export default function LessonPlayer({ screens, lesson, moduleTitle, languageCode }) {
   const { language, setLang, completeLesson } = useLearn();
