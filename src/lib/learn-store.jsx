@@ -48,7 +48,7 @@ function sampleProgress(lang) {
 function defaultState() {
   return {
     lang: "ar",
-    theme: "light",
+    theme: "ocean",
     progress: { ar: sampleProgress("ar"), de: emptyProgress(), ja: emptyProgress() },
     srs: { ar: {}, de: {}, ja: {} },
     reminders: { enabled: false, time: "19:00", days: [1, 2, 3, 4, 5, 6, 0] },
@@ -93,8 +93,9 @@ export function LearnProvider({ children }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
-    const dark = state.theme === "dark";
+    const dark = state.theme === "midnight";
     root.classList.toggle("dark", dark);
+    root.dataset.theme = state.theme;
     root.dataset.lang = state.lang;
     root.style.colorScheme = dark ? "dark" : "light";
     const lang = getLanguage(state.lang);
@@ -102,10 +103,8 @@ export function LearnProvider({ children }) {
   }, [state.theme, state.lang]);
 
   const setLang = useCallback((lang) => setState((s) => ({ ...s, lang })), []);
-  const toggleTheme = useCallback(
-    () => setState((s) => ({ ...s, theme: s.theme === "dark" ? "light" : "dark" })),
-    [],
-  );
+  const setTheme = useCallback((theme) => setState((s) => ({ ...s, theme })), []);
+  const toggleTheme = useCallback(() => setState((s) => ({ ...s, theme: s.theme === "midnight" ? "ocean" : "midnight" })), []);
   const setReminders = useCallback(
     (patch) => setState((s) => ({ ...s, reminders: { ...s.reminders, ...patch } })),
     [],
@@ -227,6 +226,7 @@ export function LearnProvider({ children }) {
     unlockedBadges: badges.filter((b) => b.unlocked),
     setLang,
     toggleTheme,
+    setTheme,
     setReminders,
     hearts: heartsToday(state),
     maxHearts: MAX_HEARTS,
