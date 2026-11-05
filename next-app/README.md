@@ -24,10 +24,14 @@ Do not put a Supabase secret/service-role key in a `NEXT_PUBLIC_*` variable or b
 - Next.js App Router root layout and landing page.
 - Supabase browser and server clients with cookie-based sessions.
 - Next.js 16 `proxy.js` refreshes/validates claims.
-- Email/password sign-in and Google OAuth start/callback.
+- Email/password sign-in, account registration/email confirmation, password recovery, and Google OAuth start/callback.
 - Server-protected dashboard route.
+- Existing seven-language curriculum, flashcard data and lesson task definitions copied into the new workspace.
+- Protected course catalog, unit pages and lesson reading pages.
+- Existing browser learning-state store retained under `lisan.state.v2`, with hydration-safe restoration.
+- Five theme choices and language selection in the settings page.
 
-This is the migration foundation, not a completed port. Lessons, flashcards, SRS, progress, themes, settings, tutor, profile management, account recovery, signup/verification, and legacy-state import still need to be ported and tested.
+This is an early migration build, not a completed port. Interactive graded lesson screens, flashcard/SRS workflows, cloud progress sync, reminders, badges, pronunciation lab, tutor, profile/account management, and opt-in legacy-state import still need to be ported and tested. Learning progress and settings currently remain local to the browser; no Supabase tables have been created or used yet.
 
 ## Data safety
 
