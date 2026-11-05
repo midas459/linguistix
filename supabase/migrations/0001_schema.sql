@@ -11,7 +11,7 @@ create table public.profiles (
 
 create table public.user_preferences (
   user_id uuid primary key references auth.users (id) on delete cascade,
-  active_language text not null default 'ar' check (active_language in ('ar', 'de', 'ja')),
+  active_language text not null default 'ar' check (active_language in ('ar', 'de', 'ja', 'en', 'es', 'fr', 'pt')),
   theme text not null default 'ocean' check (theme in ('ocean', 'forest', 'sunset', 'lavender', 'midnight')),
   time_zone text,
   reminder_enabled boolean not null default false,
@@ -30,7 +30,7 @@ create table public.user_preferences (
 
 create table public.language_progress (
   user_id uuid not null references auth.users (id) on delete cascade,
-  language text not null check (language in ('ar', 'de', 'ja')),
+  language text not null check (language in ('ar', 'de', 'ja', 'en', 'es', 'fr', 'pt')),
   xp_total integer not null default 0 check (xp_total >= 0),
   cards_total integer not null default 0 check (cards_total >= 0),
   minutes_total integer not null default 0 check (minutes_total >= 0),
@@ -42,7 +42,7 @@ create table public.language_progress (
 
 create table public.daily_progress (
   user_id uuid not null references auth.users (id) on delete cascade,
-  language text not null check (language in ('ar', 'de', 'ja')),
+  language text not null check (language in ('ar', 'de', 'ja', 'en', 'es', 'fr', 'pt')),
   study_day date not null,
   xp integer not null default 0 check (xp >= 0),
   cards integer not null default 0 check (cards >= 0),
@@ -53,7 +53,7 @@ create table public.daily_progress (
 
 create table public.lesson_completions (
   user_id uuid not null references auth.users (id) on delete cascade,
-  language text not null check (language in ('ar', 'de', 'ja')),
+  language text not null check (language in ('ar', 'de', 'ja', 'en', 'es', 'fr', 'pt')),
   lesson_id text not null check (length(lesson_id) between 1 and 120),
   -- Legacy local state stored lesson IDs without completion timestamps.
   completed_at timestamptz,
@@ -62,7 +62,7 @@ create table public.lesson_completions (
 
 create table public.card_reviews (
   user_id uuid not null references auth.users (id) on delete cascade,
-  language text not null check (language in ('ar', 'de', 'ja')),
+  language text not null check (language in ('ar', 'de', 'ja', 'en', 'es', 'fr', 'pt')),
   card_id text not null check (length(card_id) between 1 and 120),
   due_at timestamptz not null,
   interval_days smallint not null check (interval_days in (1, 2, 4, 7)),
@@ -74,7 +74,7 @@ create table public.card_reviews (
 create table public.study_activity (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
-  language text not null check (language in ('ar', 'de', 'ja')),
+  language text not null check (language in ('ar', 'de', 'ja', 'en', 'es', 'fr', 'pt')),
   source_id text,
   event_type text not null check (event_type in ('lesson', 'cards', 'badge')),
   title text not null check (length(title) between 1 and 240),
