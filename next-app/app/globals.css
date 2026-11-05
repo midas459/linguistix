@@ -95,3 +95,8 @@ html[data-theme="midnight"] .lesson-points { background: #203348; }
 .choice-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .choice-button { border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; background: var(--surface); color: var(--foreground); cursor: pointer; font: inherit; }
 .choice-button[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent); }
+
+select { width: 100%; max-width: 320px; margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--foreground); background: var(--surface); font: inherit; }
+.flashcard { display: grid; gap: 18px; margin: 24px 0; padding: clamp(20px, 4vw, 36px); border: 1px solid var(--border); border-radius: 20px; background: var(--surface); }
+.flashcard-face { min-height: 180px; display: grid; align-content: center; text-align: center; }
+.flashcard-face h2 { font-size: clamp(28px, 5vw, 44px); }
