@@ -10,8 +10,8 @@ import { useLearn } from "@/lib/learn-store";
 export const Route = createFileRoute("/_authed/")({
   head: () => ({
     meta: [
-      { title: "Learn — Lisan" },
-      { name: "description", content: "Your daily path through Arabic, German or Japanese." },
+      { title: "Learn — Linguistix" },
+      { name: "description", content: "Your daily path through seven available language courses." },
     ],
   }),
   component: DashboardPage,
