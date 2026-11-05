@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "../../../lib/supabase/server";
+import { createClient } from "../../lib/supabase/server";
 import PronunciationLab from "./pronunciation-lab";
 
 export default async function PronunciationPage() {
