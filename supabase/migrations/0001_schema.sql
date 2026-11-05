@@ -12,7 +12,7 @@ create table public.profiles (
 create table public.user_preferences (
   user_id uuid primary key references auth.users (id) on delete cascade,
   active_language text not null default 'ar' check (active_language in ('ar', 'de', 'ja')),
-  theme text not null default 'light' check (theme in ('light', 'dark')),
+  theme text not null default 'ocean' check (theme in ('ocean', 'forest', 'sunset', 'lavender', 'midnight')),
   time_zone text,
   reminder_enabled boolean not null default false,
   reminder_time time not null default '19:00',
