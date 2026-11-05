@@ -27,11 +27,12 @@ Do not put a Supabase secret/service-role key in a `NEXT_PUBLIC_*` variable or b
 - Email/password sign-in, account registration/email confirmation, password recovery, and Google OAuth start/callback.
 - Server-protected dashboard route.
 - Existing seven-language curriculum, flashcard data and lesson task definitions copied into the new workspace.
-- Protected course catalog, unit pages and lesson reading pages.
+- Protected course catalog, unit pages and interactive six-screen lesson exercises.
 - Existing browser learning-state store retained under `lisan.state.v2`, with hydration-safe restoration.
+- Flashcard review with the existing four spaced-repetition ratings.
 - Five theme choices and language selection in the settings page.
 
-This is an early migration build, not a completed port. Interactive graded lesson screens, flashcard/SRS workflows, cloud progress sync, reminders, badges, pronunciation lab, tutor, profile/account management, and opt-in legacy-state import still need to be ported and tested. Learning progress and settings currently remain local to the browser; no Supabase tables have been created or used yet.
+This is an early migration build, not a completed port. Cloud progress sync, reminders, badges, pronunciation lab, tutor, richer profile/account management, and opt-in legacy-state import still need to be ported and tested. Learning progress and settings currently remain local to the browser; no Supabase tables have been created or used yet.
 
 ## Data safety
 
