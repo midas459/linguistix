@@ -5,7 +5,8 @@ Linguistix is a language-learning web app with guided lessons, flashcards, space
 ## Current status
 
 - **Current runtime:** React 19 + TanStack Start, JavaScript/JSX, Vite, Tailwind CSS and the existing Base44 integration.
-- **Migration target:** Next.js App Router + Supabase Auth/Postgres. This migration is in planning/review; the current application still runs on TanStack Start and Base44.
+- **Migration target:** a separate Next.js App Router + Supabase Auth/Postgres application is being built in `next-app/`. The root application still runs on TanStack Start and Base44; the replacement is not yet feature-complete.
+- **Next.js workspace:** see `next-app/README.md` for setup, Supabase environment variables and current migration scope.
 - **Safe review branch:** `supabase-migration-review`.
 - **Database safety:** SQL files under `supabase/migrations/` are drafts only. They have not been executed against the connected Supabase project. Do not apply them or merge this branch into `main` without the owner's explicit approval.
 - **Legacy safety:** keep the Base44 app and its existing authentication available until the replacement has been tested and a deliberate cutover is approved.
