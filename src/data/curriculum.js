@@ -1,5 +1,25 @@
 export const LANGUAGES = [
   {
+    code: "en", label: "English", short: "English", native: "English", emblem: "A",
+    speech: "en-US", dir: "ltr", accent: "205 82% 42%", accentDark: "198 90% 62%",
+    blurb: "Build clear everyday English with useful phrases, core grammar and confident conversation.",
+  },
+  {
+    code: "es", label: "Spanish", short: "Spanish", native: "Español", emblem: "Ñ",
+    speech: "es-ES", dir: "ltr", accent: "8 78% 48%", accentDark: "18 90% 62%",
+    blurb: "Learn practical Spanish greetings, present-tense verbs and everyday conversation.",
+  },
+  {
+    code: "fr", label: "French", short: "French", native: "Français", emblem: "É",
+    speech: "fr-FR", dir: "ltr", accent: "224 72% 52%", accentDark: "218 90% 70%",
+    blurb: "Build French pronunciation, introductions, articles and useful everyday phrases.",
+  },
+  {
+    code: "pt", label: "Portuguese", short: "Portuguese", native: "Português", emblem: "Ã",
+    speech: "pt-PT", dir: "ltr", accent: "150 65% 34%", accentDark: "145 65% 52%",
+    blurb: "Start Portuguese with greetings, pronunciation, core verbs and practical phrases.",
+  },
+  {
     code: "ar",
     label: "Arabic (MSA)",
     short: "Arabic",
@@ -44,6 +64,54 @@ export const CARDS_GOAL = 20;
 export const MINUTES_GOAL = 15;
 
 export const MODULES = {
+  en: [
+    { id: "en-m1", title: "Everyday Greetings & Introductions", subtitle: "English A1 · Unit 1", summary: "Greet people, introduce yourself and ask simple questions.", lessons: [
+      { id: "en-m1-l1", title: "Hello and goodbye", subtitle: "Greetings and polite expressions", points: ["Hello / Hi are common greetings", "Good morning is used earlier in the day", "Goodbye / See you later close a conversation"] },
+      { id: "en-m1-l2", title: "Introducing yourself", subtitle: "I am… / My name is…", points: ["My name is Ana = I am called Ana", "I am from Kenya describes your origin", "Nice to meet you is a polite response"] },
+      { id: "en-m1-l3", title: "Simple questions", subtitle: "What, where and how", points: ["What is your name? asks for a name", "Where are you from? asks about origin", "How are you? asks about wellbeing"] },
+    ] },
+    { id: "en-m2", title: "People, Pronouns & Be", subtitle: "English A1 · Unit 2", summary: "Use personal pronouns and the verb be in simple sentences.", lessons: [
+      { id: "en-m2-l1", title: "Personal pronouns", subtitle: "I, you, he, she, it, we, they", points: ["I and we include the speaker", "He, she and it refer to singular subjects", "They refers to people or things in the plural"] },
+      { id: "en-m2-l2", title: "The verb be", subtitle: "am, is and are", points: ["I am; you are; he or she is", "We are; they are", "The negative adds not: I am not"] },
+      { id: "en-m2-l3", title: "Articles and nouns", subtitle: "a, an and the", points: ["Use a before a consonant sound", "Use an before a vowel sound", "The points to something specific"] },
+    ] },
+  ],
+  es: [
+    { id: "es-m1", title: "Saludos y presentaciones", subtitle: "Español A1 · Unidad 1", summary: "Greet people and introduce yourself in Spanish.", lessons: [
+      { id: "es-m1-l1", title: "Saludos básicos", subtitle: "Hola, buenos días, adiós", points: ["Hola means hello", "Buenos días means good morning", "Buenas tardes / noches fit afternoon and evening"] },
+      { id: "es-m1-l2", title: "Presentarte", subtitle: "Me llamo… / Soy de…", points: ["Me llamo Ana = My name is Ana", "Soy de Kenia = I am from Kenya", "Mucho gusto means nice to meet you"] },
+      { id: "es-m1-l3", title: "Preguntas sencillas", subtitle: "Qué, dónde and cómo", points: ["¿Cómo te llamas? asks your name", "¿De dónde eres? asks where you are from", "¿Cómo estás? asks how you are"] },
+    ] },
+    { id: "es-m2", title: "Pronombres y el verbo ser", subtitle: "Español A1 · Unidad 2", summary: "Use subject pronouns and ser to describe identity and origin.", lessons: [
+      { id: "es-m2-l1", title: "Pronombres personales", subtitle: "yo, tú, él, ella, nosotros", points: ["Yo means I and tú means informal you", "Él / ella mean he / she", "Nosotros / nosotras mean we"] },
+      { id: "es-m2-l2", title: "El verbo ser", subtitle: "soy, eres, es, somos, son", points: ["Yo soy = I am", "Tú eres = you are; ella es = she is", "Ser describes identity, origin and lasting characteristics"] },
+      { id: "es-m2-l3", title: "Artículos y género", subtitle: "el, la, los, las, un, una", points: ["El and la are singular the", "Los and las are plural the", "Nouns are commonly masculine or feminine"] },
+    ] },
+  ],
+  fr: [
+    { id: "fr-m1", title: "Salutations et présentations", subtitle: "Français A1 · Unité 1", summary: "Greet people and introduce yourself in French.", lessons: [
+      { id: "fr-m1-l1", title: "Salutations", subtitle: "Bonjour, salut, au revoir", points: ["Bonjour is a polite hello and good day", "Salut is informal hello or goodbye", "Au revoir means goodbye"] },
+      { id: "fr-m1-l2", title: "Se présenter", subtitle: "Je m'appelle… / Je suis…", points: ["Je m'appelle Léa = My name is Léa", "Je viens du Kenya = I come from Kenya", "Enchanté / enchantée means pleased to meet you"] },
+      { id: "fr-m1-l3", title: "Questions simples", subtitle: "Comment, où and quel", points: ["Comment tu t'appelles? asks your name", "Tu viens d'où? asks where you come from", "Comment ça va? asks how it is going"] },
+    ] },
+    { id: "fr-m2", title: "Pronoms et le verbe être", subtitle: "Français A1 · Unité 2", summary: "Use subject pronouns and être for identity and descriptions.", lessons: [
+      { id: "fr-m2-l1", title: "Pronoms personnels", subtitle: "je, tu, il, elle, nous, vous, ils", points: ["Je means I; tu is informal you", "Il / elle mean he / she", "Vous is formal or plural you"] },
+      { id: "fr-m2-l2", title: "Le verbe être", subtitle: "suis, es, est, sommes, êtes, sont", points: ["Je suis = I am", "Tu es / elle est = you are / she is", "Être describes identity, state and characteristics"] },
+      { id: "fr-m2-l3", title: "Articles et noms", subtitle: "un, une, le, la, les", points: ["Un is masculine and une is feminine", "Le / la are singular the", "Les is plural the for all genders"] },
+    ] },
+  ],
+  pt: [
+    { id: "pt-m1", title: "Saudações e apresentações", subtitle: "Português A1 · Unidade 1", summary: "Greet people and introduce yourself in Portuguese.", lessons: [
+      { id: "pt-m1-l1", title: "Saudações básicas", subtitle: "Olá, bom dia, adeus", points: ["Olá means hello", "Bom dia means good morning", "Boa tarde / boa noite are afternoon / evening greetings"] },
+      { id: "pt-m1-l2", title: "Apresentar-se", subtitle: "Chamo-me… / Eu sou…", points: ["Chamo-me Ana = My name is Ana", "Sou do Quénia = I am from Kenya", "Muito prazer means nice to meet you"] },
+      { id: "pt-m1-l3", title: "Perguntas simples", subtitle: "Como, onde and qual", points: ["Como te chamas? asks your name", "De onde és? asks where you are from", "Como estás? asks how you are"] },
+    ] },
+    { id: "pt-m2", title: "Pronomes e o verbo ser", subtitle: "Português A1 · Unidade 2", summary: "Use subject pronouns and ser to describe identity and origin.", lessons: [
+      { id: "pt-m2-l1", title: "Pronomes pessoais", subtitle: "eu, tu, ele, ela, nós, vocês", points: ["Eu means I; tu is informal you", "Ele / ela mean he / she", "Nós means we"] },
+      { id: "pt-m2-l2", title: "O verbo ser", subtitle: "sou, és, é, somos, são", points: ["Eu sou = I am", "Tu és / ela é = you are / she is", "Ser describes identity, origin and lasting characteristics"] },
+      { id: "pt-m2-l3", title: "Artigos e género", subtitle: "o, a, os, as, um, uma", points: ["O / a are singular the", "Os / as are plural the", "Nouns are commonly masculine or feminine"] },
+    ] },
+  ],
   ar: [
     {
       id: "ar-m1",
