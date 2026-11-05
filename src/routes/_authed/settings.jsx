@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authed/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Lisan" },
+      { title: "Settings — Linguistix" },
       { name: "description", content: "Choose your language, theme and daily study reminder." },
     ],
   }),
