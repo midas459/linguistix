@@ -1,0 +1,132 @@
+export const ARABIC_LETTERS = [
+  { name: "Alif", iso: "ا", ini: "ا", med: "ا", fin: "ـا", translit: "ā", join: false },
+  { name: "Bāʾ", iso: "ب", ini: "بـ", med: "ـبـ", fin: "ـب", translit: "b", join: true },
+  { name: "Tāʾ", iso: "ت", ini: "تـ", med: "ـتـ", fin: "ـت", translit: "t", join: true },
+  { name: "Thāʾ", iso: "ث", ini: "ثـ", med: "ـثـ", fin: "ـث", translit: "th", join: true },
+  { name: "Jīm", iso: "ج", ini: "جـ", med: "ـجـ", fin: "ـج", translit: "j", join: true },
+  { name: "Ḥāʾ", iso: "ح", ini: "حـ", med: "ـحـ", fin: "ـح", translit: "ḥ", join: true },
+  { name: "Khāʾ", iso: "خ", ini: "خـ", med: "ـخـ", fin: "ـخ", translit: "kh", join: true },
+  { name: "Dāl", iso: "د", ini: "د", med: "د", fin: "ـد", translit: "d", join: false },
+  { name: "Dhāl", iso: "ذ", ini: "ذ", med: "ذ", fin: "ـذ", translit: "dh", join: false },
+  { name: "Rāʾ", iso: "ر", ini: "ر", med: "ر", fin: "ـر", translit: "r", join: false },
+  { name: "Zāy", iso: "ز", ini: "ز", med: "ز", fin: "ـز", translit: "z", join: false },
+  { name: "Sīn", iso: "س", ini: "سـ", med: "ـسـ", fin: "ـس", translit: "s", join: true },
+  { name: "Shīn", iso: "ش", ini: "شـ", med: "ـشـ", fin: "ـش", translit: "sh", join: true },
+  { name: "Ṣād", iso: "ص", ini: "صـ", med: "ـصـ", fin: "ـص", translit: "ṣ", join: true },
+  { name: "Ḍād", iso: "ض", ini: "ضـ", med: "ـضـ", fin: "ـض", translit: "ḍ", join: true },
+  { name: "Ṭāʾ", iso: "ط", ini: "طـ", med: "ـطـ", fin: "ـط", translit: "ṭ", join: true },
+  { name: "Ẓāʾ", iso: "ظ", ini: "ظـ", med: "ـظـ", fin: "ـظ", translit: "ẓ", join: true },
+  { name: "ʿAyn", iso: "ع", ini: "عـ", med: "ـعـ", fin: "ـع", translit: "ʿ", join: true },
+  { name: "Ghayn", iso: "غ", ini: "غـ", med: "ـغـ", fin: "ـغ", translit: "gh", join: true },
+  { name: "Fāʾ", iso: "ف", ini: "فـ", med: "ـفـ", fin: "ـف", translit: "f", join: true },
+  { name: "Qāf", iso: "ق", ini: "قـ", med: "ـقـ", fin: "ـق", translit: "q", join: true },
+  { name: "Kāf", iso: "ك", ini: "كـ", med: "ـكـ", fin: "ـك", translit: "k", join: true },
+  { name: "Lām", iso: "ل", ini: "لـ", med: "ـلـ", fin: "ـل", translit: "l", join: true },
+  { name: "Mīm", iso: "م", ini: "مـ", med: "ـمـ", fin: "ـم", translit: "m", join: true },
+  { name: "Nūn", iso: "ن", ini: "نـ", med: "ـنـ", fin: "ـن", translit: "n", join: true },
+  { name: "Hāʾ", iso: "ه", ini: "هـ", med: "ـهـ", fin: "ـه", translit: "h", join: true },
+  { name: "Wāw", iso: "و", ini: "و", med: "و", fin: "ـو", translit: "w / ū", join: false },
+  { name: "Yāʾ", iso: "ي", ini: "يـ", med: "ـيـ", fin: "ـي", translit: "y / ī", join: true },
+];
+
+export const HARAKAT = [
+  { mark: "\u064E", name: "Fathah", sound: "a", hint: "short a, above the letter" },
+  { mark: "\u0650", name: "Kasrah", sound: "i", hint: "short i, below the letter" },
+  { mark: "\u064F", name: "Dammah", sound: "u", hint: "short u, above like a curl" },
+  { mark: "\u0652", name: "Sukūn", sound: "—", hint: "no vowel, closes the syllable" },
+];
+
+export const GERMAN_LETTERS = [
+  { letter: "A", name: "ah", example: "Apfel", meaning: "apple" },
+  { letter: "B", name: "beh", example: "Buch", meaning: "book" },
+  { letter: "C", name: "tseh", example: "Computer", meaning: "computer" },
+  { letter: "D", name: "deh", example: "Dom", meaning: "cathedral" },
+  { letter: "E", name: "eh", example: "Elefant", meaning: "elephant" },
+  { letter: "F", name: "eff", example: "Fenster", meaning: "window" },
+  { letter: "G", name: "geh", example: "Garten", meaning: "garden" },
+  { letter: "H", name: "hah", example: "Haus", meaning: "house" },
+  { letter: "I", name: "ih", example: "Insel", meaning: "island" },
+  { letter: "J", name: "jot", example: "Jahr", meaning: "year", note: "sounds like English y" },
+  { letter: "K", name: "kah", example: "Katze", meaning: "cat" },
+  { letter: "L", name: "ell", example: "Lampe", meaning: "lamp" },
+  { letter: "M", name: "emm", example: "Mutter", meaning: "mother" },
+  { letter: "N", name: "enn", example: "Nacht", meaning: "night" },
+  { letter: "O", name: "oh", example: "Obst", meaning: "fruit" },
+  { letter: "P", name: "peh", example: "Papier", meaning: "paper" },
+  { letter: "Q", name: "kuh", example: "Quelle", meaning: "source" },
+  { letter: "R", name: "err", example: "Rot", meaning: "red" },
+  { letter: "S", name: "ess", example: "Sonne", meaning: "sun" },
+  { letter: "T", name: "teh", example: "Tisch", meaning: "table" },
+  { letter: "U", name: "uh", example: "Uhr", meaning: "clock" },
+  { letter: "V", name: "fau", example: "Vater", meaning: "father", note: "sounds like English f" },
+  { letter: "W", name: "weh", example: "Wasser", meaning: "water", note: "sounds like English v" },
+  { letter: "X", name: "iks", example: "Xylophon", meaning: "xylophone" },
+  { letter: "Y", name: "üpsilon", example: "Yoga", meaning: "yoga" },
+  { letter: "Z", name: "tsett", example: "Zeit", meaning: "time", note: "sounds like ts" },
+];
+
+export const GERMAN_SPECIALS = [
+  { letter: "Ä", name: "ah-Umlaut", example: "Äpfel", meaning: "apples", hint: "like e in bed, lips relaxed" },
+  { letter: "Ö", name: "oh-Umlaut", example: "Öl", meaning: "oil", hint: "say ay, then round the lips" },
+  { letter: "Ü", name: "uh-Umlaut", example: "Übung", meaning: "exercise", hint: "say ee, then round the lips" },
+  { letter: "ß", name: "eszett", example: "Straße", meaning: "street", hint: "a sharp s after a long vowel" },
+];
+
+export const GERMAN_NOUNS = [
+  { article: "der", gender: "m", noun: "Tisch", plural: "die Tische", meaning: "table" },
+  { article: "der", gender: "m", noun: "Schlüssel", plural: "die Schlüssel", meaning: "key" },
+  { article: "der", gender: "m", noun: "Apfel", plural: "die Äpfel", meaning: "apple" },
+  { article: "die", gender: "f", noun: "Lampe", plural: "die Lampen", meaning: "lamp" },
+  { article: "die", gender: "f", noun: "Zeitung", plural: "die Zeitungen", meaning: "newspaper" },
+  { article: "die", gender: "f", noun: "Straße", plural: "die Straßen", meaning: "street" },
+  { article: "das", gender: "n", noun: "Buch", plural: "die Bücher", meaning: "book" },
+  { article: "das", gender: "n", noun: "Fenster", plural: "die Fenster", meaning: "window" },
+  { article: "das", gender: "n", noun: "Mädchen", plural: "die Mädchen", meaning: "girl" },
+];
+
+export const GERMAN_CASES = [
+  { case: "Nominative", role: "the subject", m: "der", f: "die", n: "das", pl: "die", example: "Der Mann liest." },
+  { case: "Accusative", role: "the direct object", m: "den", f: "die", n: "das", pl: "die", example: "Ich sehe den Hund." },
+  { case: "Dative", role: "the indirect object", m: "dem", f: "der", n: "dem", pl: "den", example: "Ich helfe dem Kind." },
+  { case: "Genitive", role: "possession", m: "des", f: "der", n: "des", pl: "der", example: "Das Buch des Lehrers." },
+];
+
+export const KANA = {
+  hiragana: [
+    { kana: "あ", romaji: "a" }, { kana: "い", romaji: "i" }, { kana: "う", romaji: "u" }, { kana: "え", romaji: "e" }, { kana: "お", romaji: "o" },
+    { kana: "か", romaji: "ka" }, { kana: "き", romaji: "ki" }, { kana: "く", romaji: "ku" }, { kana: "け", romaji: "ke" }, { kana: "こ", romaji: "ko" },
+    { kana: "さ", romaji: "sa" }, { kana: "し", romaji: "shi" }, { kana: "す", romaji: "su" }, { kana: "せ", romaji: "se" }, { kana: "そ", romaji: "so" },
+    { kana: "た", romaji: "ta" }, { kana: "ち", romaji: "chi" }, { kana: "つ", romaji: "tsu" }, { kana: "て", romaji: "te" }, { kana: "と", romaji: "to" },
+    { kana: "な", romaji: "na" }, { kana: "に", romaji: "ni" }, { kana: "ぬ", romaji: "nu" }, { kana: "ね", romaji: "ne" }, { kana: "の", romaji: "no" },
+    { kana: "は", romaji: "ha" }, { kana: "ひ", romaji: "hi" }, { kana: "ふ", romaji: "fu" }, { kana: "へ", romaji: "he" }, { kana: "ほ", romaji: "ho" },
+    { kana: "ま", romaji: "ma" }, { kana: "み", romaji: "mi" }, { kana: "む", romaji: "mu" }, { kana: "め", romaji: "me" }, { kana: "も", romaji: "mo" },
+    { kana: "や", romaji: "ya" }, { kana: "ゆ", romaji: "yu" }, { kana: "よ", romaji: "yo" },
+    { kana: "ら", romaji: "ra" }, { kana: "り", romaji: "ri" }, { kana: "る", romaji: "ru" }, { kana: "れ", romaji: "re" }, { kana: "ろ", romaji: "ro" },
+    { kana: "わ", romaji: "wa" }, { kana: "を", romaji: "wo" }, { kana: "ん", romaji: "n" },
+  ],
+  katakana: [
+    { kana: "ア", romaji: "a" }, { kana: "イ", romaji: "i" }, { kana: "ウ", romaji: "u" }, { kana: "エ", romaji: "e" }, { kana: "オ", romaji: "o" },
+    { kana: "カ", romaji: "ka" }, { kana: "キ", romaji: "ki" }, { kana: "ク", romaji: "ku" }, { kana: "ケ", romaji: "ke" }, { kana: "コ", romaji: "ko" },
+    { kana: "サ", romaji: "sa" }, { kana: "シ", romaji: "shi" }, { kana: "ス", romaji: "su" }, { kana: "セ", romaji: "se" }, { kana: "ソ", romaji: "so" },
+    { kana: "タ", romaji: "ta" }, { kana: "チ", romaji: "chi" }, { kana: "ツ", romaji: "tsu" }, { kana: "テ", romaji: "te" }, { kana: "ト", romaji: "to" },
+    { kana: "ナ", romaji: "na" }, { kana: "ニ", romaji: "ni" }, { kana: "ヌ", romaji: "nu" }, { kana: "ネ", romaji: "ne" }, { kana: "ノ", romaji: "no" },
+    { kana: "ハ", romaji: "ha" }, { kana: "ヒ", romaji: "hi" }, { kana: "フ", romaji: "fu" }, { kana: "ヘ", romaji: "he" }, { kana: "ホ", romaji: "ho" },
+    { kana: "マ", romaji: "ma" }, { kana: "ミ", romaji: "mi" }, { kana: "ム", romaji: "mu" }, { kana: "メ", romaji: "me" }, { kana: "モ", romaji: "mo" },
+    { kana: "ヤ", romaji: "ya" }, { kana: "ユ", romaji: "yu" }, { kana: "ヨ", romaji: "yo" },
+    { kana: "ラ", romaji: "ra" }, { kana: "リ", romaji: "ri" }, { kana: "ル", romaji: "ru" }, { kana: "レ", romaji: "re" }, { kana: "ロ", romaji: "ro" },
+    { kana: "ワ", romaji: "wa" }, { kana: "ヲ", romaji: "wo" }, { kana: "ン", romaji: "n" },
+  ],
+};
+
+export const KANJI = [
+  { char: "日", meaning: "sun, day", on: "nichi", kun: "hi", word: "日本", reading: "にほん", translation: "Japan" },
+  { char: "月", meaning: "moon, month", on: "getsu", kun: "tsuki", word: "月曜日", reading: "げつようび", translation: "Monday" },
+  { char: "火", meaning: "fire", on: "ka", kun: "hi", word: "火曜日", reading: "かようび", translation: "Tuesday" },
+  { char: "水", meaning: "water", on: "sui", kun: "mizu", word: "水曜日", reading: "すいようび", translation: "Wednesday" },
+  { char: "木", meaning: "tree, wood", on: "moku", kun: "ki", word: "木曜日", reading: "もくようび", translation: "Thursday" },
+  { char: "人", meaning: "person", on: "jin", kun: "hito", word: "日本人", reading: "にほんじん", translation: "Japanese person" },
+  { char: "学", meaning: "study", on: "gaku", kun: "manabu", word: "学生", reading: "がくせい", translation: "student" },
+  { char: "生", meaning: "life, birth", on: "sei", kun: "ikiru", word: "先生", reading: "せんせい", translation: "teacher" },
+  { char: "食", meaning: "eat, food", on: "shoku", kun: "taberu", word: "食べる", reading: "たべる", translation: "to eat" },
+  { char: "行", meaning: "go", on: "kō", kun: "iku", word: "行きます", reading: "いきます", translation: "to go (polite)" },
+];
