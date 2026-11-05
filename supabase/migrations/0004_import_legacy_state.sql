@@ -40,7 +40,7 @@ begin
   end if;
   if p_state ? 'theme' and (
     pg_catalog.jsonb_typeof(p_state -> 'theme') <> 'string'
-    or p_state ->> 'theme' not in ('light', 'dark')
+    or p_state ->> 'theme' not in ('ocean', 'forest', 'sunset', 'lavender', 'midnight')
   ) then
     raise exception 'Invalid theme';
   end if;
@@ -127,7 +127,7 @@ begin
   values (
     v_user_id,
     p_state ->> 'lang',
-    coalesce(p_state ->> 'theme', 'light'),
+    coalesce(p_state ->> 'theme', 'ocean'),
     p_time_zone,
     coalesce((v_reminders ->> 'enabled')::boolean, false),
     coalesce((v_reminders ->> 'time')::time, time '19:00'),
