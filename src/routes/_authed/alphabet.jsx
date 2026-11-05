@@ -8,7 +8,7 @@ import { useLearn } from "@/lib/learn-store";
 export const Route = createFileRoute("/_authed/alphabet")({
   head: () => ({
     meta: [
-      { title: "Alphabet Lab — Lisan" },
+      { title: "Pronunciation Lab — Linguistix" },
       { name: "description", content: "Practise Arabic letters by position, German umlauts and cases, or Japanese kana and kanji." },
     ],
   }),
