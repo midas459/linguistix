@@ -110,7 +110,10 @@ export function LearnProvider({ children }) {
     if (!LANGUAGES.some((item) => item.code === lang)) return;
     setState((s) => ({ ...s, lang }));
   }, []);
-  const setTheme = useCallback((theme) => setState((s) => ({ ...s, theme })), []);
+  const setTheme = useCallback((theme) => {
+    if (!["ocean", "forest", "sunset", "lavender", "midnight"].includes(theme)) return;
+    setState((s) => ({ ...s, theme }));
+  }, []);
   const toggleTheme = useCallback(() => setState((s) => ({ ...s, theme: s.theme === "midnight" ? "ocean" : "midnight" })), []);
   const setReminders = useCallback(
     (patch) => setState((s) => ({ ...s, reminders: { ...s.reminders, ...patch } })),
