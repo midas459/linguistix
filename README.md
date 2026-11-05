@@ -1,45 +1,88 @@
-# Base44 App — TanStack Start
+# Linguistix
 
-A full-stack Base44 app: [TanStack Start](https://tanstack.com/start) (React 19, plain JavaScript) with file-based routes, server functions and server routes, server-rendered and hosted by Base44.
+Linguistix is a language-learning web app with guided lessons, flashcards, spaced repetition, pronunciation practice, learning progress, themes and an AI tutor.
 
-## What is in the starter
+## Current status
 
-| Route | File |
+- **Current runtime:** React 19 + TanStack Start, JavaScript/JSX, Vite, Tailwind CSS and the existing Base44 integration.
+- **Migration target:** Next.js App Router + Supabase Auth/Postgres. This migration is in planning/review; the current application still runs on TanStack Start and Base44.
+- **Safe review branch:** `supabase-migration-review`.
+- **Database safety:** SQL files under `supabase/migrations/` are drafts only. They have not been executed against the connected Supabase project. Do not apply them or merge this branch into `main` without the owner's explicit approval.
+- **Legacy safety:** keep the Base44 app and its existing authentication available until the replacement has been tested and a deliberate cutover is approved.
+
+## Available language courses
+
+Seven languages currently have curriculum modules and flashcard decks:
+
+| Code | Language |
 | --- | --- |
-| `/` | `src/routes/index.jsx` — a server-rendered page whose loader calls a server function |
-| `GET /api/time` | `src/routes/api/time.js` — a server route: a raw HTTP endpoint next to the pages |
+| `ar` | Arabic (Modern Standard Arabic) |
+| `de` | German |
+| `ja` | Japanese |
+| `en` | English |
+| `es` | Spanish |
+| `fr` | French |
+| `pt` | Portuguese (European Portuguese starter content) |
 
-## Run locally
+The settings screen also provides a searchable ISO 639-1 language catalogue. Catalogue entries without published curriculum remain disabled and are marked as coming soon. The catalogue is not a claim that all of the world's approximately 7,000 languages are supported.
+
+The four newer courses use starter lesson tasks generated from their language-specific flashcard decks where fully authored interactive task sets are not yet available. Expand and review this content before marketing the courses as comprehensive.
+
+## Themes
+
+The five supported theme IDs are:
+
+- `ocean` — teal and blue
+- `forest` — green
+- `sunset` — orange and amber
+- `lavender` — violet
+- `midnight` — dark navy
+
+Theme definitions live in `src/index.css`; settings and preference state live in `src/routes/_authed/settings.jsx` and `src/lib/learn-store.jsx`.
+
+## Local development
+
+Requirements: Node.js (use a current LTS release) and npm.
 
 ```bash
-npm ci
-base44 login   # one-time per machine
-base44 link    # one-time per clone
-base44 dev     # local backend + app together
+npm install
+npm run dev
 ```
 
-## Build and publish
+The app currently uses the Base44 Vite plugin and Base44 platform runtime. For the platform's full local backend workflow, install/authenticate the Base44 CLI and follow the owner dashboard's current setup instructions.
+
+Useful scripts:
 
 ```bash
-npm run build         # -> dist/client (assets) + dist/server (the Worker)
-base44 deploy         # or publish from the Base44 builder
+npm run dev
+npm run lint
+npm run build
+npm run preview
 ```
 
-There is no `index.html`: the HTML document is rendered on the server from `src/routes/__root.jsx`. The build runs through the [Cloudflare Vite plugin](https://developers.cloudflare.com/workers/vite-plugin/), so dev and build both execute server code in `workerd`.
+This repository currently has no committed npm lockfile, so `npm ci` is not the correct install command until a lockfile is added and committed.
 
-## How the pieces fit
+## Key project files
 
-- **Pages** are files in `src/routes/`. A route's `loader` runs on the server for a document request and in the browser for a client navigation; `Route.useLoaderData()` gives the component the resolved data.
-- **Server functions** (`src/lib/server-fns.js`) are RPCs created with `createServerFn`. `src/start.js` runs every one of them through `authMiddleware`, which sends the visitor's token along, so `context.getBase44()` returns a client acting as that visitor and entity access rules apply. `context.getBase44().asServiceRole` bypasses them, so use it only after authenticating the caller (`.middleware([requireUser])`) and checking they may access the records involved: server functions and server routes are public endpoints anyone can call with any input. See **Server Security** in `AGENTS.md`. Call it only in handlers that need Base44: it reads the platform headers, and a handler that never calls it works without them.
-- **Secrets** are read in server code with `import { secrets } from "base44:runtime"` → `secrets.get("NAME")`, inside a handler. Never `process.env`.
-- **Server routes** (`src/routes/api/*.js`) are raw HTTP endpoints for URLs something other than the app's own code requests (webhooks, downloads, feeds); the app's pages call server functions. `src/start.js` runs every request through `base44RequestMiddleware`, so their `server.handlers` receive the same `context.getBase44()` (`({ request, params, context }) => …`).
-- **Server-only code** lives in `*.server.js` files (TanStack refuses to bundle them for the browser).
-- **Auth** is resolved client-side after hydration (`useAuth()`); the server is anonymous on a document request, so give per-user pages `ssr: false`.
-- **Sign-in and gated pages** are not wired in the starter: `src/components/auth/` holds the pages (login, register, password reset, MCP consent) and a login gate for `src/routes/_authed/`, to add when the app needs them. See **Adding Authentication** in `AGENTS.md`.
-- **AI**: TanStack AI is installed and runs on the Base44 AI gateway, with no API key and usage billed to the app's AI credits. `gatewayModel(context.getBase44())` in `src/lib/ai.server.js` builds the adapter; `AGENTS.md` has a streaming chat example (a server route plus `useChat`).
-- **Caching**: the platform caches only what a route opts into via `headers()` (`Cache-Control: public, s-maxage=…`). Everything else is served fresh.
+- `src/data/curriculum.js` — enabled languages and lesson modules.
+- `src/data/cards.js` — language-specific flashcard decks.
+- `src/data/lessons.js` — authored lesson exercises and starter task generation.
+- `src/data/language-catalog.js` — searchable ISO 639-1 catalogue.
+- `src/lib/learn-store.jsx` — local learning state, progress, themes and spaced repetition.
+- `src/routes/_authed/settings.jsx` — language and theme settings.
+- `src/index.css` — theme palettes and design tokens.
+- `.github/copilot-instructions.md` — project-specific guidance for GitHub Copilot.
+- `AGENTS.md` — repository architecture and safety conventions.
+- `supabase/migrations/` — reviewed migration drafts; not applied.
 
+## Migration guardrails
 
----
+1. Preserve existing Base44 behavior until the Next.js/Supabase replacement has passed functional and security testing.
+2. Keep Supabase service-role secrets server-only; never put them in browser-exposed `VITE_*` or `NEXT_PUBLIC_*` variables.
+3. Enable RLS on every exposed user-data table and enforce ownership using the authenticated user ID.
+4. Treat legacy localStorage import as opt-in, authenticated, atomic and non-overwriting. Do not clear the original local state before verifying the imported state can be read back.
+5. Existing Base44 passwords, sessions and OAuth grants should not be assumed portable to Supabase Auth.
+6. Run lint/build and migration review before proposing a release. Report checks honestly; do not claim tests passed unless they were run.
+7. Do not execute SQL, apply migrations, switch production traffic, or merge into `main` without explicit owner approval.
 
-[![Restore to base44](https://img.shields.io/badge/Restore%20to-BASE44-orange?style=for-the-badge&logo=rocket)](https://app.base44.com/apps)
+For AI-assisted work, read `.github/copilot-instructions.md` and `AGENTS.md` before editing.
