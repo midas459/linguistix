@@ -68,6 +68,10 @@ function loadState() {
     return {
       ...base,
       ...parsed,
+      // Migrate the former light/dark preference to the new five-preset system.
+      theme: ["ocean", "forest", "sunset", "lavender", "midnight"].includes(parsed.theme)
+        ? parsed.theme
+        : parsed.theme === "dark" ? "midnight" : "ocean",
       progress: { ...base.progress, ...(parsed.progress || {}) },
       srs: { ...base.srs, ...(parsed.srs || {}) },
       reminders: { ...base.reminders, ...(parsed.reminders || {}) },
