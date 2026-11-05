@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "../../../../lib/supabase/server";
 import { getLanguage, MODULES } from "../../../../data/curriculum";
 import { buildScreens } from "../../../../data/lessons";
+import LessonPlayer from "./lesson-player";
 
 export default async function LessonPage({ params }) {
   const { language: code, lessonId } = await params;
@@ -29,8 +30,7 @@ export default async function LessonPage({ params }) {
         <div className="lesson-points">
           {lesson.points.map((point, index) => <p key={index}>✦ {point}</p>)}
         </div>
-        <h2>Practice preview</h2>
-        <p>{screens.length} practice screens are available in the course data. The interactive exercise player is still being ported.</p>
+        <LessonPlayer screens={screens} lesson={lesson} moduleTitle={courseModule.title} languageCode={code} />
         <div className="actions">
           <Link className="button secondary" href={`/learn/${code}`}>Back to units</Link>
           <Link className="button" href="/dashboard">Dashboard</Link>
