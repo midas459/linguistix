@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CARD_CATEGORIES, FLASHCARDS } from "../../data/cards";
 import { useLearn } from "../../lib/learn-store";
 
@@ -11,12 +11,17 @@ export default function FlashcardsPage() {
   const { language, lang, srs, rateCard } = useLearn();
   const [category, setCategory] = useState("all");
   const [flipped, setFlipped] = useState(false);
+  const [now, setNow] = useState(null);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setNow(Date.now()));
+    return () => window.cancelAnimationFrame(frame);
+  }, [lang, srs]);
 
   const deck = FLASHCARDS[lang] || [];
-  const now = Date.now();
   const due = deck.filter(card => {
     const review = srs[card.id];
-    return (!review || new Date(review.due).getTime() <= now)
+    return (!review || (now !== null && new Date(review.due).getTime() <= now))
       && (category === "all" || card.category === category);
   });
   const card = due[0];
@@ -38,7 +43,7 @@ export default function FlashcardsPage() {
           <option value="all">All categories</option>
           {CARD_CATEGORIES.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </select>
-        <p>{due.length} cards due in this category</p>
+        <p>{now === null ? "Loading review schedule…" : `${due.length} cards due in this category`}</p>
         {card ? (
           <div className="flashcard">
             <small>{CARD_CATEGORIES.find(item => item.id === card.category)?.label || "Vocabulary"}</small>
@@ -60,12 +65,12 @@ export default function FlashcardsPage() {
               ))}
             </div>}
           </div>
-        ) : (
+        ) : now !== null ? (
           <div className="module-card">
             <h2>You're caught up</h2>
             <p>No cards are due in this category right now. Choose another category or come back when your next reviews are due.</p>
           </div>
-        )}
+        ) : null}
         <div className="actions">
           <Link className="button secondary" href="/dashboard">Dashboard</Link>
           <Link className="button" href="/learn">Courses</Link>
