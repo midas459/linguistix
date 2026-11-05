@@ -117,3 +117,36 @@ select { width: 100%; max-width: 320px; margin-top: 8px; border: 1px solid var(-
 .exercise-feedback.success { background: #eaf7ee; color: #21623c; }
 .exercise-feedback.error { background: #fff1e9; color: #8b3b20; }
 html[data-theme="midnight"] .exercise-stem { background: #203b4c; color: #9ce4e8; }
+
+
+.pronunciation-lab { display: grid; gap: 16px; margin-top: 28px; }
+.pronunciation-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+.pronunciation-toolbar > div { display: grid; gap: 4px; }
+.pronunciation-meta { display: block; margin: 4px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.support-status { display: inline-flex; border-radius: 999px; padding: 7px 11px; background: #eaf7ee; color: #21623c; font-size: 12px; font-weight: 700; }
+.support-status.unavailable { background: #fff1e9; color: #8b3b20; }
+.pronunciation-lab textarea { width: 100%; resize: vertical; border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface); color: var(--foreground); font: inherit; line-height: 1.7; }
+.pronunciation-lab textarea:focus { outline: 2px solid #8bc9cc; outline-offset: 1px; }
+.pronunciation-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+.pronunciation-field { display: grid; align-content: start; gap: 6px; }
+.pronunciation-field select { max-width: none; width: 100%; }
+.pronunciation-field input[type="range"] { padding: 8px 0; accent-color: var(--accent); }
+.pronunciation-actions { margin-top: 4px; }
+.pronunciation-status { min-height: 28px; margin: 0; font-size: 14px; }
+.pronunciation-examples { display: grid; gap: 12px; padding-top: 22px; border-top: 1px solid var(--border); }
+.pronunciation-examples h2 { margin: 0; font-size: 22px; }
+.pronunciation-examples > p { margin: 0; }
+.pronunciation-example-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.pronunciation-example { display: grid; gap: 7px; min-height: 116px; border: 1px solid var(--border); border-radius: 14px; padding: 15px; background: var(--surface); color: var(--foreground); text-align: left; cursor: pointer; font: inherit; }
+.pronunciation-example:hover, .pronunciation-example:focus-visible { border-color: var(--accent); outline-color: var(--accent); }
+.pronunciation-example strong { font-size: 19px; overflow-wrap: anywhere; }
+.pronunciation-example span { font-size: 13px; }
+.pronunciation-example small { color: var(--muted); line-height: 1.5; }
+.pronunciation-disclaimer { margin: 0; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 8%, var(--surface)); font-size: 12px; }
+html[data-theme="midnight"] .pronunciation-example, html[data-theme="midnight"] .pronunciation-toolbar, html[data-theme="midnight"] .pronunciation-lab textarea { background: #203348; color: var(--foreground); }
+html[data-theme="midnight"] .support-status { background: #203b31; color: #a6e3b8; }
+html[data-theme="midnight"] .support-status.unavailable { background: #4a3028; color: #ffc1a7; }
+@media (max-width: 560px) {
+  .pronunciation-toolbar { align-items: flex-start; flex-direction: column; }
+  .pronunciation-actions .button { flex: 1 1 130px; }
+}
