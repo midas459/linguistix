@@ -26,7 +26,7 @@ export default function TopBar({ onMenu }) {
 
   const dueCards = Object.values(srs).filter((c) => new Date(c.due) <= new Date()).length;
   const nearBadge = badges.find((b) => !b.unlocked && b.ratio >= 0.5);
-  const initials = (user?.full_name || user?.email || "Lisan learner")
+  const initials = (user?.full_name || user?.email || "Linguistix learner")
     .split(/\s+/)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
