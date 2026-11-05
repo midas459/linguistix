@@ -25,6 +25,8 @@ The app currently has seven enabled language courses in `src/data/curriculum.js`
 | `pt` | Portuguese | Available |
 
 - Each enabled language must have a `LANGUAGES` entry and a matching `MODULES[code]` curriculum. Do not enable a language in the settings picker unless its course content and app flows exist.
+- The lesson player also needs `LESSON_TASKS[code][moduleId]` in `src/data/lessons.js`, or a valid language-specific flashcard deck for the `starterTasks()` fallback. Keep the fallback working while replacing its generic prompts with authored exercises. Ensure every enabled lesson opens a non-empty set of screens.
+- Speech playback must use the language's `speech` locale from `getLanguage(code)`; do not default English, Spanish, French or Portuguese to German voices.
 - The settings page also displays a searchable ISO 639-1 catalogue. Catalogue entries without course content are intentionally disabled and marked “Course coming soon”. Do not represent this ISO 639-1 list as every language in the world; ISO 639-3 would be needed for a much broader catalogue.
 - If adding another enabled course, update all dependent language-keyed state and backend validation: `src/lib/learn-store.jsx`, `supabase/migrations/0001_schema.sql`, and `supabase/migrations/0004_import_legacy_state.sql`, as well as any course-specific content/decks or UI assumptions. Keep language code validation allowlisted; never accept arbitrary client-supplied language codes.
 - Learning state is currently browser-local under `lisan.state.v2`. Preserve existing progress when changing storage or migrating it. Legacy import must remain opt-in, atomic, authenticated and non-overwriting.
