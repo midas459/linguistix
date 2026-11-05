@@ -30,3 +30,8 @@ src/routeTree.gen.ts
 
 # Local link to a Base44 app, written by `base44 link`
 base44/.app.jsonc
+
+# Next.js migration workspace
+next-app/.next
+next-app/node_modules
+next-app/out
