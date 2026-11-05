@@ -63,3 +63,9 @@ p { color: var(--muted); line-height: 1.75; }
   cursor: pointer;
 }
 .button.secondary { background: #e8f3f4; color: #126b70; }
+
+form { display: grid; gap: 10px; margin-top: 24px; }
+label { color: var(--foreground); font-size: 14px; font-weight: 700; }
+input { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 13px 14px; color: var(--foreground); background: white; font: inherit; }
+input:focus { outline: 2px solid #8bc9cc; outline-offset: 1px; }
+button:disabled { opacity: .6; cursor: wait; }
