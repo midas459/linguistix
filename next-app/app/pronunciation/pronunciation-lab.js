@@ -44,7 +44,9 @@ const EXAMPLES = {
 export default function PronunciationLab() {
   const { language, lang } = useLearn();
   const examples = EXAMPLES[lang] || EXAMPLES.en;
-  const [phrase, setPhrase] = useState("مرحبًا");
+  const [phrases, setPhrases] = useState({});
+  const phrase = phrases[lang] ?? examples[0].text;
+  const setPhrase = (value) => setPhrases((current) => ({ ...current, [lang]: value }));
   const [voices, setVoices] = useState([]);
   const [voiceURI, setVoiceURI] = useState("");
   const [rate, setRate] = useState("0.9");
