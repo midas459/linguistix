@@ -80,3 +80,18 @@ button:disabled { opacity: .6; cursor: wait; }
 .module-card ul { margin: 0; padding-left: 20px; line-height: 2; }
 .lesson-points { margin: 24px 0; padding: 8px 18px; border-left: 3px solid var(--accent); background: #f7fbfc; }
 .lesson-points p { color: var(--foreground); }
+
+html[data-theme="forest"] { --accent: #27835a; --background: #f2f8f3; }
+html[data-theme="sunset"] { --accent: #d66c32; --background: #fff7f0; }
+html[data-theme="lavender"] { --accent: #8060b5; --background: #f7f4fc; }
+html[data-theme="midnight"] { color-scheme: dark; --background: #101b2a; --surface: #18283b; --foreground: #edf4fa; --muted: #a8b9c9; --accent: #63b9c4; --border: #34485c; }
+html[data-theme="midnight"] .course-card, html[data-theme="midnight"] .module-card, html[data-theme="midnight"] input { background: #203348; color: var(--foreground); }
+html[data-theme="midnight"] .lesson-points { background: #203348; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 24px 0; }
+.stat-card { border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: var(--surface); }
+.stat-card strong { display: block; font-size: 26px; }
+.stat-card span { color: var(--muted); font-size: 12px; }
+.settings-grid { display: grid; gap: 24px; margin-top: 24px; }
+.choice-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.choice-button { border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; background: var(--surface); color: var(--foreground); cursor: pointer; font: inherit; }
+.choice-button[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent); }
