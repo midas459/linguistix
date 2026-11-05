@@ -4,6 +4,11 @@ import { NextResponse } from "next/server";
 export async function proxy(request) {
   let response = NextResponse.next({ request });
 
+  // Allow the app shell to render before local Supabase credentials are configured.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+    return response;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
