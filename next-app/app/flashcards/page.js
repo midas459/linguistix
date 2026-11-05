@@ -67,7 +67,7 @@ export default function FlashcardsPage() {
           </div>
         ) : now !== null ? (
           <div className="module-card">
-            <h2>You're caught up</h2>
+            <h2>All caught up</h2>
             <p>No cards are due in this category right now. Choose another category or come back when your next reviews are due.</p>
           </div>
         ) : null}
