@@ -100,3 +100,20 @@ select { width: 100%; max-width: 320px; margin-top: 8px; border: 1px solid var(-
 .flashcard { display: grid; gap: 18px; margin: 24px 0; padding: clamp(20px, 4vw, 36px); border: 1px solid var(--border); border-radius: 20px; background: var(--surface); }
 .flashcard-face { min-height: 180px; display: grid; align-content: center; text-align: center; }
 .flashcard-face h2 { font-size: clamp(28px, 5vw, 44px); }
+
+.exercise-panel { display: grid; gap: 16px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+.exercise-panel h2 { margin: 0; font-size: clamp(22px, 4vw, 32px); }
+.exercise-progress, .exercise-hint { color: var(--muted); font-size: 13px; }
+.exercise-track { height: 7px; overflow: hidden; border-radius: 99px; background: var(--border); }
+.exercise-track span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.exercise-stem { padding: 18px; border-radius: 12px; background: #e8f3f4; color: #126b70; text-align: center; font-size: 30px; font-weight: 800; }
+.exercise-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.exercise-choice { display: grid; gap: 6px; min-height: 68px; border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface); color: var(--foreground); text-align: left; cursor: pointer; font: inherit; }
+.exercise-choice[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.exercise-choice:disabled { cursor: default; opacity: .8; }
+.exercise-choice small { color: var(--muted); }
+.exercise-feedback { padding: 14px 16px; border-radius: 12px; }
+.exercise-feedback p { margin-bottom: 0; }
+.exercise-feedback.success { background: #eaf7ee; color: #21623c; }
+.exercise-feedback.error { background: #fff1e9; color: #8b3b20; }
+html[data-theme="midnight"] .exercise-stem { background: #203b4c; color: #9ce4e8; }
