@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLearn } from "../../../lib/learn-store";
 
 export default function LessonPlayer({ screens, lesson, moduleTitle, languageCode }) {
-  const { language, completeLesson } = useLearn();
+  const { language, setLang, completeLesson } = useLearn();
+
+  useEffect(() => {
+    setLang(languageCode);
+  }, [languageCode, setLang]);
   const [screenIndex, setScreenIndex] = useState(0);
   const [selected, setSelected] = useState([]);
   const [checked, setChecked] = useState(false);
