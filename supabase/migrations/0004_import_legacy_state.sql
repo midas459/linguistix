@@ -35,7 +35,7 @@ begin
   end if;
 
   if pg_catalog.jsonb_typeof(p_state -> 'lang') <> 'string'
-     or p_state ->> 'lang' not in ('ar', 'de', 'ja') then
+     or p_state ->> 'lang' not in ('ar', 'de', 'ja', 'en', 'es', 'fr', 'pt') then
     raise exception 'Invalid active language';
   end if;
   if p_state ? 'theme' and (
@@ -138,7 +138,7 @@ begin
     now()
   );
 
-  for v_language in select unnest(array['ar', 'de', 'ja']::text[])
+  for v_language in select unnest(array['ar', 'de', 'ja', 'en', 'es', 'fr', 'pt']::text[])
   loop
     v_progress := p_state #> array['progress', v_language];
 
