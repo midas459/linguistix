@@ -91,7 +91,7 @@ export function LearnProvider({ children }) {
   const setTheme = useCallback((theme) => {
     if (["ocean", "forest", "sunset", "lavender", "midnight"].includes(theme)) setState((s) => ({ ...s, theme }));
   }, []);
-  const toggleTheme = useCallback(() => setState((s) => ({ ...s, theme: s.theme === "midnight" ? "ocean" : "midnight" }), []);
+  const toggleTheme = useCallback(() => setState((s) => ({ ...s, theme: s.theme === "midnight" ? "ocean" : "midnight" })), []);
   const setReminders = useCallback((patch) => setState((s) => ({ ...s, reminders: { ...s.reminders, ...patch } })), []);
 
   const heartsToday = useCallback((s) => s.heartsDay === dayKey() ? s.hearts ?? MAX_HEARTS : MAX_HEARTS, []);
