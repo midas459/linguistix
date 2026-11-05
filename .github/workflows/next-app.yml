@@ -12,6 +12,10 @@ on:
       - "next-app/**"
       - ".github/workflows/next-app.yml"
 
+concurrency:
+  group: next-app-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   next-app:
     runs-on: ubuntu-latest
