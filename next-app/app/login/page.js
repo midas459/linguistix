@@ -58,6 +58,7 @@ export default function LoginPage() {
           </div>
         </form>
         {message && <p role="alert">{message}</p>}
+        <p><Link href="/register">Create an account</Link> · <Link href="/forgot-password">Forgot password?</Link></p>
         <p><Link href="/">Back to home</Link></p>
       </section>
     </main>
