@@ -20,6 +20,7 @@ export default async function DashboardPage() {
         <div className="actions">
           <Link className="button" href="/learn">Explore courses</Link>
           <Link className="button secondary" href="/settings">Settings</Link>
+          <Link className="button secondary" href="/flashcards">Flashcards</Link>
           <Link className="button secondary" href="/">Home</Link>
         </div>
       </section>
