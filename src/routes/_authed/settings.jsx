@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Bell, Check, Moon, RotateCcw, Sun, Trash2 } from "lucide-react";
+import { Bell, Check, Palette, RotateCcw, Trash2 } from "lucide-react";
 import PageHeader from "@/components/shell/PageHeader";
 import ReminderDialog from "@/components/settings/ReminderDialog";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { LANGUAGES } from "@/data/curriculum";
+import { LANGUAGE_CATALOG } from "@/data/language-catalog";
 import { useLearn } from "@/lib/learn-store";
 import { upcomingReminderLabel } from "@/lib/reminders";
 import { cn } from "@/lib/utils";
@@ -23,7 +24,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authed/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Lisan" },
+      { title: "Settings — Linguistix" },
       { name: "description", content: "Choose your language, theme and daily study reminder." },
     ],
   }),
@@ -31,8 +32,20 @@ export const Route = createFileRoute("/_authed/settings")({
 });
 
 function SettingsPage() {
-  const { lang, setLang, theme, toggleTheme, reminders, setReminders, resetProgress, progress } = useLearn();
+  const { lang, setLang, theme, setTheme, reminders, setReminders, resetProgress, progress } = useLearn();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [languageQuery, setLanguageQuery] = useState("");
+  const availableCodes = new Set(LANGUAGES.map((item) => item.code));
+  const filteredLanguages = LANGUAGE_CATALOG.filter((item) =>
+    item.name.toLowerCase().includes(languageQuery.trim().toLowerCase()) || item.code.includes(languageQuery.trim().toLowerCase()),
+  );
+  const themes = [
+    { id: "ocean", name: "Ocean", detail: "Calm teal and sea blue", swatch: "bg-cyan-600" },
+    { id: "forest", name: "Forest", detail: "Natural greens", swatch: "bg-green-700" },
+    { id: "sunset", name: "Sunset", detail: "Warm orange and amber", swatch: "bg-orange-500" },
+    { id: "lavender", name: "Lavender", detail: "Soft violet tones", swatch: "bg-violet-500" },
+    { id: "midnight", name: "Midnight", detail: "Deep navy dark mode", swatch: "bg-slate-950" },
+  ];
 
   return (
     <div className="mx-auto w-full max-w-[900px] px-4 py-8 sm:px-6 lg:px-8">
@@ -45,45 +58,73 @@ function SettingsPage() {
       <section className="mt-8 rounded-[26px] border border-border/70 bg-card p-5 sm:p-6">
         <h2 className="text-base font-semibold">Language</h2>
         <p className="mt-1 text-sm text-muted-foreground">Each language keeps its own XP, streak and review queue.</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {LANGUAGES.map((language) => (
-            <button
-              key={language.code}
-              type="button"
-              onClick={() => setLang(language.code)}
-              className={cn(
-                "rounded-2xl border p-4 text-left transition-colors",
-                lang === language.code ? "border-[hsl(var(--lang))] bg-[hsl(var(--lang)/0.06)]" : "border-border hover:bg-accent/50",
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className="grid h-9 w-9 place-items-center rounded-full text-sm text-white"
-                  style={{ background: `hsl(${language.accent})` }}
+        <div className="mt-4">
+          <input
+            value={languageQuery}
+            onChange={(event) => setLanguageQuery(event.target.value)}
+            placeholder="Search world languages (name or ISO code)…"
+            aria-label="Search languages"
+            className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+          />
+          <p className="mt-2 text-xs text-muted-foreground">
+            {filteredLanguages.length} languages in the catalogue · Courses are enabled as learning content is published.
+          </p>
+          <div className="mt-3 grid max-h-[440px] gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
+            {filteredLanguages.map((item) => {
+              const course = LANGUAGES.find((language) => language.code === item.code);
+              const enabled = availableCodes.has(item.code);
+              return (
+                <button
+                  key={item.code}
+                  type="button"
+                  disabled={!enabled}
+                  onClick={() => setLang(item.code)}
+                  className={cn(
+                    "flex items-center justify-between rounded-xl border p-3 text-left transition-colors",
+                    enabled ? "border-border hover:bg-accent/50" : "cursor-not-allowed border-border/60 opacity-60",
+                    lang === item.code && "border-[hsl(var(--lang))] bg-[hsl(var(--lang)/0.08)]",
+                  )}
                 >
-                  {language.emblem}
-                </span>
-                {lang === language.code && <Check className="h-4 w-4" style={{ color: "hsl(var(--lang))" }} />}
-              </div>
-              <p className="mt-3 text-sm font-medium">{language.label}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{language.native}</p>
-            </button>
-          ))}
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium">{item.name}</span>
+                    <span className="text-xs text-muted-foreground">{item.code.toUpperCase()} · {course?.native || "Course coming soon"}</span>
+                  </span>
+                  <span className="ml-2 shrink-0 text-xs font-medium text-muted-foreground">
+                    {enabled ? (lang === item.code ? "Selected ✓" : "Available") : "Coming soon"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       <section className="mt-5 rounded-[26px] border border-border/70 bg-card p-5 sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-base font-semibold">Appearance</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Currently using the {theme === "dark" ? "dark" : "light"} theme.
-            </p>
-          </div>
-          <Button variant="outline" className="rounded-full" onClick={toggleTheme}>
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            Switch to {theme === "dark" ? "light" : "dark"}
-          </Button>
+        <div className="flex items-center gap-2">
+          <Palette className="h-4 w-4 text-muted-foreground" />
+          <h2 className="text-base font-semibold">Appearance</h2>
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">Choose one of five custom colour themes. Your choice is saved on this device.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {themes.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setTheme(item.id)}
+              aria-pressed={theme === item.id}
+              className={cn(
+                "flex items-center gap-3 rounded-2xl border p-3 text-left transition-colors",
+                theme === item.id ? "border-[hsl(var(--lang))] bg-[hsl(var(--lang)/0.07)]" : "border-border hover:bg-accent/50",
+              )}
+            >
+              <span className={cn("h-10 w-10 shrink-0 rounded-xl", item.swatch)} />
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold">{item.name}</span>
+                <span className="block text-xs text-muted-foreground">{item.detail}</span>
+              </span>
+              {theme === item.id && <Check className="h-4 w-4" style={{ color: "hsl(var(--lang))" }} />}
+            </button>
+          ))}
         </div>
       </section>
 

@@ -1,5 +1,6 @@
 import { Volume2 } from "lucide-react";
 import { speak } from "@/lib/speech";
+import { getLanguage } from "@/data/curriculum";
 import { cn } from "@/lib/utils";
 
 /**
@@ -74,7 +75,7 @@ export default function ChoiceGrid({ screen, value, onChange, locked, lang }) {
         <div className="mt-5 flex flex-col items-center gap-2 rounded-3xl border border-border/70 bg-muted/40 px-5 py-7">
           <button
             type="button"
-            onClick={() => speak(screen.audio, lang === "ar" ? "ar-SA" : lang === "ja" ? "ja-JP" : "de-DE")}
+            onClick={() => speak(screen.audio, getLanguage(lang).speech)}
             className="grid h-16 w-16 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 active:scale-95"
             aria-label="Play the audio"
           >

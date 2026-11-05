@@ -554,10 +554,40 @@ function audioScreen(cards, index, key) {
 }
 
 /** Six graded screens per lesson, in a fixed pedagogical order. */
+function starterTasks(cards, lessonIndex) {
+  if (cards.length < 3) return null;
+  const card = cards[lessonIndex % cards.length];
+  const choices = [0, 1, 2].map((offset) => cards[(lessonIndex + offset) % cards.length]);
+  const options = choices.map((item) => ({ id: item.id, label: item.meaning, sub: item.front }));
+  return {
+    matrix: {
+      prompt: `What does “${card.front}” mean?`,
+      root: [card.front], pattern: ["meaning"], tiles: options, correct: card.id,
+      note: `${card.front} means “${card.meaning}”. Example: ${card.exampleMeaning || card.example || card.front}.`,
+    },
+    vowel: {
+      prompt: `Choose the meaning of “${card.front}”.`,
+      stem: card.front, tiles: options, correct: card.id,
+      note: card.breakdown || `${card.front} — ${card.meaning}.`,
+    },
+    position: {
+      prompt: `Which translation matches “${card.example || card.front}”?`,
+      stem: card.example || card.front, tiles: options, correct: card.id,
+      note: card.exampleMeaning || card.meaning,
+    },
+    wordbank: {
+      prompt: "Build the expression shown below.",
+      translation: card.meaning, tiles: [card.front], answer: [card.front],
+      note: `${card.front} — ${card.meaning}.`,
+    },
+  };
+}
+
+/** Six graded screens per lesson, using authored tasks or a language-specific starter deck. */
 export function buildScreens(lang, moduleId, lessonIndex) {
-  const tasks = LESSON_TASKS[lang]?.[moduleId];
-  if (!tasks) return [];
   const cards = FLASHCARDS[lang] || [];
+  const tasks = LESSON_TASKS[lang]?.[moduleId] || starterTasks(cards, lessonIndex);
+  if (!tasks) return [];
   const screens = [
     { kind: "matrix", key: "matrix", title: "Root & pattern", ...tasks.matrix },
     { kind: "vowel", key: "vowel", title: "Vowel puzzle", ...tasks.vowel },

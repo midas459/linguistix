@@ -6,7 +6,7 @@ import { useLearn } from "@/lib/learn-store";
 export const Route = createFileRoute("/_authed/tutor")({
   head: () => ({
     meta: [
-      { title: "Kalam AI — Lisan" },
+      { title: "Kalam AI — Linguistix" },
       { name: "description", content: "A language tutor that breaks down grammar, builds quizzes and roleplays real conversations." },
     ],
   }),
