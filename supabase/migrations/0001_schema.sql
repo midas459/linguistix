@@ -1,4 +1,4 @@
--- Proposed initial Supabase schema for Linguistics.
+-- Proposed initial Supabase schema for Linguistix.
 -- Apply only to a reviewed Supabase project; this file has not been executed.
 
 create table public.profiles (
