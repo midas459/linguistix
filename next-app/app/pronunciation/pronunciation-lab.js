@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useLearn } from "../../../lib/learn-store";
+import { useLearn } from "../../lib/learn-store";
 
 const EXAMPLES = {
   ar: [
