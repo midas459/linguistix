@@ -198,3 +198,87 @@ html[data-theme="midnight"] .support-status.unavailable { background: #4a3028; c
   .app-xp-pill { display: none; }
   .app-page-content > main { width: calc(100% - 28px); padding-top: 28px; }
 }
+
+
+/* Restored learning dashboard */
+.lf-dashboard { width:min(1180px,calc(100% - 48px)); margin:0 auto; padding:38px 0 76px; }
+.lf-welcome { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding:34px; border:1px solid var(--border); border-radius:26px; background:radial-gradient(circle at 90% 10%,color-mix(in srgb,var(--accent) 17%,transparent),transparent 36%),var(--surface); }
+.lf-welcome h1 { max-width:720px; margin:10px 0; font-size:clamp(30px,4vw,48px); }
+.lf-eyebrow { margin:0; color:var(--accent); font-size:10px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+.lf-subtitle { margin:0; }
+.lf-welcome-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+.lf-welcome-tags span { border:1px solid var(--border); border-radius:99px; padding:6px 10px; background:var(--background); color:var(--foreground); font-size:11px; font-weight:700; }
+.lf-welcome-tags .lf-preview-tag { border-style:dashed; color:var(--muted); }
+.lf-resume { flex:0 0 auto; gap:12px; }
+.lf-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-top:16px; }
+.lf-stat,.lf-card,.lf-module { border:1px solid var(--border); border-radius:20px; background:var(--surface); }
+.lf-stat { display:grid; gap:7px; padding:18px; }
+.lf-stat-icon { display:grid; width:34px; height:34px; place-items:center; border-radius:11px; background:color-mix(in srgb,var(--accent) 12%,var(--surface)); color:var(--accent); }
+.lf-stat p { margin:3px 0 0; font-size:12px; }
+.lf-stat strong { font-size:clamp(23px,3vw,31px); letter-spacing:-.04em; }
+.lf-stat strong small { color:var(--muted); font-size:12px; font-weight:700; letter-spacing:0; }
+.lf-stat>span:last-child { color:var(--muted); font-size:11px; }
+.lf-dashboard-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+.lf-card { padding:22px; }
+.lf-card-heading,.lf-section-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.lf-card-heading h2,.lf-section-heading h2 { margin:5px 0 0; font-size:22px; letter-spacing:-.035em; }
+.lf-goal-ring { display:grid; width:62px; height:62px; place-items:center; border-radius:50%; background:conic-gradient(var(--accent) var(--goal),var(--border) 0); color:var(--foreground); font-size:13px; font-weight:800; position:relative; }
+.lf-goal-ring:before { content:""; position:absolute; inset:6px; border-radius:50%; background:var(--surface); }
+.lf-goal-ring { isolation:isolate; }
+.lf-goal-ring:after { content:attr(class); display:none; }
+.lf-goal-row { display:grid; gap:8px; margin-top:22px; }
+.lf-goal-row>div:first-child { display:flex; justify-content:space-between; gap:10px; font-size:12px; }
+.lf-goal-row>div:first-child span { color:var(--muted); }
+.lf-track { height:7px; overflow:hidden; border-radius:99px; background:var(--border); }
+.lf-track span { display:block; height:100%; border-radius:inherit; background:var(--accent); }
+.lf-week-total { font-size:24px; }
+.lf-week-total small { color:var(--muted); font-size:11px; }
+.lf-chart { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px; height:180px; margin-top:18px; }
+.lf-chart-day { display:grid; grid-template-rows:18px 1fr 18px; gap:6px; text-align:center; }
+.lf-chart-value,.lf-chart-label { color:var(--muted); font-size:10px; }
+.lf-chart-track { display:flex; align-items:flex-end; overflow:hidden; border-radius:8px; background:color-mix(in srgb,var(--accent) 7%,var(--background)); }
+.lf-chart-track span { display:block; width:100%; min-height:0; border-radius:8px 8px 3px 3px; background:var(--accent); }
+.lf-section { margin-top:38px; }
+.lf-section-heading { align-items:flex-end; margin-bottom:16px; }
+.lf-section-heading h2 { font-size:26px; }
+.lf-section-heading p:not(.lf-eyebrow) { margin:4px 0 0; font-size:12px; }
+.lf-section-heading>a { color:var(--accent); font-size:12px; font-weight:800; text-decoration:none; }
+.lf-path { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.lf-module { padding:20px; }
+.lf-module-top { display:flex; align-items:flex-start; gap:12px; }
+.lf-module-number { display:grid; width:38px; height:38px; flex:0 0 auto; place-items:center; border-radius:13px; background:color-mix(in srgb,var(--accent) 12%,var(--surface)); color:var(--accent); font-weight:800; }
+.lf-module h3 { margin:5px 0; font-size:16px; }
+.lf-module-top p:last-child { margin:0; font-size:12px; }
+.lf-module-progress { height:5px; overflow:hidden; margin:16px 0 10px; border-radius:99px; background:var(--border); }
+.lf-module-progress span { display:block; height:100%; background:var(--accent); }
+.lf-module ul { display:grid; gap:3px; margin:0; padding:0; list-style:none; }
+.lf-module li { display:flex; align-items:center; gap:10px; min-width:0; padding:9px 0; border-top:1px solid color-mix(in srgb,var(--border) 65%,transparent); }
+.lf-lesson-check { display:grid; width:25px; height:25px; flex:0 0 auto; place-items:center; border:1px solid var(--border); border-radius:50%; color:var(--muted); font-size:11px; }
+.lf-lesson-check.done { border-color:var(--accent); background:var(--accent); color:white; }
+.lf-module li a { display:grid; min-width:0; flex:1; gap:2px; text-decoration:none; }
+.lf-module li a span { overflow:hidden; color:var(--foreground); font-size:12px; font-weight:750; text-overflow:ellipsis; white-space:nowrap; }
+.lf-module li a small { overflow:hidden; color:var(--muted); font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.lf-module li a.is-locked { opacity:.45; pointer-events:none; }
+.lf-lesson-xp { flex:0 0 auto; color:var(--muted); font-size:10px; }
+.lf-badges { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.lf-badge { display:grid; gap:8px; min-width:0; padding:16px; border:1px dashed var(--border); border-radius:17px; background:var(--surface); }
+.lf-badge.unlocked { border-style:solid; }
+.lf-badge>span { display:grid; width:32px; height:32px; place-items:center; border-radius:10px; background:color-mix(in srgb,var(--accent) 12%,var(--surface)); color:var(--accent); }
+.lf-badge strong { font-size:12px; }
+.lf-badge small { min-height:28px; color:var(--muted); font-size:10px; }
+.lf-activity { padding:6px 20px; }
+.lf-activity-item { display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--border); }
+.lf-activity-item:last-child { border:0; }
+.lf-activity-item>span { display:grid; width:34px; height:34px; flex:0 0 auto; place-items:center; border-radius:11px; background:color-mix(in srgb,var(--accent) 10%,var(--surface)); color:var(--accent); }
+.lf-activity-item>div { display:grid; min-width:0; flex:1; gap:3px; }
+.lf-activity-item strong { font-size:12px; }
+.lf-activity-item small,.lf-activity-item time { color:var(--muted); font-size:10px; }
+.lf-empty,.lf-storage-note { color:var(--muted); font-size:12px; }
+.lf-quick-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:18px; }
+.lf-quick-links a { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:15px; border:1px solid var(--border); border-radius:15px; background:var(--surface); color:var(--foreground); font-size:11px; font-weight:750; text-decoration:none; }
+.lf-quick-links a span { color:var(--accent); }
+.lf-storage-note { margin-top:16px; text-align:center; }
+html[data-theme="midnight"] .lf-stat,html[data-theme="midnight"] .lf-card,html[data-theme="midnight"] .lf-module,html[data-theme="midnight"] .lf-badge,html[data-theme="midnight"] .lf-quick-links a { background:var(--surface); }
+@media(max-width:1050px){.lf-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.lf-path{grid-template-columns:1fr}.lf-badges{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){.lf-dashboard{width:calc(100% - 28px);padding-top:24px}.lf-welcome{align-items:flex-start;flex-direction:column;padding:24px}.lf-resume{width:100%}.lf-dashboard-grid{grid-template-columns:1fr}.lf-badges{grid-template-columns:repeat(2,minmax(0,1fr))}.lf-quick-links{grid-template-columns:1fr}.lf-chart{height:150px}}
+@media(max-width:420px){.lf-stats{gap:8px}.lf-stat{padding:13px}.lf-stat strong{font-size:22px}.lf-card{padding:16px}.lf-module{padding:15px}.lf-lesson-xp{display:none}}
