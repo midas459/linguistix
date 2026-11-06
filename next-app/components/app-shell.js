@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLearn } from "../lib/learn-store";
+import ResearchPanel from "./research-panel";
 
 const NAV = [
   { href: "/learn", label: "Learn map", icon: "⌂" },
@@ -21,6 +22,7 @@ export default function AppShell({ children }) {
   const pathname = usePathname();
   const { language, languages, lang, setLang, progress, hearts, maxHearts, theme, setTheme, badges, unlockedBadges } = useLearn();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [researchOpen, setResearchOpen] = useState(false);
   const menuButtonRef = useRef(null);
   const closeButtonRef = useRef(null);
   const isPublic = PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/auth/");
@@ -90,10 +92,12 @@ export default function AppShell({ children }) {
         <span className="app-stat-pill" title="Current streak">🔥 {progress.streak}</span>
         <span className="app-stat-pill" title="Available hearts">♥ {hearts}/{maxHearts}</span>
         <span className="app-stat-pill app-xp-pill">★ {progress.xpTotal} XP</span>
+        <button className="app-research-button" type="button" onClick={() => setResearchOpen(true)} aria-label="Open Lugha Research">⌕ <span>Research</span></button>
         <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}>{theme === "midnight" ? "☀" : "◐"}</button>
       </header>
       <div className="app-page-content">{children}</div>
     </div>
+    <ResearchPanel open={researchOpen} onClose={() => setResearchOpen(false)} />
     {menuOpen && <div className="app-mobile-backdrop" role="presentation" onClick={() => setMenuOpen(false)}>
       <aside id="app-mobile-drawer" className="app-mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile navigation" onClick={(event) => event.stopPropagation()}>
         <button ref={closeButtonRef} type="button" className="app-drawer-close" onClick={() => setMenuOpen(false)} aria-label="Close navigation">×</button>
