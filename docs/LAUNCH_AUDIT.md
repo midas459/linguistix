@@ -26,7 +26,7 @@ This list reflects code paths and route definitions; it does not certify every i
 - **Positive:** `.env.local` is ignored by Git; `.env.example` contains only a blank Gemini key placeholder and the optional model name. A built-client search found no Gemini endpoint or key names.
 - **Positive:** provider failures do not relay provider response bodies or credentials to the browser. The missing-Gemini-key case has a setup-specific message.
 - **Action required:** a Gemini key was pasted into chat during this work. Treat it as compromised, revoke it, and replace it before enabling Gemini in any environment. The key was not added to source, the example file, or the commit.
-- **Configuration note:** provider credentials are configured as Base44 runtime secrets, not loaded from `.env.local`. Do not put either key in a `VITE_*` variable.
+- **Configuration note:** provider credentials are configured as Base44 runtime secrets, not loaded from `.env.local`. Do not put the key in a `VITE_*` variable.
 
 ## Build and test status
 
