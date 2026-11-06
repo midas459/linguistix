@@ -7,6 +7,7 @@ import { useLearn } from "../lib/learn-store";
 
 const NAV = [
   { href: "/learn", label: "Learn map", icon: "⌂" },
+  { href: "/tutor", label: "Kalam AI tutor", icon: "✦" },
   { href: "/pronunciation", label: "Pronunciation lab", icon: "◉" },
   { href: "/flashcards", label: "Flashcards", icon: "▤" },
   { href: "/dashboard", label: "Dashboard", icon: "▦" },
