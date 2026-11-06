@@ -6,7 +6,7 @@ This checklist is a release gate, not a claim that these checks have already pas
 
 - [ ] Confirm the tested commit SHA and deployment/environment.
 - [ ] Confirm Base44 app ID and proxy configuration are present in the test environment.
-- [ ] Confirm replacement provider credentials are stored only as Base44 server secrets. Never paste keys into this checklist, browser storage, screenshots or issue comments.
+- [ ] Confirm the replacement Gemini credential is stored only as a Base44 server secret. Never paste keys into this checklist, browser storage, screenshots or issue comments.
 - [ ] Confirm the Gemini key previously exposed in chat has been revoked.
 
 ## Authentication and navigation
@@ -37,8 +37,7 @@ This checklist is a release gate, not a claim that these checks have already pas
 Run with a valid signed-in test account and replacement server-side secrets.
 
 - [ ] Gemini succeeds for breakdown, quiz and roleplay.
-- [ ] Groq fallback succeeds when Gemini is unavailable and Groq is configured.
-- [ ] Gemini-only and Groq-only configurations behave as expected.
+- [ ] Gemini-only configuration works without any secondary provider credentials.
 - [ ] Missing credentials show safe setup guidance.
 - [ ] Invalid credentials and quota/rate limits show sanitized errors.
 - [ ] Timeout/network failure returns a recoverable error.
@@ -68,7 +67,7 @@ For each failure, record the route, viewport, steps, expected result, actual res
 
 - [ ] All critical flows pass on desktop and mobile.
 - [ ] No open critical/high severity defects.
-- [ ] Live Gemini and fallback behavior verified in staging.
+- [ ] Live Gemini behavior and sanitized failure handling verified in staging.
 - [ ] CI is green for the exact release candidate commit.
 - [ ] Lockfile and deterministic clean-install requirement is satisfied.
 - [ ] Product owner approves release.
