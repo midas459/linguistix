@@ -1,11 +1,25 @@
-import { openaiCompatibleText } from "@tanstack/ai-openai/compatible";
+import { secrets } from "base44:runtime";
+import { DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL } from "@/lib/tutor-providers";
+import { generateTutorResponse, TutorProviderError } from "@/lib/tutor-provider-core.server";
 
-// A TanStack AI chat adapter on the Base44 AI gateway: OpenAI-compatible, no API
-// key, billed to the app's AI credits. Pass `context.getBase44()`. The gateway is
-// called as the app (service role) because an owner can restrict it to server-side
-// calls, which refuses a visitor's token, so authenticate the caller first.
-// "automatic" lets the platform pick the model; named models cost more credits.
-export const gatewayModel = (base44, model = "automatic") => {
-  const { baseURL, token, headers } = base44.asServiceRole.aiGateway.connection();
-  return openaiCompatibleText(model, { name: "base44", baseURL, apiKey: token, defaultHeaders: headers });
+export const generateTutorReply = async (prompt, schema) => {
+  try {
+    return await generateTutorResponse({
+      prompt,
+      schema,
+      providers: {
+        gemini: {
+          apiKey: secrets.get("GEMINI_API_KEY"),
+          model: secrets.get("GEMINI_MODEL") || DEFAULT_GEMINI_MODEL,
+        },
+        groq: {
+          apiKey: secrets.get("GROQ_API_KEY"),
+          model: secrets.get("GROQ_MODEL") || DEFAULT_GROQ_MODEL,
+        },
+      },
+    });
+  } catch (error) {
+    if (error instanceof TutorProviderError) throw error;
+    throw new TutorProviderError("unavailable", "Kalam AI is temporarily unavailable. Please try again later.");
+  }
 };
