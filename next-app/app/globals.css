@@ -361,3 +361,6 @@ html[data-theme="midnight"] .lf-stat,html[data-theme="midnight"] .lf-card,html[d
 .app-signout-button { border:1px solid var(--border); border-radius:99px; padding:7px 11px; background:var(--surface); color:var(--muted); font:inherit; font-size:11px; font-weight:750; cursor:pointer; white-space:nowrap; }
 .app-signout-button:hover { border-color:var(--accent); color:var(--foreground); }
 @media(max-width:560px){.app-signout-button{padding:7px 8px;font-size:10px}}
+
+@media(max-width:560px){.app-signout-button{display:none}.app-language-select{max-width:34vw}.app-language-select select{font-size:10px}}
+@media(max-width:390px){.app-stat-pill[title="Current streak"]{display:none}.app-language-select{max-width:40vw}}
