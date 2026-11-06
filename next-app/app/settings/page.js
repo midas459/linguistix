@@ -7,9 +7,17 @@ const THEMES = [
   ["ocean", "Ocean"], ["forest", "Forest"], ["sunset", "Sunset"],
   ["lavender", "Lavender"], ["midnight", "Midnight"],
 ];
+const DAYS = [["Mon",1],["Tue",2],["Wed",3],["Thu",4],["Fri",5],["Sat",6],["Sun",0]];
 
 export default function SettingsPage() {
-  const { language, languages, lang, setLang, theme, setTheme } = useLearn();
+  const { language, languages, lang, setLang, theme, setTheme, reminders, setReminders } = useLearn();
+
+  function toggleDay(day) {
+    const days = reminders.days.includes(day)
+      ? reminders.days.filter((value) => value !== day)
+      : [...reminders.days, day];
+    setReminders({ days });
+  }
 
   return (
     <main>
@@ -36,6 +44,26 @@ export default function SettingsPage() {
               {THEMES.map(([id, label]) => (
                 <button className="choice-button" key={id} type="button" aria-pressed={theme === id} onClick={() => setTheme(id)}>{label}</button>
               ))}
+            </div>
+          </section>
+          <section className="lf-ai-settings">
+            <h2>Kalam AI provider setup</h2>
+            <p>Connect a free-tier AI provider for the language tutor. Gemini is tried first; Groq is an optional backup.</p>
+            <div className="actions">
+              <a className="button" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Get Gemini API key ↗</a>
+              <a className="button secondary" href="https://console.groq.com/keys" target="_blank" rel="noreferrer">Get Groq API key ↗</a>
+            </div>
+            <p><strong>Keep your keys private.</strong> Add them to <code>next-app/.env.local</code> on your computer, or to your hosting provider's server environment. Do not paste them into this page, chat, GitHub, or any field in the browser.</p>
+            <pre className="lf-env-example"><code>{"GEMINI_API_KEY=your_key_here\nGROQ_API_KEY=your_backup_key_here"}</code></pre>
+            <p>After saving the file, restart the development server. The tutor uses these keys on the server only.</p>
+          </section>
+          <section className="lf-reminder-settings">
+            <h2>Study reminder preference</h2>
+            <p>Choose the days and local time you would like to study. This preference is saved in this browser; push/email delivery is not connected yet.</p>
+            <label className="lf-reminder-enable"><input type="checkbox" checked={reminders.enabled} onChange={(event)=>setReminders({enabled:event.target.checked})} /> Enable reminder preference</label>
+            <label className="lf-reminder-time">Preferred time <input type="time" value={reminders.time} onChange={(event)=>setReminders({time:event.target.value})} disabled={!reminders.enabled} /></label>
+            <div className="lf-reminder-days" aria-label="Reminder days">
+              {DAYS.map(([label,value])=><button type="button" key={value} disabled={!reminders.enabled} aria-pressed={reminders.days.includes(value)} onClick={()=>toggleDay(value)}>{label}</button>)}
             </div>
           </section>
         </div>
