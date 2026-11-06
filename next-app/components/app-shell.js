@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLearn } from "../lib/learn-store";
 
 const NAV = [
@@ -14,13 +14,41 @@ const NAV = [
 ];
 
 const PUBLIC_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
+const THEMES = ["ocean", "forest", "sunset", "lavender", "midnight"];
 
 export default function AppShell({ children }) {
   const pathname = usePathname();
-  const { language, languages, lang, setLang, progress, hearts, maxHearts, theme, toggleTheme, badges, unlockedBadges } = useLearn();
+  const { language, languages, lang, setLang, progress, hearts, maxHearts, theme, setTheme, badges, unlockedBadges } = useLearn();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef(null);
+  const closeButtonRef = useRef(null);
   const isPublic = PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/auth/");
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") setMenuOpen(false);
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus instanceof HTMLElement) previousFocus.focus();
+    };
+  }, [menuOpen]);
+
   if (isPublic) return children;
+
+  function cycleTheme() {
+    const currentIndex = THEMES.indexOf(theme);
+    setTheme(THEMES[(currentIndex + 1) % THEMES.length]);
+  }
 
   const navigation = (
     <>
@@ -30,7 +58,9 @@ export default function AppShell({ children }) {
       </Link>
       <nav className="app-nav" aria-label="Main navigation">
         {NAV.map((item) => {
-          const active = pathname === item.href || (item.href !== "/learn" && pathname.startsWith(item.href + "/"));
+          const active = item.href === "/learn"
+            ? pathname === item.href || pathname.startsWith("/learn/")
+            : pathname === item.href || pathname.startsWith(item.href + "/");
           return <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className={active ? "app-nav-link active" : "app-nav-link"} aria-current={active ? "page" : undefined}>
             <span className="app-nav-icon" aria-hidden="true">{item.icon}</span><span>{item.label}</span>
           </Link>;
@@ -49,7 +79,7 @@ export default function AppShell({ children }) {
     <aside className="app-sidebar">{navigation}</aside>
     <div className="app-workspace">
       <header className="app-topbar">
-        <button className="app-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>☰</button>
+        <button ref={menuButtonRef} className="app-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="app-mobile-drawer" onClick={() => setMenuOpen(true)}>☰</button>
         <label className="app-language-select"><span className="sr-only">Learning language</span>
           <select value={lang} onChange={(event) => setLang(event.target.value)}>
             {languages.map((item) => <option key={item.code} value={item.code}>{item.emblem} {item.label}</option>)}
@@ -59,13 +89,13 @@ export default function AppShell({ children }) {
         <span className="app-stat-pill" title="Current streak">🔥 {progress.streak}</span>
         <span className="app-stat-pill" title="Available hearts">♥ {hearts}/{maxHearts}</span>
         <span className="app-stat-pill app-xp-pill">★ {progress.xpTotal} XP</span>
-        <button className="app-theme-button" type="button" onClick={toggleTheme} aria-label={theme === "midnight" ? "Switch to ocean theme" : "Switch to midnight theme"}>{theme === "midnight" ? "☀" : "☾"}</button>
+        <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}>{theme === "midnight" ? "☀" : "◐"}</button>
       </header>
       <div className="app-page-content">{children}</div>
     </div>
     {menuOpen && <div className="app-mobile-backdrop" role="presentation" onClick={() => setMenuOpen(false)}>
-      <aside className="app-mobile-drawer" aria-label="Mobile navigation" onClick={(event) => event.stopPropagation()}>
-        <button type="button" className="app-drawer-close" onClick={() => setMenuOpen(false)} aria-label="Close navigation">×</button>
+      <aside id="app-mobile-drawer" className="app-mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile navigation" onClick={(event) => event.stopPropagation()}>
+        <button ref={closeButtonRef} type="button" className="app-drawer-close" onClick={() => setMenuOpen(false)} aria-label="Close navigation">×</button>
         {navigation}
       </aside>
     </div>}
