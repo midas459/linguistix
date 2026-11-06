@@ -1,5 +1,6 @@
 import "./globals.css";
 import { LearnProvider } from "../lib/learn-store";
+import AppShell from "../components/app-shell";
 
 export const metadata = {
   title: "Linguistix — Learn, Practice, Speak",
@@ -9,7 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body><LearnProvider>{children}</LearnProvider></body>
+      <body>
+        <LearnProvider>
+          <AppShell>{children}</AppShell>
+        </LearnProvider>
+      </body>
     </html>
   );
 }
