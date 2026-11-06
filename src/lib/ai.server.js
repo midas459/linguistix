@@ -1,5 +1,5 @@
 import { secrets } from "base44:runtime";
-import { DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL } from "@/lib/tutor-providers";
+import { DEFAULT_GEMINI_MODEL } from "@/lib/tutor-providers";
 import { generateTutorResponse, TutorProviderError } from "@/lib/tutor-provider-core.server";
 
 export const generateTutorReply = async (prompt, schema) => {
@@ -7,16 +7,8 @@ export const generateTutorReply = async (prompt, schema) => {
     return await generateTutorResponse({
       prompt,
       schema,
-      providers: {
-        gemini: {
-          apiKey: secrets.get("GEMINI_API_KEY"),
-          model: secrets.get("GEMINI_MODEL") || DEFAULT_GEMINI_MODEL,
-        },
-        groq: {
-          apiKey: secrets.get("GROQ_API_KEY"),
-          model: secrets.get("GROQ_MODEL") || DEFAULT_GROQ_MODEL,
-        },
-      },
+      apiKey: secrets.get("GEMINI_API_KEY"),
+      model: secrets.get("GEMINI_MODEL") || DEFAULT_GEMINI_MODEL,
     });
   } catch (error) {
     if (error instanceof TutorProviderError) throw error;
