@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLearn } from "../lib/learn-store";
 import ResearchPanel from "./research-panel";
+import { createClient as createSupabaseClient } from "../lib/supabase/client";
 
 const NAV = [
   { href: "/learn", label: "Learn map", icon: "⌂" },
@@ -20,6 +21,7 @@ const THEMES = ["ocean", "forest", "sunset", "lavender", "midnight"];
 
 export default function AppShell({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { language, languages, lang, setLang, progress, hearts, maxHearts, theme, setTheme, badges, unlockedBadges } = useLearn();
   const [menuOpen, setMenuOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
@@ -47,6 +49,13 @@ export default function AppShell({ children }) {
   }, [menuOpen]);
 
   if (isPublic) return children;
+
+  async function signOut() {
+    const supabase = createSupabaseClient();
+    await supabase.auth.signOut();
+    router.replace("/login");
+    router.refresh();
+  }
 
   function cycleTheme() {
     const currentIndex = THEMES.indexOf(theme);
@@ -93,6 +102,7 @@ export default function AppShell({ children }) {
         <span className="app-stat-pill" title="Available hearts">♥ {hearts}/{maxHearts}</span>
         <span className="app-stat-pill app-xp-pill">★ {progress.xpTotal} XP</span>
         <button className="app-research-button" type="button" onClick={() => setResearchOpen(true)} aria-label="Open Lugha Research">⌕ <span>Research</span></button>
+        <button className="app-signout-button" type="button" onClick={signOut}>Sign out</button>
         <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}>{theme === "midnight" ? "☀" : "◐"}</button>
       </header>
       <div className="app-page-content">{children}</div>
