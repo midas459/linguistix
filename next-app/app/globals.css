@@ -150,3 +150,51 @@ html[data-theme="midnight"] .support-status.unavailable { background: #4a3028; c
   .pronunciation-toolbar { align-items: flex-start; flex-direction: column; }
   .pronunciation-actions .button { flex: 1 1 130px; }
 }
+
+
+/* Linguistix responsive application shell, adapted from the original Base44 layout. */
+.app-shell { min-height: 100vh; }
+.app-sidebar { position: fixed; inset: 0 auto 0 0; z-index: 20; display: flex; width: 268px; flex-direction: column; gap: 30px; padding: 26px 20px 22px; border-right: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 92%, var(--background)); }
+.app-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; min-width: 0; }
+.app-brand-mark { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border-radius: 15px; background: var(--accent); color: white; font-size: 21px; font-weight: 800; }
+.app-brand strong, .app-brand small { display: block; }
+.app-brand strong { font-size: 19px; letter-spacing: -.04em; }
+.app-brand small { margin-top: 3px; color: var(--muted); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; }
+.app-nav { display: grid; gap: 5px; }
+.app-nav-link { display: flex; min-height: 44px; align-items: center; gap: 12px; border-radius: 13px; padding: 10px 12px; color: var(--muted); font-size: 13px; font-weight: 650; text-decoration: none; transition: background .18s ease, color .18s ease; }
+.app-nav-link:hover, .app-nav-link.active { background: color-mix(in srgb, var(--accent) 10%, var(--surface)); color: var(--foreground); }
+.app-nav-link.active { box-shadow: inset 3px 0 var(--accent); }
+.app-nav-icon { width: 22px; color: var(--accent); font-size: 18px; text-align: center; }
+.app-sidebar-progress { display: grid; gap: 8px; margin-top: auto; border: 1px solid var(--border); border-radius: 18px; padding: 16px; background: var(--background); }
+.app-sidebar-kicker { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.app-sidebar-progress strong { font-size: 25px; letter-spacing: -.04em; }
+.app-sidebar-progress small { color: var(--muted); font-size: 11px; }
+.app-progress-track { height: 6px; overflow: hidden; border-radius: 99px; background: var(--border); }
+.app-progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.app-workspace { min-height: 100vh; margin-left: 268px; }
+.app-topbar { position: sticky; top: 0; z-index: 15; display: flex; min-height: 66px; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding: 10px clamp(16px, 3vw, 34px); background: color-mix(in srgb, var(--background) 88%, transparent); backdrop-filter: blur(16px); }
+.app-topbar-spacer { flex: 1; }
+.app-language-select select { max-width: 230px; margin: 0; border-radius: 999px; padding: 9px 34px 9px 13px; font-size: 12px; }
+.app-stat-pill { display: inline-flex; min-height: 34px; align-items: center; gap: 5px; border: 1px solid var(--border); border-radius: 999px; padding: 6px 10px; background: var(--surface); color: var(--foreground); font-size: 12px; font-weight: 750; white-space: nowrap; }
+.app-theme-button, .app-menu-button, .app-drawer-close { display: grid; width: 36px; height: 36px; flex: 0 0 auto; place-items: center; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--foreground); cursor: pointer; font-size: 17px; }
+.app-menu-button { display: none; }
+.app-page-content { min-width: 0; }
+.app-page-content > main { width: min(1120px, calc(100% - 48px)); padding: clamp(30px, 5vw, 64px) 0 80px; }
+.app-mobile-backdrop { display: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 900px) {
+  .app-sidebar { display: none; }
+  .app-workspace { margin-left: 0; }
+  .app-menu-button { display: grid; }
+  .app-mobile-backdrop { position: fixed; inset: 0; z-index: 50; display: block; background: rgb(9 20 30 / 48%); }
+  .app-mobile-drawer { display: flex; position: absolute; inset: 0 auto 0 0; width: min(310px, 86vw); flex-direction: column; gap: 26px; padding: 26px 20px 22px; border-right: 1px solid var(--border); background: var(--surface); box-shadow: 18px 0 60px rgb(0 0 0 / 16%); }
+  .app-drawer-close { align-self: flex-end; margin-bottom: -20px; }
+}
+@media (max-width: 560px) {
+  .app-topbar { min-height: 60px; gap: 6px; padding: 8px 12px; }
+  .app-language-select { min-width: 0; max-width: 42vw; }
+  .app-language-select select { max-width: 100%; overflow: hidden; padding: 8px 8px; font-size: 11px; }
+  .app-stat-pill { min-height: 31px; padding: 5px 7px; font-size: 10px; }
+  .app-xp-pill { display: none; }
+  .app-page-content > main { width: calc(100% - 28px); padding-top: 28px; }
+}
