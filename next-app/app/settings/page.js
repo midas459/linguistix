@@ -52,7 +52,7 @@ export default function SettingsPage() {
             <div className="actions">
               <a className="button" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Get Gemini API key ↗</a>
             </div>
-            <p><strong>Keep your keys private.</strong> Add it to <code>next-app/.env.local</code> on your computer, or to your hosting provider's server environment. Do not paste them into this page, chat, GitHub, or any field in the browser.</p>
+            <p><strong>Keep your keys private.</strong> Add it to <code>next-app/.env.local</code> on your computer, or to your hosting provider's server environment. Do not paste it into this page, chat, GitHub, or any field in the browser.</p>
             <pre className="lf-env-example"><code>{"GEMINI_API_KEY=your_key_here\nGROQ_API_KEY=your_backup_key_here"}</code></pre>
             <p>After saving the file, restart the development server. The tutor uses this key on the server only.</p>
           </section>
