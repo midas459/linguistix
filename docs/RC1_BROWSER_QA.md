@@ -6,8 +6,8 @@ This checklist is a release gate, not a claim that these checks have already pas
 
 - [ ] Confirm the tested commit SHA and deployment/environment.
 - [ ] Confirm Base44 app ID and proxy configuration are present in the test environment.
-- [ ] Confirm the replacement Gemini credential is stored only as a Base44 server secret. Never paste keys into this checklist, browser storage, screenshots or issue comments.
-- [ ] Confirm the Gemini key previously exposed in chat has been revoked.
+- [x] User confirms the replacement Gemini credential is stored only as a Base44 server secret. Never paste keys into this checklist, browser storage, screenshots or issue comments. (Not independently verified.)
+- [x] User confirms the Gemini key previously exposed in chat has been revoked. (Not independently verified.)
 
 ## Authentication and navigation
 
