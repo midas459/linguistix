@@ -66,7 +66,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add next-app/package.json next-app/package-lock.json next-app/vite.config.ts next-app/cloudflare.config.ts next-app/.gitignore
+          git add package.json package-lock.json vite.config.ts cloudflare.config.ts .gitignore
           if git diff --cached --quiet; then
             echo "Cloudflare configuration is already committed."
           else
