@@ -1,6 +1,6 @@
 # Linguistix Base44 Retirement — Architecture Decision
 
-**Status:** Accepted; integration work underway. Production cutover not approved.
+**Status:** Accepted; Supabase v1 schema and helper-function hardening applied and verified. Cloudflare preview and production cutover not approved.
 **Date:** 2026-11-09
 
 ## Decision
@@ -18,20 +18,21 @@ Do not create a second app or rewrite the existing Next.js workspace without a d
 ## Verified repository and Supabase state
 
 - The Next.js workspace and Supabase SSR clients exist on the migration branches.
-- The Next.js app now has an authenticated learner-state API and account-aware background sync. Sync remains inactive until the `learner_state` migration is approved and applied.
+- The Next.js app has an authenticated learner-state API and account-aware background sync. The `public.learner_state` table and owner-scoped RLS policies are now applied and catalog-verified.
 - Kalam AI has been changed to Gemini-only, with bounded input, a timeout, output validation and sanitized failures.
-- Supabase schema and RLS migration drafts remain unapplied; no production data has been modified.
+- Supabase migrations `learner_state` and `security_hardening_rls_auto_enable` were applied to the connected project after the owner's explicit approval.
+- The `learner_state` table is RLS-enabled with SELECT/INSERT/UPDATE/DELETE policies restricted to `auth.uid() = user_id`; the table has no user rows yet.
+- The legacy `public.rls_auto_enable()` function remains installed for its DDL event-trigger purpose, but EXECUTE has been revoked from `PUBLIC`, `anon`, and `authenticated`; the catalog confirms only `postgres` and `service_role` retain EXECUTE.
 - The connected Supabase project is active in `eu-west-1`.
-- Read-only inspection found no base tables in the `public` schema and no recorded Supabase migrations.
-- Supabase security advisors reported a public `SECURITY DEFINER` function named `rls_auto_enable()` executable by both `anon` and `authenticated`, and leaked-password protection is disabled. These need investigation/remediation before production auth is enabled. No database changes were made during this audit.
+- Supabase security advisor now reports only leaked-password protection disabled. Supabase docs state this control is available on Pro and above; do not upgrade the project without a separate cost decision.
 
 ## Required implementation sequence
 
 1. **Consolidate the app:** use this branch as the single integration line for the Next.js workspace; preserve existing lessons, flashcards and app features.
 2. **Cloudflare compatibility:** completed in CI: vinext scan reports 95% compatibility with one non-blocking React Strict Mode note; Next.js production build and Cloudflare Worker build both pass. Generated Vite/Cloudflare config and npm lockfile are committed. Live Cloudflare preview and runtime bindings still need testing. Do not deploy production.
 3. **Gemini-only tutor:** completed in this branch. Live Gemini credentials and calls still need verification in the final runtime.
-4. **Supabase security:** investigate `rls_auto_enable()`; enable leaked-password protection; review grants and RLS policies. Draft migration `0006_security_hardening.sql` revokes direct execute grants from `anon` and `authenticated`. Do not apply SQL until separately approved.
-5. **Cloud persistence:** authenticated GET/PUT API and account-aware background sync are implemented. The active v1 migration `20261109080500_learner_state.sql` creates the owner-only RLS table. `20261109080600_security_hardening.sql` conditionally revokes the legacy helper's public execution grants. Earlier normalized schema/import drafts are archived outside the active migrations folder. Apply and verify only after approval; sync will not function before then.
+4. **Supabase security:** applied the v1 learner-state table/RLS and revoked public execution of the legacy `rls_auto_enable()` function. Catalog verification passed. The only remaining advisor is leaked-password protection, which is a Pro+ feature; do not upgrade without a cost decision.
+5. **Cloud persistence:** authenticated GET/PUT API and account-aware background sync are implemented. The v1 table and four owner-scoped RLS policies are applied. Next: two-account isolation tests and end-to-end sync verification. Earlier normalized schema/import drafts are archived outside the active migrations folder.
 6. **Environment and auth setup:** configure Supabase URL/publishable key and auth redirect URLs; configure Gemini and Supabase server settings in Cloudflare secrets/environment. No secret values belong in GitHub.
 7. **Release verification:** CI, end-to-end auth tests, live tutor test, data-isolation/RLS tests, mobile/desktop browser QA, backup/rollback plan, and owner approval.
 8. **Cutover:** only after explicit approval, deploy to Cloudflare, verify production smoke tests, and then retire remaining Base44 configuration. Do not merge or deploy automatically.
