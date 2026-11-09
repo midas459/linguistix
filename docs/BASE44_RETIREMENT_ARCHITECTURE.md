@@ -28,7 +28,7 @@ Do not create a second app or rewrite the existing Next.js workspace without a d
 ## Required implementation sequence
 
 1. **Consolidate the app:** use this branch as the single integration line for the Next.js workspace; preserve existing lessons, flashcards and app features.
-2. **Cloudflare compatibility:** run the Cloudflare-recommended vinext migration check, add its non-destructive setup, generate a lockfile and verify local build/preview. Do not deploy production.
+2. **Cloudflare compatibility:** completed in CI: vinext scan reports 95% compatibility with one non-blocking React Strict Mode note; Next.js production build and Cloudflare Worker build both pass. Generated Vite/Cloudflare config and npm lockfile are committed. Live Cloudflare preview and runtime bindings still need testing. Do not deploy production.
 3. **Gemini-only tutor:** completed in this branch. Live Gemini credentials and calls still need verification in the final runtime.
 4. **Supabase security:** investigate `rls_auto_enable()`; enable leaked-password protection; review grants and RLS policies. Draft migration `0006_security_hardening.sql` revokes direct execute grants from `anon` and `authenticated`. Do not apply SQL until separately approved.
 5. **Cloud persistence:** authenticated GET/PUT API and account-aware background sync are implemented. Draft migration `0005_learner_state.sql` creates the owner-only RLS table. Apply and verify only after approval; sync will not function before then.
