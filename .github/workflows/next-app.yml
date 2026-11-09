@@ -31,6 +31,8 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install
+      - name: Check Cloudflare vinext compatibility
+        run: npx --yes vinext check
       - name: Lint
         run: npm run lint
       - name: Build
