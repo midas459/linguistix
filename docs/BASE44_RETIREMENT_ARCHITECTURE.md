@@ -1,6 +1,6 @@
 # Linguistix Base44 Retirement — Architecture Decision
 
-**Status:** Accepted for implementation; production cutover not approved.
+**Status:** Accepted; integration work underway. Production cutover not approved.
 **Date:** 2026-11-09
 
 ## Decision
@@ -18,21 +18,22 @@ Do not create a second app or rewrite the existing Next.js workspace without a d
 ## Verified repository and Supabase state
 
 - The Next.js workspace and Supabase SSR clients exist on the migration branches.
-- The learning UI has been substantially restored, but progress, flashcard schedules, and preferences still use browser-local storage.
-- The tutor route in the current migration branch has Gemini plus optional Groq/OpenAI-compatible fallbacks. This conflicts with the Gemini-only product decision and must be simplified before release.
+- The Next.js app now has an authenticated learner-state API and account-aware background sync. Sync remains inactive until the `learner_state` migration is approved and applied.
+- Kalam AI has been changed to Gemini-only, with bounded input, a timeout, output validation and sanitized failures.
+- Supabase schema and RLS migration drafts remain unapplied; no production data has been modified.
 - The connected Supabase project is active in `eu-west-1`.
 - Read-only inspection found no base tables in the `public` schema and no recorded Supabase migrations.
 - Supabase security advisors reported a public `SECURITY DEFINER` function named `rls_auto_enable()` executable by both `anon` and `authenticated`, and leaked-password protection is disabled. These need investigation/remediation before production auth is enabled. No database changes were made during this audit.
 
 ## Required implementation sequence
 
-1. **Consolidate the app:** make this branch the single integration line for the Next.js workspace; retain the existing learning features and remove all Base44 runtime dependencies from the launch application.
-2. **Cloudflare compatibility:** run the Cloudflare-recommended `vinext check`, add its non-destructive setup, pin dependencies and lockfile, and verify local build/preview. Do not deploy production.
-3. **Gemini-only tutor:** remove Groq/OpenAI fallback code and environment variables. Read `GEMINI_API_KEY` only on the server. Validate authentication, request bounds, timeout handling, output schema and sanitized errors.
-4. **Supabase security:** investigate `rls_auto_enable()`; enable leaked-password protection; prepare reviewed schema and least-privilege grants; enable RLS on every exposed user-data table and verify ownership policies. Do not apply SQL until separately approved.
-5. **Cloud persistence:** implement authenticated persistence for user preferences, language progress, daily activity, lesson completion and spaced-repetition reviews. Preserve local-first behavior and provide an explicit, validated, one-time import path; never silently overwrite remote data.
+1. **Consolidate the app:** use this branch as the single integration line for the Next.js workspace; preserve existing lessons, flashcards and app features.
+2. **Cloudflare compatibility:** run the Cloudflare-recommended vinext migration check, add its non-destructive setup, generate a lockfile and verify local build/preview. Do not deploy production.
+3. **Gemini-only tutor:** completed in this branch. Live Gemini credentials and calls still need verification in the final runtime.
+4. **Supabase security:** investigate `rls_auto_enable()`; enable leaked-password protection; review grants and RLS policies. Draft migration `0006_security_hardening.sql` revokes direct execute grants from `anon` and `authenticated`. Do not apply SQL until separately approved.
+5. **Cloud persistence:** authenticated GET/PUT API and account-aware background sync are implemented. Draft migration `0005_learner_state.sql` creates the owner-only RLS table. Apply and verify only after approval; sync will not function before then.
 6. **Environment and auth setup:** configure Supabase URL/publishable key and auth redirect URLs; configure Gemini and Supabase server settings in Cloudflare secrets/environment. No secret values belong in GitHub.
-7. **Release verification:** CI, end-to-end auth tests, tutor live test, data-isolation/RLS tests, mobile/desktop browser QA, backup/rollback plan, and owner approval.
+7. **Release verification:** CI, end-to-end auth tests, live tutor test, data-isolation/RLS tests, mobile/desktop browser QA, backup/rollback plan, and owner approval.
 8. **Cutover:** only after explicit approval, deploy to Cloudflare, verify production smoke tests, and then retire remaining Base44 configuration. Do not merge or deploy automatically.
 
 ## Explicit safety boundaries
