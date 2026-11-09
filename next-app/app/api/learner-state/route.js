@@ -90,6 +90,7 @@ export async function PUT(request) {
   try { body = await request.json(); }
   catch { return fail("Invalid request body.", 400, "INVALID_JSON"); }
 
+  if (body?.userId !== auth.user.id) return fail("The signed-in account changed. Reload before syncing.", 409, "ACCOUNT_CHANGED");
   if (!validState(body?.state)) return fail("Learning data failed validation.", 400, "INVALID_STATE");
 
   const { error } = await auth.supabase.from("learner_state").upsert({
