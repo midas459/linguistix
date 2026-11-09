@@ -64,7 +64,7 @@ Enable leaked-password protection in Supabase Auth security settings.
 
 ## 5. Apply database migrations only after approval
 
-The connected project currently has no Linguistix application tables. The draft migrations are in `supabase/migrations/`; read `supabase/LAUNCH_SETUP.md` for their order and review notes.
+The connected project currently has no Linguistix application tables. The two active v1 migrations are `20261109080500_learner_state.sql` and `20261109080600_security_hardening.sql`; earlier normalized-schema drafts are archived outside the active migrations folder. Read `supabase/LAUNCH_SETUP.md` before applying anything.
 
 Do not apply them until the owner explicitly approves. After application, test:
 
