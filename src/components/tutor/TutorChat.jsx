@@ -64,7 +64,11 @@ export default function TutorChat() {
         { role: "assistant", text: data.reply || "Let me try that again — ask me once more.", translation: data.translation, quiz: data.quiz },
       ]);
     } catch (err) {
-      setError("Kalam AI couldn't answer just now. Try sending that again.");
+      setError(
+        err?.message === "Kalam AI is not configured. Add GEMINI_API_KEY as a Base44 server secret."
+          ? err.message
+          : "Kalam AI couldn't answer just now. Try sending that again.",
+      );
     } finally {
       setBusy(false);
     }
