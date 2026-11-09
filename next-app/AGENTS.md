@@ -33,7 +33,7 @@ Base44 passwords, sessions and OAuth grants are not portable by assumption. Prov
 ## Workflow
 
 - Current integration branch: `base44-retirement-cloudflare-supabase`.
-- Pin dependencies and commit a lockfile after installation.
-- Run lint/build and tests; report exactly what ran.
-- Cloudflare deployment setup must use the official vinext migration workflow and be compatibility-tested before production.
+- Node.js 22 and the committed npm lockfile are required; use `npm ci`.
+- CI runs vinext compatibility, ESLint, Next.js production build and Cloudflare Worker build.
+- Cloudflare config is in `vite.config.ts` and `cloudflare.config.ts`; the Next config is ESM `next.config.mjs`.
 - Do not merge to `main`, deploy production, or apply database migrations without explicit owner approval.
