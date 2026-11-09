@@ -38,20 +38,23 @@ function defaultState() {
   };
 }
 
+export function normalizeState(parsed) {
+  const base = defaultState();
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return base;
+  return {
+    ...base, ...parsed,
+    theme: ["ocean", "forest", "sunset", "lavender", "midnight"].includes(parsed.theme) ? parsed.theme : parsed.theme === "dark" ? "midnight" : "ocean",
+    progress: { ...base.progress, ...(parsed.progress || {}) },
+    srs: { ...base.srs, ...(parsed.srs || {}) },
+    reminders: { ...base.reminders, ...(parsed.reminders || {}) },
+  };
+}
+
 function loadState() {
   if (typeof window === "undefined") return defaultState();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaultState();
-    const parsed = JSON.parse(raw);
-    const base = defaultState();
-    return {
-      ...base, ...parsed,
-      theme: ["ocean", "forest", "sunset", "lavender", "midnight"].includes(parsed.theme) ? parsed.theme : parsed.theme === "dark" ? "midnight" : "ocean",
-      progress: { ...base.progress, ...(parsed.progress || {}) },
-      srs: { ...base.srs, ...(parsed.srs || {}) },
-      reminders: { ...base.reminders, ...(parsed.reminders || {}) },
-    };
+    return raw ? normalizeState(JSON.parse(raw)) : defaultState();
   } catch { return defaultState(); }
 }
 
@@ -151,8 +154,12 @@ export function LearnProvider({ children }) {
   const today = dayKey();
   const todayStats = { xp: progress.dayXp[today] || 0, cards: progress.dayCards[today] || 0, minutes: progress.dayMinutes[today] || 0 };
 
+  const replaceState = useCallback((next) => setState(normalizeState(next)), []);
+  const resetForAccount = useCallback(() => setState(defaultState()), []);
+
   const value = {
-    ...state, language, languages: LANGUAGES, progress, todayStats, badges,
+    ...state, state, hydrated, replaceState, resetForAccount,
+    language, languages: LANGUAGES, progress, todayStats, badges,
     unlockedBadges: badges.filter((b) => b.unlocked),
     setLang, toggleTheme, setTheme, setReminders,
     hearts: heartsToday(state), maxHearts: MAX_HEARTS, loseHeart, refillHearts,
