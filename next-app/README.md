@@ -6,7 +6,7 @@ This is the replacement application for the legacy Base44 runtime. Keep the exis
 
 - Next.js App Router 16 and React 19
 - Supabase Auth using `@supabase/ssr` cookie sessions
-- Supabase Postgres with per-user Row Level Security (migration drafts only)
+- Supabase Postgres with per-user Row Level Security
 - Google Gemini only for Kalam AI, called from an authenticated server route
 - Cloudflare Workers through vinext and the Cloudflare Vite plugin
 
@@ -19,7 +19,7 @@ This is the replacement application for the legacy Base44 runtime. Keep the exis
 5. Set `GEMINI_API_KEY` in the server environment if you want Kalam AI enabled.
 6. Run `npm run dev` and open `http://localhost:3000`. For the Cloudflare/Vite development path, use `npm run dev:vinext`.
 
-Do not add service-role keys or Gemini keys to `NEXT_PUBLIC_*`, client components, source control, or chat. The connected Supabase project currently has no Linguistix application tables; SQL in the parent `supabase/migrations` directory is draft only and has not been applied.
+Do not add service-role keys or Gemini keys to `NEXT_PUBLIC_*`, client components, source control, or chat. The connected Supabase project now has the `public.learner_state` table with RLS and four owner-scoped policies. The legacy `public.rls_auto_enable()` helper is no longer executable by `anon` or `authenticated`.
 
 ## Current feature set
 
@@ -33,10 +33,10 @@ Do not add service-role keys or Gemini keys to `NEXT_PUBLIC_*`, client component
 
 ## Release blockers
 
-- Cloud sync is implemented in code but remains inactive until the two active Supabase migrations (`20261109080500_learner_state.sql` and `20261109080600_security_hardening.sql`) are approved and applied.
-- Supabase schema/RLS migrations have not been applied or fully verified. Earlier normalized schema drafts are archived under `supabase/drafts/legacy-normalized/` and are not required for v1.
+- Supabase table and RLS setup is applied and catalog-verified. Still required: end-to-end tests with two real test accounts to prove cross-account isolation before enabling cloud sync for general users.
+- Supabase Auth leaked-password protection is currently disabled. Supabase documentation says this feature is available on Pro and above; the connected project should remain on its current plan unless the owner separately chooses an upgrade. Earlier normalized schema drafts are archived under `supabase/drafts/legacy-normalized/` and are not required for v1.
 - Existing Base44 accounts/passwords do not automatically transfer. Users will need a new Supabase account or an explicitly planned recovery path.
-- CI has passed the Next.js production build, ESLint, vinext compatibility scan (95% with one non-blocking React Strict Mode note), and Cloudflare Worker build. A live Cloudflare preview and runtime environment bindings have not been tested.
+- GitHub Actions previously reported passing Next.js production build, ESLint, vinext compatibility scan (95% with one non-blocking React Strict Mode note), and Cloudflare Worker build. Re-run checks after the latest integration changes. A live Cloudflare preview and runtime environment bindings have not been tested.
 - Live Gemini calls, browser QA, accessibility and mobile QA remain release gates.
 - Study reminder preferences are saved locally; reminder delivery is not implemented.
 - Cloud state currently uses a single versioned JSON snapshot with last-write-wins behavior; concurrent edits from multiple devices need a conflict-resolution policy before heavy use.
