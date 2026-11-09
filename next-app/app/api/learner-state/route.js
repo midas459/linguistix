@@ -87,8 +87,15 @@ export async function PUT(request) {
   if (length > MAX_STATE_BYTES + 1024) return fail("Learning data is too large.", 413, "STATE_TOO_LARGE");
 
   let body;
-  try { body = await request.json(); }
-  catch { return fail("Invalid request body.", 400, "INVALID_JSON"); }
+  try {
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).byteLength > MAX_STATE_BYTES + 1024) {
+      return fail("Learning data is too large.", 413, "STATE_TOO_LARGE");
+    }
+    body = JSON.parse(raw);
+  } catch {
+    return fail("Invalid request body.", 400, "INVALID_JSON");
+  }
 
   if (body?.userId !== auth.user.id) return fail("The signed-in account changed. Reload before syncing.", 409, "ACCOUNT_CHANGED");
   if (!validState(body?.state)) return fail("Learning data failed validation.", 400, "INVALID_STATE");
