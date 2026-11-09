@@ -35,7 +35,7 @@ function buildSystem(language, mode, scenario) {
 
 function parseResult(raw) {
   if (typeof raw !== "string") return null;
-  const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+  const cleaned = raw.trim();
   try {
     const parsed = JSON.parse(cleaned);
     if (!parsed || typeof parsed.reply !== "string" || !parsed.reply.trim()) return null;
