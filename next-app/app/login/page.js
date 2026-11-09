@@ -26,21 +26,9 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/dashboard");
-  }
-
-  async function signInWithGoogle() {
-    setBusy(true);
-    setMessage("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
-    });
-    if (error) {
-      setMessage(error.message);
-      setBusy(false);
-    }
+    const requested = new URLSearchParams(window.location.search).get("next");
+    const destination = requested && requested.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
+    router.push(destination);
   }
 
   return (
@@ -56,7 +44,6 @@ export default function LoginPage() {
           <input id="password" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} />
           <div className="actions">
             <button className="button" type="submit" disabled={busy}>{busy ? "Please wait…" : "Sign in"}</button>
-            <button className="button secondary" type="button" onClick={signInWithGoogle} disabled={busy}>Continue with Google</button>
           </div>
         </form>
         {message && <p role="alert">{message}</p>}
