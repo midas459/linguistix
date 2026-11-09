@@ -1,64 +1,53 @@
-# Linguistix — Next.js migration workspace
+# Linguistix — Next.js application
 
-This folder is the isolated replacement application. The repository root remains the legacy TanStack Start + Base44 app until the replacement is feature-complete and approved for cutover.
+This is the replacement application for the legacy Base44 runtime. Keep the existing Base44 app untouched until this replacement has passed release verification and the owner explicitly approves cutover.
 
 ## Stack
 
-- Next.js App Router 16
-- React 19
-- Supabase Auth through `@supabase/ssr`
-- JavaScript/JSX
+- Next.js App Router 16 and React 19
+- Supabase Auth using `@supabase/ssr` cookie sessions
+- Supabase Postgres with per-user Row Level Security (migration drafts only)
+- Google Gemini only for Kalam AI, called from an authenticated server route
+- Cloudflare Workers deployment through Cloudflare's recommended vinext integration (compatibility validation required)
 
-## Setup
+## Local setup
 
-1. Install Node.js 22 LTS or a compatible current LTS.
-2. From this folder, run `npm install`.
+1. Use Node.js 22 LTS.
+2. From `next-app/`, install dependencies with `npm install`.
 3. Copy `.env.example` to `.env.local`.
-4. Add the Supabase project URL and publishable key from the Supabase dashboard.
-5. Add a Gemini API key as `GEMINI_API_KEY` in `.env.local` to enable Kalam AI. Optionally add `GROQ_API_KEY` as a fallback. You can also configure the optional OpenAI-compatible fallback.
-6. Run `npm run dev` and open http://localhost:3000.
+4. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from Supabase project settings.
+5. Set `GEMINI_API_KEY` in the server environment if you want Kalam AI enabled.
+6. Run `npm run dev` and open `http://localhost:3000`.
 
-### AI provider configuration
+Do not add service-role keys or Gemini keys to `NEXT_PUBLIC_*`, client components, source control, or chat. The replacement Supabase project currently has no Linguistix application tables; SQL in the parent `supabase/migrations` directory is draft only and has not been applied.
 
-Kalam AI uses server-side providers in this order:
+## Current feature set
 
-1. **Gemini** — `GEMINI_API_KEY`, model defaults to `gemini-2.5-flash`; override with `GEMINI_MODEL`.
-2. **Groq fallback** — `GROQ_API_KEY`, model defaults to `llama-3.3-70b-versatile`; override with `GROQ_MODEL`.
-3. **Optional OpenAI-compatible fallback** — `OPENAI_API_KEY`, `OPENAI_MODEL`, and `OPENAI_BASE_URL`.
+- Seven language courses: Arabic, German, Japanese, English, Spanish, French and Portuguese.
+- Responsive learning shell, course map, lessons, interactive lesson player, flashcards, pronunciation lab, research panel, dashboard and settings.
+- Five visual themes.
+- Supabase email/password registration and login, email confirmation, password recovery and OAuth callback.
+- Server-side authenticated Kalam AI route using Gemini only.
+- Local-first learning progress, XP, streaks, activity, hearts, badges, settings and spaced-repetition state.
 
-If a configured provider fails or returns invalid output, the route tries the next configured provider. Provider errors and secrets are not sent to the browser. The route requires an authenticated Supabase user. Without a configured key, the tutor page remains visible and explains that the provider is not configured.
+## Known release blockers
 
-Get keys from [Google AI Studio](https://aistudio.google.com/apikey) and [Groq Console](https://console.groq.com/keys). Add them only to your local `.env.local` or your hosting provider's server-side environment settings. Never paste keys into chat, browser settings, client-side code, public environment variables, or source control. If a key is accidentally shared, revoke it and create a replacement.
+- Learning progress and preferences still live in browser localStorage. Cross-device Supabase sync is not implemented.
+- Supabase schema/RLS migrations are not applied or fully verified. Review the existing migration SQL and security findings before approval.
+- Existing Base44 accounts/passwords do not automatically transfer. Users will need a new Supabase account or an explicitly planned recovery path.
+- Cloudflare vinext compatibility, environment bindings and preview deployment must pass before production cutover.
+- Live Gemini calls, browser QA, accessibility and mobile QA remain release gates.
+- Study reminder preferences are saved locally; reminder delivery is not implemented.
 
-Do not put a Supabase secret/service-role key or AI provider key in browser code, public environment variables, or source control.
+## Checks
 
-## Current implementation
+```bash
+npm run lint
+npm run build
+```
 
-- Next.js App Router root layout and responsive authenticated app shell.
-- Supabase browser and server clients with cookie-based sessions.
-- Next.js 16 `proxy.js` refreshes/validates claims.
-- Email/password sign-in, account registration/email confirmation, password recovery, and Google OAuth start/callback.
-- Server-protected course, dashboard, flashcard, pronunciation and tutor routes.
-- Seven-language curriculum and existing lesson/task/card content retained.
-- Interactive six-screen lesson exercises.
-- Local learning-state store retained under `lisan.state.v2`, with XP, streaks, hearts, activity, achievements and spaced-repetition scheduling.
-- Dashboard with daily goals, weekly XP chart, course progress, achievements and recent activity.
-- Flashcard review with four spaced-repetition ratings.
-- Five themes, seven course choices and local study-reminder preferences.
-- Pronunciation Lab using browser speech synthesis, language-specific sample phrases, voice selection and playback controls.
-- Lugha Research searches flashcard reference content across all seven languages.
-- Kalam AI tutor interface with breakdown, quiz and roleplay modes, backed by an authenticated server route with Gemini-first and optional Groq/OpenAI-compatible fallback.
+The GitHub Actions workflow runs these checks on changes to `next-app/`. A lockfile still needs to be generated and committed before switching CI to `npm ci`.
 
-## Remaining migration work
+## Cutover safety
 
-- Persist learning progress, settings, flashcard schedules and activity in Supabase with tested Row Level Security.
-- Implement actual reminder delivery (current settings only store the learner's preference locally).
-- Complete profile/account management, voice recording and pronunciation assessment.
-- Add opt-in, validated migration of legacy local state and verify imported data.
-- Complete accessibility, mobile-browser and end-to-end QA.
-
-Learning progress and preferences currently remain local to the browser; no Supabase learning tables have been created or used by this Next.js feature layer yet.
-
-## Data safety
-
-The SQL files in the parent `supabase/migrations` folder are drafts. They have not been applied to the connected Supabase project. Keep the Base44 app running until the new app and data migration have passed verification and the owner explicitly approves cutover.
+No production deployment, database migration, PR merge, destructive SQL or Base44 retirement is automatic. Keep the old runtime and its data intact until the replacement passes the full release checklist and the owner approves cutover.
