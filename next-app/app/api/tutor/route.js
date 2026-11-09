@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../lib/supabase/server";
 
-export const runtime = "nodejs";
-
 const LANGUAGES = {
   ar: "Modern Standard Arabic. Show Arabic script, transliteration, then English meaning. Explain roots and harakat when useful.",
   de: "German. Include noun articles and grammatical case when relevant. Explain irregular and separable verbs.",
@@ -19,12 +17,16 @@ const MODES = {
   roleplay: "Stay in the requested scenario. Reply first in the target language in no more than three short sentences, then provide the English meaning in translation. Correct at most one mistake gently.",
 };
 
+function jsonError(error, status, code) {
+  return NextResponse.json({ error, code }, { status });
+}
+
 function buildSystem(language, mode, scenario) {
   return [
     "You are Kalam AI, a patient language tutor inside Linguistix.",
     `Target language: ${LANGUAGES[language]}`,
     MODES[mode],
-    mode === "roleplay" && typeof scenario === "string" ? `Roleplay scenario: ${scenario.slice(0, 120)}` : "",
+    mode === "roleplay" && scenario ? `Roleplay scenario: ${scenario}` : "",
     "Be encouraging, concise, accurate and age-appropriate. Do not invent that you can hear the learner.",
     "Return only valid JSON with keys: reply (string), translation (string), quiz (array of objects with question and answer strings).",
     "Use an empty translation when not needed and an empty quiz array outside quiz mode.",
@@ -33,24 +35,24 @@ function buildSystem(language, mode, scenario) {
 
 function parseResult(raw) {
   if (typeof raw !== "string") return null;
-  const cleaned = raw.trim().replace(/^\x60{3}(?:json)?\s*/i, "").replace(/\s*\x60{3}$/i, "");
+  const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
   try {
     const parsed = JSON.parse(cleaned);
-    if (!parsed || typeof parsed.reply !== "string") return null;
+    if (!parsed || typeof parsed.reply !== "string" || !parsed.reply.trim()) return null;
+    const quiz = Array.isArray(parsed.quiz) ? parsed.quiz.slice(0, 3).filter((item) =>
+      item && typeof item.question === "string" && typeof item.answer === "string"
+    ).map((item) => ({ question: item.question.slice(0, 500), answer: item.answer.slice(0, 500) })) : [];
     return {
       reply: parsed.reply.slice(0, 4000),
       translation: typeof parsed.translation === "string" ? parsed.translation.slice(0, 1200) : "",
-      quiz: Array.isArray(parsed.quiz) ? parsed.quiz.slice(0, 3).filter((item) =>
-        item && typeof item.question === "string" && typeof item.answer === "string"
-      ) : [],
+      quiz,
     };
   } catch {
     return null;
   }
 }
 
-async function callGemini({ apiKey, system, history, message }) {
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+async function callGemini({ apiKey, model, system, history, message }) {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
     {
@@ -59,7 +61,7 @@ async function callGemini({ apiKey, system, history, message }) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] },
         contents: [
-          ...history.slice(-12).map(({ role, content }) => ({
+          ...history.map(({ role, content }) => ({
             role: role === "assistant" ? "model" : "user",
             parts: [{ text: content }],
           })),
@@ -67,99 +69,69 @@ async function callGemini({ apiKey, system, history, message }) {
         ],
         generationConfig: { temperature: 0.4, responseMimeType: "application/json" },
       }),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(20000),
     }
   );
-  if (!response.ok) throw new Error(`Gemini request failed (${response.status})`);
+  if (!response.ok) {
+    // Keep upstream status and body private; never send provider diagnostics to the browser.
+    throw new Error("Gemini request failed");
+  }
   const payload = await response.json();
   return parseResult(payload?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n"));
 }
 
-async function callOpenAICompatible({ apiKey, baseUrl, model, system, history, message }) {
-  const response = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model,
-      temperature: 0.4,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: system },
-        ...history.slice(-12).map(({ role, content }) => ({ role, content })),
-        { role: "user", content: message },
-      ],
-    }),
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!response.ok) throw new Error(`AI provider request failed (${response.status})`);
-  const payload = await response.json();
-  return parseResult(payload?.choices?.[0]?.message?.content);
-}
-
 export async function POST(request) {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch {
+    return jsonError("Authentication is not configured yet.", 503, "AUTH_NOT_CONFIGURED");
+  }
+
   const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) return NextResponse.json({ error: "Sign in to use Kalam AI." }, { status: 401 });
+  if (authError || !user) return jsonError("Sign in to use Kalam AI.", 401, "AUTH_REQUIRED");
+
+  const contentLength = Number(request.headers.get("content-length") || 0);
+  if (contentLength > 16000) return jsonError("Request is too large.", 413, "REQUEST_TOO_LARGE");
 
   let body;
   try { body = await request.json(); }
-  catch { return NextResponse.json({ error: "Invalid request body." }, { status: 400 }); }
+  catch { return jsonError("Invalid request body.", 400, "INVALID_JSON"); }
 
   const { language, mode, message, history = [], scenario = "" } = body || {};
   if (!Object.hasOwn(LANGUAGES, language) || !Object.hasOwn(MODES, mode)) {
-    return NextResponse.json({ error: "Choose a supported language and tutor mode." }, { status: 400 });
+    return jsonError("Choose a supported language and tutor mode.", 400, "INVALID_OPTIONS");
   }
   if (typeof message !== "string" || !message.trim() || message.length > 1200) {
-    return NextResponse.json({ error: "Your message must be between 1 and 1,200 characters." }, { status: 400 });
+    return jsonError("Your message must be between 1 and 1,200 characters.", 400, "INVALID_MESSAGE");
   }
   if (!Array.isArray(history) || history.length > 12 || history.some((turn) =>
-    !turn || !["user", "assistant"].includes(turn.role) || typeof turn.content !== "string" || turn.content.length > 2000
+    !turn || !["user", "assistant"].includes(turn.role) ||
+    typeof turn.content !== "string" || !turn.content.trim() || turn.content.length > 2000
   )) {
-    return NextResponse.json({ error: "Conversation history is invalid." }, { status: 400 });
+    return jsonError("Conversation history is invalid.", 400, "INVALID_HISTORY");
+  }
+  if (typeof scenario !== "string" || scenario.length > 120) {
+    return jsonError("Scenario must be 120 characters or fewer.", 400, "INVALID_SCENARIO");
   }
 
-  const system = buildSystem(language, mode, scenario);
-  const providers = [];
-  if (process.env.GEMINI_API_KEY) {
-    providers.push(() => callGemini({
-      apiKey: process.env.GEMINI_API_KEY, system, history, message: message.trim(),
-    }));
-  }
-  if (process.env.GROQ_API_KEY) {
-    providers.push(() => callOpenAICompatible({
-      apiKey: process.env.GROQ_API_KEY,
-      baseUrl: "https://api.groq.com/openai/v1",
-      model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
-      system, history, message: message.trim(),
-    }));
-  }
-  if (process.env.OPENAI_API_KEY) {
-    providers.push(() => callOpenAICompatible({
-      apiKey: process.env.OPENAI_API_KEY,
-      baseUrl: process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
-      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-      system, history, message: message.trim(),
-    }));
-  }
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return jsonError("Kalam AI is not configured yet. Add the server-side GEMINI_API_KEY.", 503, "AI_NOT_CONFIGURED");
 
-  if (!providers.length) {
-    return NextResponse.json({
-      error: "Kalam AI is not connected yet. Add GEMINI_API_KEY or GROQ_API_KEY to the server environment.",
-      code: "AI_NOT_CONFIGURED",
-    }, { status: 503 });
-  }
-
-  for (const provider of providers) {
-    try {
-      const result = await provider();
-      if (result) return NextResponse.json(result);
-    } catch {
-      // Try the next configured provider without exposing provider errors or secrets.
+  try {
+    const result = await callGemini({
+      apiKey,
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+      system: buildSystem(language, mode, scenario),
+      history: history.map(({ role, content }) => ({ role, content: content.trim() })),
+      message: message.trim(),
+    });
+    if (!result) return jsonError("Kalam AI returned an unreadable response. Please try again.", 502, "INVALID_AI_RESPONSE");
+    if (mode === "quiz" && result.quiz.length !== 3) {
+      return jsonError("Kalam AI could not create a complete quiz. Please try again.", 502, "INCOMPLETE_QUIZ");
     }
+    return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+  } catch {
+    return jsonError("Kalam AI is temporarily unavailable. Please try again shortly.", 502, "AI_PROVIDER_UNAVAILABLE");
   }
-
-  return NextResponse.json({
-    error: "Kalam AI is temporarily unavailable. Check your server AI configuration or try again shortly.",
-    code: "AI_PROVIDER_UNAVAILABLE",
-  }, { status: 502 });
 }
