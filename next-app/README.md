@@ -33,8 +33,8 @@ Do not add service-role keys or Gemini keys to `NEXT_PUBLIC_*`, client component
 
 ## Release blockers
 
-- Cloud sync is implemented in code but remains inactive until the reviewed Supabase migrations (including `learner_state`) are approved and applied.
-- Supabase schema/RLS migrations have not been applied or fully verified. Review the SQL and the existing security findings before approval.
+- Cloud sync is implemented in code but remains inactive until the two active Supabase migrations (`20261109080500_learner_state.sql` and `20261109080600_security_hardening.sql`) are approved and applied.
+- Supabase schema/RLS migrations have not been applied or fully verified. Earlier normalized schema drafts are archived under `supabase/drafts/legacy-normalized/` and are not required for v1.
 - Existing Base44 accounts/passwords do not automatically transfer. Users will need a new Supabase account or an explicitly planned recovery path.
 - CI has passed the Next.js production build, ESLint, vinext compatibility scan (95% with one non-blocking React Strict Mode note), and Cloudflare Worker build. A live Cloudflare preview and runtime environment bindings have not been tested.
 - Live Gemini calls, browser QA, accessibility and mobile QA remain release gates.
