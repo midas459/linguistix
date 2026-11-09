@@ -21,7 +21,7 @@ Preserve seven course codes (ar, de, ja, en, es, fr, pt), five themes (ocean, fo
 - Existing browser state key is `lisan.state.v2`; keep it for compatibility.
 - `/api/learner-state` stores a bounded JSON snapshot in `public.learner_state`.
 - Only the authenticated owner may read/write their row; RLS is mandatory.
-- Sync is inactive until migration `0005_learner_state.sql` is approved and applied.
+- Sync is inactive until `20261109080500_learner_state.sql` and `20261109080600_security_hardening.sql` are approved and applied.
 - Initial sync preserves a local snapshot only when it is not already associated with a different Supabase user. Remote data wins if it exists.
 - Never clear local state until remote read-back verification succeeds.
 - Snapshot writes are last-write-wins; do not add concurrent multi-device editing without conflict handling.
