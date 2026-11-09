@@ -12,6 +12,9 @@ export default function CloudSync() {
   const [userId, setUserId] = useState(null);
   const [ready, setReady] = useState(false);
   const generation = useRef(0);
+  const stateRef = useRef(state);
+
+  useEffect(() => { stateRef.current = state; }, [state]);
 
   useEffect(() => {
     if (!hydrated) return undefined;
@@ -53,7 +56,7 @@ export default function CloudSync() {
         }
 
         const raw = window.localStorage.getItem(STORAGE_KEY);
-        let initialState = state;
+        let initialState = stateRef.current;
         if (raw) {
           try {
             initialState = JSON.parse(raw);
@@ -78,7 +81,7 @@ export default function CloudSync() {
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (["INITIAL_SESSION", "SIGNED_IN", "SIGNED_OUT", "TOKEN_REFRESHED", "USER_UPDATED"].includes(event)) {
+      if (["INITIAL_SESSION", "SIGNED_IN", "SIGNED_OUT"].includes(event)) {
         queueMicrotask(() => { void syncSession(session); });
       }
     });
