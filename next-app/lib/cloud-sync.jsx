@@ -18,6 +18,7 @@ export default function CloudSync() {
 
   useEffect(() => {
     if (!hydrated) return undefined;
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return undefined;
 
     const supabase = createClient();
 
