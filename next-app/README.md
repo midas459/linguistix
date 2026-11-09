@@ -21,6 +21,24 @@ This is the replacement application for the legacy Base44 runtime. Keep the exis
 
 Do not add service-role keys or Gemini keys to `NEXT_PUBLIC_*`, client components, source control, or chat. The connected Supabase project now has the `public.learner_state` table with RLS and four owner-scoped policies. The legacy `public.rls_auto_enable()` helper is no longer executable by `anon` or `authenticated`.
 
+## Cloudflare preview deployment
+
+The isolated preview is deployed manually from GitHub Actions using `.github/workflows/cloudflare-preview.yml`. It does not deploy the production Worker or merge the pull request.
+
+Before running it, add these repository settings in GitHub (**Settings → Secrets and variables → Actions**):
+
+**Actions secret**
+- `CLOUDFLARE_API_TOKEN`: Cloudflare API token with the Workers deployment permissions required by the vinext Cloudflare CLI.
+
+**Actions variables**
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID.
+- `NEXT_PUBLIC_SUPABASE_URL`: the Supabase project URL.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: the Supabase publishable key.
+
+Then open **Actions → Cloudflare preview deployment → Run workflow** and use the default preview name. The workflow runs compatibility checks and lint, builds with `CLOUDFLARE_PREVIEW_BUILD=true`, and deploys an isolated Worker Preview. It prints the preview URL in the deployment logs.
+
+After the preview exists, configure the server-only `GEMINI_API_KEY` as a Worker secret for the preview runtime (never as a GitHub variable or `NEXT_PUBLIC_*`). Add the preview URL to Supabase Auth's allowed redirect URLs/site URL as appropriate, then test signup, email confirmation, password reset, learner-state sync and Kalam AI. Do not promote the preview to production until those checks pass.
+
 ## Current feature set
 
 - Seven language courses: Arabic, German, Japanese, English, Spanish, French and Portuguese.
