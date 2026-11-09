@@ -1,0 +1,65 @@
+name: Cloudflare preview deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      preview_name:
+        description: "Preview identifier"
+        required: true
+        default: "linguistix-launch-check"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linguistix-cloudflare-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: next-app
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - name: Check out integration branch
+        uses: actions/checkout@v4
+        with:
+          ref: base44-retirement-cloudflare-supabase
+
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Add CLOUDFLARE_API_TOKEN as a GitHub Actions secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Add CLOUDFLARE_ACCOUNT_ID as a GitHub Actions variable."; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_URL" || { echo "::error::Add NEXT_PUBLIC_SUPABASE_URL as a GitHub Actions variable."; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" || { echo "::error::Add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY as a GitHub Actions variable."; exit 1; }
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: next-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Check vinext compatibility
+        run: npx --yes vinext check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build Cloudflare preview output
+        run: npm run build:vinext
+        env:
+          CLOUDFLARE_PREVIEW_BUILD: "true"
+
+      - name: Deploy isolated Cloudflare Worker Preview
+        run: npx vinext-cloudflare previews deploy "${{ inputs.preview_name }}" --skip-build
