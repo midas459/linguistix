@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This report records a repository-level review of the existing Base44/TanStack Start app and the Gemini-only tutor integration on branch `copilot/secure-gemini-tutor`. It is not a full browser-based launch certification. Findings below distinguish code/build evidence from behavior that still requires live environment or device testing.
+This report records a repository-level review of the Base44/TanStack Start app and Gemini-only tutor integration on `release-candidate-1-quality-gates`. It is not a full browser-based launch certification. Findings below distinguish verified repository/CI evidence from behavior that still requires live environment or device testing.
 
 ## Architecture
 
@@ -40,21 +40,19 @@ Checks run for the tutor integration:
 | Client bundle search for provider endpoints and key names | No matches |
 | `.env.local` ignore check | Ignored by `.gitignore` |
 
-The local build printed Base44 warnings because `VITE_BASE44_APP_ID` and the Base44 proxy URL were not configured in this environment. A passing local build therefore does not verify connectivity to a linked Base44 app or either AI provider.
+The local build printed Base44 warnings because `VITE_BASE44_APP_ID` and the Base44 proxy URL were not configured in that environment. A passing build therefore does not verify connectivity to a linked Base44 app or live Gemini responses.
 
-There is no package lockfile in the repository, so `npm ci` cannot be used reproducibly in this checkout. Dependency installation required npm's legacy peer-dependency resolution. Add and review a lockfile before relying on clean installs or CI.
+**Updated RC1 dependency/CI status:** `.npmrc` now sets `legacy-peer-deps=true`; `package-lock.json` (lockfile v3) is committed; `.github/workflows/quality.yml` uses `npm ci` on Node.js 22. The pushed RC1 commit `38163998b8b90137bb6c319c1f42007a0e0b6762` has a successful GitHub Actions run: install, lint, unit tests and production build all passed. The contributor also reports local `npm ci`, lint, tests (7), and build passed using Node.js 26.13.0/npm 11.20.0. CI's Node.js 22 run is the authoritative automated check.
 
 ## Launch blockers and follow-up
 
-1. **Rotate the exposed Gemini key.** Confirm the replacement is stored only as a Base44 server secret.
-2. **Configure Gemini.** Set `GEMINI_API_KEY` as a Base44 server secret; optionally set `GEMINI_MODEL` after verifying model availability.
-3. **Run live Gemini checks.** Exercise valid responses, quota/rate limits, invalid credentials, network timeouts, malformed provider output, and sanitized failures in a non-production environment with the configured secret.
-4. **Create reproducible CI.** No `.github` directory or GitHub Actions workflow was present during this review. Add checks for dependency installation, lint, tests and production build after committing a lockfile.
-5. **Complete browser and device QA.** No viewport-specific or end-to-end checks were run here. Verify authentication, dashboard, lesson completion, flashcard scheduling, tutor, settings, errors, keyboard/accessibility behavior and themes at the requested mobile/tablet/desktop widths.
-6. **Review settings requirements.** Current Settings covers language, appearance, reminders and local progress reset; it does not provide an AI configuration panel. Configure server secrets out-of-band and consider adding a safe, key-free status/help panel if users need in-app setup guidance.
-7. **Confirm persistence expectations.** Progress is local to the browser. Verify that this is acceptable for launch or plan account synchronization and a recovery/export path.
-8. **Confirm release operations.** No production deployment or merge was performed as part of this audit.
+1. **Gemini credential rotation/configuration:** the user reports that the previously exposed key was revoked and a replacement secret was configured in Base44. This is user-confirmed, not independently verified. Keep the credential server-side; never request or commit it.
+2. **Run live Gemini checks.** Exercise valid responses for breakdown, quiz and roleplay, plus missing/invalid credentials, quota/rate limits, timeouts, malformed output and sanitized failures in a non-production environment.
+3. **Complete browser and device QA.** No viewport-specific or end-to-end checks are certified yet. Verify authentication, dashboard, lesson completion, flashcard scheduling, tutor, settings, errors, keyboard/accessibility behavior and themes at mobile/tablet/desktop widths.
+4. **Review settings requirements.** Current Settings covers language, appearance, reminders and local progress reset; it does not provide an AI configuration panel. Configure server secrets out-of-band and consider a safe, key-free status/help panel only if users need in-app setup guidance.
+5. **Confirm persistence expectations.** Progress is local to the browser. Verify that this is acceptable for the first launch or plan account synchronization and a recovery/export path.
+6. **Confirm release operations.** The RC1 branch remains separate from `main`; no production deployment or merge was performed.
 
 ## Overall assessment
 
-The Gemini-only tutor change passes its targeted automated checks and keeps provider credentials out of the browser bundle. The repository is **not launch-certified**: production secrets and live provider behavior, clean dependency installation/CI, and browser/accessibility/device QA remain unverified.
+The Gemini-only tutor change passes targeted automated checks and keeps provider credentials out of the browser bundle. Reproducible dependency installation and GitHub Actions quality gates are now in place and have passed on the RC1 branch. The repository is **not launch-certified**: live Gemini behavior and full browser/accessibility/device QA remain unverified.
