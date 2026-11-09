@@ -6,6 +6,7 @@ on:
     paths:
       - "next-app/**"
       - ".github/workflows/next-app.yml"
+      - ".github/workflows/cloudflare-preview.yml"
   push:
     branches:
       - supabase-migration-review
