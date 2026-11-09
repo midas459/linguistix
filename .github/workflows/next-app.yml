@@ -1,6 +1,7 @@
 name: Next.js migration checks
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - "next-app/**"
@@ -8,6 +9,7 @@ on:
   push:
     branches:
       - supabase-migration-review
+      - base44-retirement-cloudflare-supabase
     paths:
       - "next-app/**"
       - ".github/workflows/next-app.yml"
