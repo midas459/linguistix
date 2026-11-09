@@ -37,3 +37,19 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
+      - name: Initialize Cloudflare Workers configuration (no deployment)
+        run: npx --yes vinext init --platform=cloudflare --name=linguistix --cdn-cache=none --data-cache=none --image-optimization=none
+      - name: Build Cloudflare Worker output
+        run: npm run build:vinext
+      - name: Upload generated Cloudflare configuration
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linguistix-cloudflare-config
+          path: |
+            next-app/package.json
+            next-app/package-lock.json
+            next-app/vite.config.ts
+            next-app/cloudflare.config.ts
+            next-app/.gitignore
+          if-no-files-found: warn
