@@ -20,6 +20,10 @@ const SCENARIOS = {
 
 export default function KalamTutor() {
   const { language, lang } = useLearn();
+  return <KalamTutorSession key={lang} language={language} lang={lang} />;
+}
+
+function KalamTutorSession({ language, lang }) {
   const [mode, setMode] = useState("breakdown");
   const [scenario, setScenario] = useState(SCENARIOS[lang]?.[0] || "Ordering at a café");
   const [messages, setMessages] = useState([]);
@@ -28,12 +32,6 @@ export default function KalamTutor() {
   const [error, setError] = useState("");
   const [translation, setTranslation] = useState(true);
   const endRef = useRef(null);
-
-  useEffect(() => {
-    setMessages([]);
-    setError("");
-    setScenario(SCENARIOS[lang]?.[0] || "Ordering at a café");
-  }, [lang]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
