@@ -69,7 +69,7 @@ export default function CloudSync() {
         const save = await fetch("/api/learner-state", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ state: initialState }),
+          body: JSON.stringify({ userId: nextUserId, state: initialState }),
         });
         if (!save.ok || generation.current !== current) return;
         replaceState(initialState);
@@ -99,7 +99,7 @@ export default function CloudSync() {
       void fetch("/api/learner-state", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ state }),
+        body: JSON.stringify({ userId, state }),
       }).then((response) => {
         if (response.ok) window.localStorage.setItem(OWNER_KEY, userId);
       }).catch(() => {
