@@ -14,16 +14,16 @@ Review every warning. Do not continue if the report identifies an unsupported fe
 
 ## 2. Initialize Cloudflare Workers support
 
-The current app has no committed vinext configuration yet. After the compatibility report is reviewed, run the official non-destructive initializer:
+The integration branch now contains the generated Cloudflare configuration in `next-app/vite.config.ts`, `next-app/cloudflare.config.ts` and `next-app/package.json`. CI has already run the initializer and built the Worker successfully. Only rerun the initializer if starting from an older branch or deliberately regenerating the platform configuration:
 
 ```powershell
 npx vinext init --platform=cloudflare --name=linguistix --cdn-cache=none --data-cache=none --image-optimization=none
 npm.cmd install
 ```
 
-The initializer adds vinext/Vite dependencies and creates the Cloudflare Vite/Worker configuration alongside the existing Next.js setup. Review the generated diff; do not accept unrelated rewrites.
+The initializer adds vinext/Vite dependencies and creates the Cloudflare Vite/Worker configuration alongside the existing Next.js setup. The current branch has already committed those outputs and a lockfile. Review any regenerated diff; do not accept unrelated rewrites.
 
-Then run:
+Then run (already exercised in GitHub Actions):
 
 ```powershell
 npm.cmd run lint
