@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "./supabase/client";
-import { useLearn } from "./learn-store";
+import { normalizeState, useLearn } from "./learn-store";
 
 const STORAGE_KEY = "lisan.state.v2";
 const OWNER_KEY = "lisan.state.owner.v1";
@@ -60,7 +60,7 @@ export default function CloudSync() {
         let initialState = stateRef.current;
         if (raw) {
           try {
-            initialState = JSON.parse(raw);
+            initialState = normalizeState(JSON.parse(raw));
           } catch {
             return;
           }
