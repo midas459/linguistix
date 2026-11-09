@@ -48,14 +48,13 @@ export default function SettingsPage() {
           </section>
           <section className="lf-ai-settings">
             <h2>Kalam AI provider setup</h2>
-            <p>Connect a free-tier AI provider for the language tutor. Gemini is tried first; Groq is an optional backup.</p>
+            <p>Kalam AI uses Google Gemini only. Your API key stays on the server and is never sent to the browser.</p>
             <div className="actions">
               <a className="button" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Get Gemini API key ↗</a>
-              <a className="button secondary" href="https://console.groq.com/keys" target="_blank" rel="noreferrer">Get Groq API key ↗</a>
             </div>
-            <p><strong>Keep your keys private.</strong> Add them to <code>next-app/.env.local</code> on your computer, or to your hosting provider's server environment. Do not paste them into this page, chat, GitHub, or any field in the browser.</p>
+            <p><strong>Keep your keys private.</strong> Add it to <code>next-app/.env.local</code> on your computer, or to your hosting provider's server environment. Do not paste them into this page, chat, GitHub, or any field in the browser.</p>
             <pre className="lf-env-example"><code>{"GEMINI_API_KEY=your_key_here\nGROQ_API_KEY=your_backup_key_here"}</code></pre>
-            <p>After saving the file, restart the development server. The tutor uses these keys on the server only.</p>
+            <p>After saving the file, restart the development server. The tutor uses this key on the server only.</p>
           </section>
           <section className="lf-reminder-settings">
             <h2>Study reminder preference</h2>
