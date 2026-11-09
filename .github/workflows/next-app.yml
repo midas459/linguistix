@@ -35,32 +35,7 @@ jobs:
         run: npx --yes vinext check
       - name: Lint
         run: npm run lint
-      - name: Build
+      - name: Build Next.js application
         run: npm run build
       - name: Build Cloudflare Worker output
         run: npm run build:vinext
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: linguistix-cloudflare-config
-          path: |
-            next-app/package.json
-            next-app/package-lock.json
-            next-app/vite.config.ts
-            next-app/cloudflare.config.ts
-            next-app/.gitignore
-          if-no-files-found: warn
-      - name: Commit generated Cloudflare configuration to this PR branch
-        if: ${{ success() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
-        env:
-          BRANCH_NAME: ${{ github.head_ref }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json vite.config.ts cloudflare.config.ts .gitignore
-          if git diff --cached --quiet; then
-            echo "Cloudflare configuration is already committed."
-          else
-            git commit -m "build: add validated Cloudflare Workers configuration"
-            git push origin "HEAD:${BRANCH_NAME}"
-          fi
