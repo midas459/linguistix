@@ -1,8 +1,11 @@
 import { bindings, defineConfig, defineWorker } from "cf/config";
 
-export default defineConfig({
+export default defineConfig(({ isPreview }) => ({
   worker: defineWorker({
     name: "linguistix",
+    // Worker Previews need an enabled workers.dev host to receive a URL.
+    // Keep the production worker's host configuration unchanged.
+    workersDev: isPreview ? true : undefined,
     previewUrls: true,
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-11-09",
@@ -16,4 +19,4 @@ export default defineConfig({
       ASSETS: bindings.assets(),
     },
   }),
-});
+}));
