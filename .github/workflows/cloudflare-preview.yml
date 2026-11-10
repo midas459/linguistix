@@ -28,7 +28,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
     steps:
       - name: Check out integration branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: base44-retirement-cloudflare-supabase
 
@@ -41,7 +41,7 @@ jobs:
           test -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" || { echo "::error::Add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY as a GitHub Actions variable."; exit 1; }
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
