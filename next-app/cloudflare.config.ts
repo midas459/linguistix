@@ -3,6 +3,7 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 export default defineConfig({
   worker: defineWorker({
     name: "linguistix",
+    previewUrls: true,
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-11-09",
     compatibilityFlags: ["nodejs_compat"],
