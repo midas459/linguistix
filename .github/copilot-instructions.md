@@ -64,3 +64,14 @@ Five supported theme IDs are `ocean`, `forest`, `sunset`, `lavender`, and `midni
 - Do not assume the preview worker inherits production bindings. Verify each preview's runtime bindings and secrets before claiming Supabase Auth or the Gemini tutor works.
 - Prefer the Cloudflare `cf` CLI for account-wide Cloudflare API tasks where appropriate; use Wrangler/vinext for this existing Workers project and its preview/deployment workflow. Authenticate interactively with `cf auth login` or the VS Code MCP OAuth flow; never ask the user to paste credentials into chat.
 - The active migration branch is `base44-retirement-cloudflare-supabase`. Keep changes on this branch unless the user directs otherwise.
+
+### Installing Cloudflare agent skills in VS Code
+
+Run these from the repository root in the VS Code integrated terminal (PowerShell is fine; use `npx.cmd` if PowerShell blocks npm scripts):
+
+```powershell
+npx.cmd -y skills add https://github.com/cloudflare/skills
+npx.cmd -y skills add cloudflare/vinext
+```
+
+The first command installs Cloudflare platform skills; the second installs vinext's upstream skills for this project's Next.js-on-Workers runtime. Use Copilot Chat in **Agent** mode so it can load skills. The Cloudflare MCP servers are defined in `.vscode/mcp.json`; after this branch is checked out locally, VS Code should prompt to start/authorize them. Approve the Cloudflare account connection in the browser and restart VS Code if the MCP servers do not appear. The documentation MCP server is public; the Cloudflare API MCP server requires OAuth authorization.
