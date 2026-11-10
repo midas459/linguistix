@@ -62,4 +62,33 @@ jobs:
           CLOUDFLARE_PREVIEW_BUILD: "true"
 
       - name: Deploy isolated Cloudflare Worker Preview
-        run: npx vinext-cloudflare previews deploy "${{ inputs.preview_name }}" --skip-build
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(npx vinext-cloudflare previews deploy "${{ inputs.preview_name }}" --skip-build 2>&1)" || {
+            printf '%s\n' "$output"
+            exit 1
+          }
+          printf '%s\n' "$output"
+          preview_url="$(printf '%s\n' "$output" | node -e '
+            const fs = require("node:fs");
+            const s = fs.readFileSync(0, "utf8");
+            const start = s.indexOf("{");
+            if (start < 0) process.exit(0);
+            try {
+              const data = JSON.parse(s.slice(start));
+              const urls = data.preview_urls || [];
+              if (urls.length) process.stdout.write(urls[0]);
+            } catch {}
+          ')"
+          if [ -z "$preview_url" ]; then
+            echo "::error::Cloudflare deployed the preview but returned no preview URL. Enable Preview URLs and configure Preview Base settings in Cloudflare."
+            exit 1
+          fi
+          echo "url=$preview_url" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Cloudflare Preview"
+            echo ""
+            echo "$preview_url"
+          } >> "$GITHUB_STEP_SUMMARY"
