@@ -37,7 +37,7 @@ Before running it, add these repository settings in GitHub (**Settings → Secre
 
 Then open **Actions → Cloudflare preview deployment → Run workflow** and use the default preview name. The workflow runs compatibility checks and lint, builds with `CLOUDFLARE_PREVIEW_BUILD=true`, and deploys an isolated Worker Preview. It prints the preview URL in the deployment logs.
 
-After the preview exists, configure the server-only `GEMINI_API_KEY` as a Worker secret for the preview runtime (never as a GitHub variable or `NEXT_PUBLIC_*`). Add the preview URL to Supabase Auth's allowed redirect URLs/site URL as appropriate, then test signup, email confirmation, password reset, learner-state sync and Kalam AI. Do not promote the preview to production until those checks pass.
+Cloudflare Preview URLs are explicitly enabled in `cloudflare.config.ts` with `previewUrls: true`. After deployment, configure the Preview Base runtime settings in Cloudflare Dashboard → Workers & Pages → the Linguistix Worker → Settings. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` as Preview variables, and add `GEMINI_API_KEY` as a Preview secret. Do not put `GEMINI_API_KEY` in GitHub variables, source control, or any `NEXT_PUBLIC_*` value. Cloudflare documents that Preview settings do not inherit production settings; configure the Preview Base separately. Add the resulting preview URL to Supabase Auth's allowed redirect URLs/site URL as appropriate, then test signup, email confirmation, password reset, learner-state sync and Kalam AI. Do not promote the preview to production until those checks pass.
 
 ## Current feature set
 
