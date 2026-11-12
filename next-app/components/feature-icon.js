@@ -1,4 +1,4 @@
-export default function FeatureIcon({ name, size = 20, className = "" }) {
+export default function FeatureIcon({ name, size = 20, className = "", strokeWidth = 1.8 }) {
   const paths = {
     compass: <><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2Z" /></>,
     message: <><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-6.5A7.5 7.5 0 0 1 10.5 7h2A7.5 7.5 0 0 1 20 14.5" /><path d="M8 12h8M8 15h5" /></>,
@@ -18,6 +18,19 @@ export default function FeatureIcon({ name, size = 20, className = "" }) {
     search: <><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></>,
     download: <><path d="M12 3v12m-5-5 5 5 5-5" /><path d="M5 17v4h14v-4" /></>,
     check: <path d="m5 12 4 4L19 6" />,
+    microphone: <><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3m-4 0h8" /></>,
+    vocabulary: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z" /><path d="M8 8h8M8 12h5" /><path d="m16 15 1.5 1.5L20 14" /></>,
+    grammar: <><path d="M5 4h14M5 10h14M5 16h8" /><circle cx="17" cy="16" r="3" /><path d="M17 14v4m-2-2h4" /></>,
+    conversation: <><path d="M4 5h13a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3h-5l-5 4v-4H4a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3Z" /><path d="M7 9h10M7 12h6" /></>,
+    arrowUpRight: <><path d="M7 17 17 7M7 7h10v10" /></>,
+    play: <path d="m8 5 11 7-11 7V5Z" />,
+    menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
+    close: <><path d="m6 6 12 12M18 6 6 18" /></>,
+    sun: <><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></>,
+    moon: <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z" />,
+    sparkles: <><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" /><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" /></>,
+    target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></>,
+    headphones: <><path d="M3 13v-1a9 9 0 0 1 18 0v1" /><rect x="3" y="12" width="5" height="8" rx="2" /><rect x="16" y="12" width="5" height="8" rx="2" /></>,
   };
-  return <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name] || paths.star}</svg>;
+  return <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{paths[name] || paths.sparkles}</svg>;
 }
