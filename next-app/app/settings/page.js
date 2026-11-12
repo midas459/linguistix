@@ -47,14 +47,9 @@ export default function SettingsPage() {
             </div>
           </section>
           <section className="lf-ai-settings">
-            <h2>Kalam AI provider setup</h2>
-            <p>Kalam AI uses Google Gemini only. Your API key stays on the server and is never sent to the browser.</p>
-            <div className="actions">
-              <a className="button" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Get Gemini API key ↗</a>
-            </div>
-            <p><strong>Keep your keys private.</strong> Add it to <code>next-app/.env.local</code> on your computer, or to your hosting provider&apos;s server environment. Do not paste it into this page, chat, GitHub, or any field in the browser.</p>
-            <pre className="lf-env-example"><code>{"GEMINI_API_KEY=your_key_here"}</code></pre>
-            <p>After saving the file, restart the development server. The tutor uses this key on the server only.</p>
+            <h2>Kalam AI is included</h2>
+            <p>You do not need to create an account with an AI provider, buy an API key, or configure anything. Linguistix connects to Kalam AI through its secure app-managed server connection.</p>
+            <p>If Kalam AI is temporarily unavailable, that is a service issue we are responsible for fixing — not something you should have to configure.</p>
           </section>
           <section className="lf-reminder-settings">
             <h2>Study reminder preference</h2>
@@ -68,7 +63,7 @@ export default function SettingsPage() {
         </div>
         <div className="actions">
           <Link className="button secondary" href="/dashboard">Dashboard</Link>
-          <Link className="button" href="/learn">Browse courses</Link>
+          <Link className="button" href="/alphabet">Open Alphabet Studio</Link>
         </div>
       </section>
     </main>
