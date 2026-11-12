@@ -60,7 +60,8 @@ export default function PronunciationLab() {
     try {
       const audio = await speakText(value.trim(), lang);
       setPlayback("speaking");
-      const endEvent = typeof HTMLAudioElement !== "undefined" && audio instanceof HTMLAudioElement ? "ended" : "end";\n      audio.addEventListener(endEvent, () => setPlayback("idle"), { once: true });
+      const endEvent = typeof HTMLAudioElement !== "undefined" && audio instanceof HTMLAudioElement ? "ended" : "end";
+      audio.addEventListener(endEvent, () => setPlayback("idle"), { once: true });
       audio.addEventListener("error", () => setPlayback("idle"), { once: true });
     } catch (error) {
       setPlayback("idle");
