@@ -30,6 +30,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
       NEXT_PUBLIC_SITE_URL: https://linguistix-launch-check-linguistix.midas-labs.workers.dev
+      PREVIEW_NAME: ${{ inputs.preview_name || 'linguistix-launch-check' }}
     steps:
       - name: Check out integration branch
         uses: actions/checkout@v5
@@ -70,7 +71,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          output="$(npx vinext-cloudflare previews deploy "${{ inputs.preview_name }}" --skip-build 2>&1)" || {
+          output="$(npx vinext-cloudflare previews deploy "$PREVIEW_NAME" --skip-build 2>&1)" || {
             printf '%s\n' "$output"
             exit 1
           }
