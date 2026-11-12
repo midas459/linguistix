@@ -76,8 +76,10 @@ export default function DashboardExperience() {
         <div className="lf-path">
           {modules.map((module,index) => {
             const done = module.lessons.filter((lesson)=>progress.lessons.includes(lesson.id)).length;
-            return <article className="lf-module" key={module.id}>
-              <div className="lf-module-top"><span className="lf-module-number">{done===module.lessons.length?"✓":String(index+1).padStart(2,"0")}</span><div><p className="lf-eyebrow">Unit {index+1} · {done}/{module.lessons.length} lessons</p><h3>{module.title}</h3><p>{module.summary}</p></div></div>
+            const complete = done === module.lessons.length;
+            const active = !complete && modules.slice(0,index).every((previous)=>previous.lessons.every((lesson)=>progress.lessons.includes(lesson.id)));
+            return <article className={`lf-module lf-module-snake ${index % 2 === 0 ? "snake-left" : "snake-right"} ${complete ? "is-complete" : active ? "is-current" : "is-locked"}`} key={module.id}>
+              <div className="lf-module-top"><span className="lf-module-number">{complete ? "✓" : String(index+1).padStart(2,"0")}</span><div><p className="lf-eyebrow">STAGE {String(index+1).padStart(2,"0")} · {done}/{module.lessons.length} lessons</p><h3>{module.title}</h3><p>{module.summary}</p></div><span className="lf-stage-state">{complete ? "Completed" : active ? "Current stage" : "Locked"}</span></div>
               <div className="lf-module-progress"><span style={{width:`${done/module.lessons.length*100}%`}} /></div>
               <ul>{module.lessons.map((lesson,li)=>{
                 const isDone=progress.lessons.includes(lesson.id);
