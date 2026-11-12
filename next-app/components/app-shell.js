@@ -27,9 +27,34 @@ export default function AppShell({ children }) {
   const { language, languages, lang, setLang, progress, hearts, maxHearts, theme, setTheme, badges, unlockedBadges } = useLearn();
   const [menuOpen, setMenuOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [appInstalled, setAppInstalled] = useState(false);
+  const [installHelp, setInstallHelp] = useState(false);
+  const showInstall = pathname === "/dashboard" && !appInstalled;
   const menuButtonRef = useRef(null);
   const closeButtonRef = useRef(null);
   const isPublic = PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/auth/");
+
+  useEffect(() => {
+    if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) setAppInstalled(true);
+    function onBeforeInstallPrompt(event) { event.preventDefault(); setInstallPrompt(event); }
+    function onInstalled() { setAppInstalled(true); setInstallPrompt(null); setInstallHelp(false); }
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onInstalled);
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", onInstalled);
+    };
+  }, []);
+
+  async function installApp() {
+    if (!installPrompt) { setInstallHelp(true); return; }
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    if (choice?.outcome === "accepted") { setAppInstalled(true); setInstallHelp(false); }
+    setInstallPrompt(null);
+  }
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -104,9 +129,11 @@ export default function AppShell({ children }) {
         <span className="app-stat-pill" title="Available hearts">♥ {hearts}/{maxHearts}</span>
         <span className="app-stat-pill app-xp-pill">★ {progress.xpTotal} XP</span>
         <button className="app-research-button" type="button" onClick={() => setResearchOpen(true)} aria-label="Open Lugha Research">⌕ <span>Research</span></button>
+        {showInstall && <button className="app-install-button" type="button" onClick={installApp}>⇩ <span>Download app</span></button>}
         <button className="app-signout-button" type="button" onClick={signOut}>Sign out</button>
         <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}>{theme === "midnight" ? "☀" : "◐"}</button>
       </header>
+      {installHelp && showInstall && <div className="app-install-help" role="status">To install Linguistix, use your browser menu and choose “Install app” or “Add to Home Screen”.</div>}
       <div className="app-page-content">{children}</div>
     </div>
     <ResearchPanel open={researchOpen} onClose={() => setResearchOpen(false)} />
