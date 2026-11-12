@@ -69,7 +69,7 @@ To update, pull the reviewed branch and run `docker compose -f compose.yaml up -
 
 - Seven language courses: Arabic, German, Japanese, English, Spanish, French and Portuguese.
 - Responsive learning shell, course map, lessons, interactive lesson player, flashcards, pronunciation lab, research panel, dashboard and settings.
-- Five visual themes.
+- Eight visual themes, including Sakura, Imperial and Obsidian.
 - Supabase email/password registration and login, email confirmation, password recovery and route-level authentication enforcement.
 - Server-side authenticated Kalam AI route using Gemini only, with bounded input, timeout, schema checks and sanitized errors.
 - Local-first learning progress, XP, streaks, activity, hearts, badges, settings and spaced-repetition state.
@@ -80,7 +80,7 @@ To update, pull the reviewed branch and run `docker compose -f compose.yaml up -
 - Supabase table and RLS setup is applied and catalog-verified. Still required: end-to-end tests with two real test accounts to prove cross-account isolation before enabling cloud sync for general users.
 - Supabase Auth leaked-password protection is currently disabled. Supabase documentation says this feature is available on Pro and above; the connected project should remain on its current plan unless the owner separately chooses an upgrade. Earlier normalized schema drafts are archived under `supabase/drafts/legacy-normalized/` and are not required for v1.
 - Existing Base44 accounts/passwords do not automatically transfer. Users will need a new Supabase account or an explicitly planned recovery path.
-- GitHub Actions previously reported passing Next.js production build, ESLint, vinext compatibility scan (95% with one non-blocking React Strict Mode note), and Cloudflare Worker build. Re-run checks after the latest integration changes. A live Cloudflare preview and runtime environment bindings have not been tested.
+- GitHub Actions previously reported passing Next.js production build, ESLint, vinext compatibility scan (95% with one non-blocking React Strict Mode note), and Cloudflare Worker build. Re-run checks after the latest integration changes. The isolated Cloudflare preview has deployed successfully; production deployment and public HTTP health checks have also passed. Full browser-level auth, learner-state isolation and live AI/TTS acceptance tests remain outstanding.
 - Live Gemini calls, browser QA, accessibility and mobile QA remain release gates.
 - Study reminder preferences are saved locally; reminder delivery is not implemented.
 - Cloud state currently uses a single versioned JSON snapshot with last-write-wins behavior; concurrent edits from multiple devices need a conflict-resolution policy before heavy use.
