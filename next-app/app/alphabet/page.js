@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useLearn } from "../../lib/learn-store";
 import { speakText, stopSpeech } from "../../lib/speech-client";
@@ -11,17 +11,12 @@ const GERMAN = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜß".split("").map(letter=>({lett
 const HIRAGANA = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん".split("");
 const KATAKANA = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン".split("");
 const ROMAJI = ["a","i","u","e","o","ka","ki","ku","ke","ko","sa","shi","su","se","so","ta","chi","tsu","te","to","na","ni","nu","ne","no","ha","hi","fu","he","ho","ma","mi","mu","me","mo","ya","yu","yo","ra","ri","ru","re","ro","wa","wo","n"];
-async function playSpeech(text) {
- try { setStatus("Generating pronunciation…"); await speakText(text, lang); setStatus("Audio playing."); }
- catch (error) { setStatus(error.message || "Pronunciation audio is unavailable."); }
-}
 export default function AlphabetPage(){
  const {language,lang}=useLearn(); const [selected,setSelected]=useState(0); const [form,setForm]=useState("iso"); const [harakat,setHarakat]=useState(false); const [status,setStatus]=useState("");
  useEffect(()=>()=>stopSpeech(),[]);
  const arabic=lang==="ar", japanese=lang==="ja";
  const letters=useMemo(()=>arabic?ARABIC:japanese?HIRAGANA:GERMAN,[arabic,japanese]);
  const activeIndex=selected%letters.length; const active=arabic?ARABIC[activeIndex]:letters[activeIndex]; const currentText=arabic?active?.[form]:japanese?active:active?.letter;
- function play(value=currentText){void playSpeech(value);}
  async function playSpeech(value){try{setStatus("Generating pronunciation…");await speakText(value,lang);setStatus("Audio playing.");}catch(error){setStatus(error.message||"Pronunciation audio is unavailable.");}}
  return <main className="alphabet-page">
  <header className="alphabet-hero"><div><p className="eyebrow">LINGUISTIX · SCRIPT STUDIO</p><h1>See every letter.<br/><span>Learn the whole system.</span></h1><p>Explore the complete writing system at your own pace. Every character stays visible — no daily two-letter lock.</p></div><div className="alphabet-hero-mark" aria-hidden="true">{arabic?"أ":japanese?"あ":"Ä"}</div></header>
