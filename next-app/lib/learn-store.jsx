@@ -43,7 +43,7 @@ export function normalizeState(parsed) {
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return base;
   return {
     ...base, ...parsed,
-    theme: ["ocean", "forest", "sunset", "lavender", "midnight"].includes(parsed.theme) ? parsed.theme : parsed.theme === "dark" ? "midnight" : "ocean",
+    theme: ["ocean", "forest", "sunset", "lavender", "midnight", "sakura", "royal", "obsidian"].includes(parsed.theme) ? parsed.theme : parsed.theme === "dark" ? "midnight" : "ocean",
     progress: { ...base.progress, ...(parsed.progress || {}) },
     srs: { ...base.srs, ...(parsed.srs || {}) },
     reminders: { ...base.reminders, ...(parsed.reminders || {}) },
