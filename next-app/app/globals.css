@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap");
 
 :root {
   color-scheme: light;
@@ -368,7 +368,6 @@ html[data-theme="midnight"] .lf-stat,html[data-theme="midnight"] .lf-card,html[d
 
 
 /* Midnight: Stoic editorial identity, modernised with crimson and vivid learning accents. */
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap");
 html[data-theme="midnight"]{--background:#080d18;--surface:#101827;--foreground:#f1eee8;--muted:#a6adbd;--accent:#d94a50;--border:#303747;color-scheme:dark}
 html[data-theme="midnight"] body{background:radial-gradient(ellipse at 78% 0%,rgba(107,72,125,.16),transparent 38%),radial-gradient(ellipse at 0% 35%,rgba(181,49,63,.08),transparent 34%),var(--background);color:var(--foreground)}
 html[data-theme="midnight"] h1,html[data-theme="midnight"] .lf-welcome h1,html[data-theme="midnight"] .li-hero h1,html[data-theme="midnight"] .li-section-head h2,html[data-theme="midnight"] .li-dialogue-heading h2,html[data-theme="midnight"] .li-bottom h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;letter-spacing:-.035em}
