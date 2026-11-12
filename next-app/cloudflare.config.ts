@@ -17,6 +17,9 @@ export default defineConfig(({ isPreview }) => ({
     },
     env: {
       ASSETS: bindings.assets(),
+      // Remote binding lets the Cloudflare/Vite dev runtime use the real
+      // account AI service; deployed Worker requests use the same binding.
+      AI: bindings.ai({ dev: { remote: true } }),
     },
   }),
 }));
