@@ -6,7 +6,7 @@ import { MODULES, XP_GOAL, CARDS_GOAL, MINUTES_GOAL } from "../../data/curriculu
 import { dayKey, weekDates, formatLongDate, relativeTime } from "../../lib/dates";
 import { useLearn } from "../../lib/learn-store";
 
-const ACTIVITY_ICONS = { lesson: "▶", cards: "▤", badge: "✦" };
+const ACTIVITY_ICONS = { lesson: "📘", cards: "🗂️", badge: "🏅" };
 
 export default function DashboardExperience() {
   const { language, lang, progress, todayStats, badges, unlockedBadges } = useLearn();
@@ -45,10 +45,10 @@ export default function DashboardExperience() {
       </section>
 
       <section className="lf-stats" aria-label="Learning statistics">
-        <article className="lf-stat"><span className="lf-stat-icon">✦</span><p>Total experience</p><strong>{progress.xpTotal.toLocaleString()} <small>XP</small></strong><span>{todayStats.xp} XP earned today</span></article>
+        <article className="lf-stat"><span className="lf-stat-icon">⭐</span><p>Total experience</p><strong>{progress.xpTotal.toLocaleString()} <small>XP</small></strong><span>{todayStats.xp} XP earned today</span></article>
         <article className="lf-stat"><span className="lf-stat-icon">🔥</span><p>Learning streak</p><strong>{progress.streak} <small>days</small></strong><span>Keep showing up daily</span></article>
-        <article className="lf-stat"><span className="lf-stat-icon">▤</span><p>Cards reviewed</p><strong>{progress.cardsTotal.toLocaleString()}</strong><span>{todayStats.cards} reviewed today</span></article>
-        <article className="lf-stat"><span className="lf-stat-icon">◷</span><p>Practice time</p><strong>{progress.minutesTotal} <small>min</small></strong><span>{todayStats.minutes} minutes today</span></article>
+        <article className="lf-stat"><span className="lf-stat-icon">🧠</span><p>Cards reviewed</p><strong>{progress.cardsTotal.toLocaleString()}</strong><span>{todayStats.cards} reviewed today</span></article>
+        <article className="lf-stat"><span className="lf-stat-icon">⏱️</span><p>Practice time</p><strong>{progress.minutesTotal} <small>min</small></strong><span>{todayStats.minutes} minutes today</span></article>
       </section>
 
       <section className="lf-dashboard-grid">
