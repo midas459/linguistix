@@ -68,7 +68,7 @@ async function callGemini({ apiKey, model, system, history, message }) {
           })),
           { role: "user", parts: [{ text: message }] },
         ],
-        generationConfig: { temperature: 0.4, responseMimeType: "application/json" },
+        generationConfig: { responseMimeType: "application/json" },
       }),
       signal: AbortSignal.timeout(20000),
     }
@@ -137,7 +137,7 @@ export async function POST(request) {
   try {
     const result = await callGemini({
       apiKey,
-      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+      model: "gemini-3.8-flash",
       system: buildSystem(language, mode, scenario),
       history: history.map(({ role, content }) => ({ role, content: content.trim() })),
       message: message.trim(),
