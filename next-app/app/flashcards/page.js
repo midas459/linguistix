@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { CARD_CATEGORIES, FLASHCARDS } from "../../data/cards";
 import { useLearn } from "../../lib/learn-store";
 import { speakText, stopSpeech } from "../../lib/speech-client";
+import FeatureIcon from "../../components/feature-icon";
 
 const RATINGS = [["again", "Again"], ["hard", "Hard"], ["good", "Good"], ["easy", "Easy"]];
 
@@ -70,7 +71,7 @@ export default function FlashcardsPage() {
             <button className="button secondary" type="button" onClick={() => setFlipped(value => !value)}>
               {flipped ? "Show prompt" : "Reveal answer"}
             </button>
-            <button className="button secondary" type="button" onClick={async () => { try { setAudioStatus("Generating pronunciation…"); await speakText(card.front, lang); setAudioStatus("Playing pronunciation."); } catch (error) { setAudioStatus(error.message); } }}>🔊 Hear this card</button>
+            <button className="button secondary" type="button" onClick={async () => { try { setAudioStatus("Generating pronunciation…"); await speakText(card.front, lang); setAudioStatus("Playing pronunciation."); } catch (error) { setAudioStatus(error.message); } }}><FeatureIcon name="audio" size={16} /> Hear this card</button>
             {audioStatus && <p role="status">{audioStatus}</p>}
             {flipped && mode === "review" && <div className="choice-row">
               {RATINGS.map(([value, label]) => (
