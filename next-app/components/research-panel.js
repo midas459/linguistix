@@ -19,8 +19,8 @@ function parseLookup(input) {
   let value = input.trim();
   let detected = "";
   const languageNames = { arabic: "ar", german: "de", japanese: "ja", english: "en", spanish: "es", french: "fr", portuguese: "pt" };
-  value = value.replace(/^how\\s+do\\s+i\\s+say\\s+/i, "").replace(/^how\\s+to\\s+say\\s+/i, "").replace(/^translate\\s+/i, "");
-  value = value.replace(/\\s+in\\s+(arabic|german|japanese|english|spanish|french|portuguese)\\s*\\??$/i, (_, name) => { detected = languageNames[name.toLowerCase()]; return ""; });
+  value = value.replace(/^how\s+do\s+i\s+say\s+/i, "").replace(/^how\s+to\s+say\s+/i, "").replace(/^translate\s+/i, "");
+  value = value.replace(/\s+in\s+(arabic|german|japanese|english|spanish|french|portuguese)\s*\\??$/i, (_, name) => { detected = languageNames[name.toLowerCase()]; return ""; });
   value = value.replace(/[?!.]+$/g, "").trim();
   return { value, detected };
 }
