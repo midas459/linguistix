@@ -843,3 +843,80 @@ button, .button, .choice-button, .exercise-choice, .alphabet-grid button,
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Device-query layout split: desktop workspace and touch-first mobile app. */
+@media (min-width: 901px) {
+  .app-sidebar { width: 276px; padding: 30px 22px; }
+  .app-workspace { margin-left: 276px; }
+  .app-page-content > main { width: min(1180px,calc(100% - 72px)); }
+  .lf-dashboard { max-width: 1240px; }
+  .lf-welcome { display:flex; align-items:flex-end; justify-content:space-between; gap:32px; padding:36px 40px; }
+  .lf-welcome > div { max-width: 760px; }
+  .lf-welcome h1 { max-width: 760px; font-size: clamp(38px,4vw,58px); }
+  .lf-stats { grid-template-columns: repeat(4,minmax(0,1fr)); gap:14px; }
+  .lf-dashboard-grid { grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr); gap:16px; }
+  .lf-path { position:relative; display:flex; flex-direction:column; gap:26px; padding:12px 0 22px; }
+  .lf-path::before { content:""; position:absolute; top:20px; bottom:30px; left:50%; width:4px; transform:translateX(-50%); border-radius:9px; background:repeating-linear-gradient(to bottom,color-mix(in srgb,var(--accent) 65%,var(--border)) 0 12px,transparent 12px 21px); }
+  .lf-module.lf-module-snake { position:relative; z-index:1; width:calc(50% - 44px); min-width:0; padding:22px; border:1px solid var(--border); border-radius:20px; background:var(--surface); box-shadow:0 12px 30px rgb(18 43 58 / 5%); }
+  .lf-module-snake.snake-left { align-self:flex-start; margin-right:auto; }
+  .lf-module-snake.snake-right { align-self:flex-end; margin-left:auto; }
+  .lf-module-snake::after { content:""; position:absolute; top:36px; width:48px; height:3px; background:color-mix(in srgb,var(--accent) 60%,var(--border)); }
+  .lf-module-snake.snake-left::after { right:-48px; }
+  .lf-module-snake.snake-right::after { left:-48px; }
+  .lf-module-snake .lf-module-number { width:44px; height:44px; border-radius:15px; font-size:14px; }
+  .lf-module-snake .lf-module-top { align-items:center; }
+  .lf-module-snake .lf-stage-state { margin-left:auto; flex:0 0 auto; border-radius:999px; padding:6px 10px; background:color-mix(in srgb,var(--accent) 10%,var(--surface)); color:var(--accent); font-size:10px; font-weight:800; white-space:nowrap; }
+  .lf-module-snake.is-locked { opacity:.76; }
+  .lf-module-snake.is-current { border:2px solid var(--accent); box-shadow:0 14px 34px color-mix(in srgb,var(--accent) 13%,transparent); }
+  .lf-module-snake.is-complete .lf-module-number { background:var(--accent); color:white; }
+  .lf-module-snake ul { margin-top:8px; }
+}
+@media (max-width: 900px) {
+  .app-sidebar { display:none; }
+  .app-workspace { margin-left:0; }
+  .app-page-content > main { width:calc(100% - 32px); }
+  .lf-dashboard { width:calc(100% - 32px); }
+  .lf-welcome { display:grid; gap:18px; padding:24px; }
+  .lf-welcome .lf-resume { justify-self:start; }
+  .lf-stats { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .lf-dashboard-grid { grid-template-columns:minmax(0,1fr); }
+  .lf-path { position:relative; display:flex; flex-direction:column; gap:16px; padding:8px 0 14px; }
+  .lf-path::before { content:""; position:absolute; top:16px; bottom:22px; left:50%; width:3px; transform:translateX(-50%); border-radius:9px; background:repeating-linear-gradient(to bottom,color-mix(in srgb,var(--accent) 60%,var(--border)) 0 10px,transparent 10px 18px); }
+  .lf-module.lf-module-snake { position:relative; z-index:1; width:calc(50% - 20px); min-width:0; padding:15px; border:1px solid var(--border); border-radius:17px; background:var(--surface); box-shadow:0 8px 22px rgb(18 43 58 / 5%); }
+  .lf-module-snake.snake-left { align-self:flex-start; margin-right:auto; }
+  .lf-module-snake.snake-right { align-self:flex-end; margin-left:auto; }
+  .lf-module-snake::after { content:""; position:absolute; top:30px; width:23px; height:3px; background:color-mix(in srgb,var(--accent) 60%,var(--border)); }
+  .lf-module-snake.snake-left::after { right:-23px; }
+  .lf-module-snake.snake-right::after { left:-23px; }
+  .lf-module-snake .lf-module-top { display:grid; grid-template-columns:34px minmax(0,1fr); gap:8px; }
+  .lf-module-snake .lf-module-number { width:34px; height:34px; border-radius:11px; }
+  .lf-module-snake .lf-stage-state { grid-column:2; justify-self:start; border-radius:999px; padding:4px 7px; background:color-mix(in srgb,var(--accent) 10%,var(--surface)); color:var(--accent); font-size:9px; font-weight:800; }
+  .lf-module-snake .lf-module-top p:last-child { font-size:10px; line-height:1.45; }
+  .lf-module-snake h3 { font-size:13px; line-height:1.3; }
+  .lf-module-snake li { align-items:flex-start; gap:6px; padding:8px 0; }
+  .lf-module-snake li a span { white-space:normal; overflow-wrap:anywhere; font-size:10px; line-height:1.35; }
+  .lf-module-snake li a small { white-space:normal; font-size:9px; }
+  .lf-module-snake .lf-lesson-xp { display:none; }
+  .lf-module-snake .lf-lesson-check { width:21px; height:21px; font-size:9px; }
+  .lf-module-snake.is-current { border:2px solid var(--accent); box-shadow:0 10px 26px color-mix(in srgb,var(--accent) 14%,transparent); }
+  .lf-module-snake.is-locked { opacity:.72; }
+  .lf-module-snake.is-complete .lf-module-number { background:var(--accent); color:white; }
+  .lf-section-heading { gap:12px; }
+  .lf-section-heading>a { flex:0 0 auto; }
+}
+@media (max-width: 420px) {
+  .lf-dashboard { width:calc(100% - 22px); }
+  .lf-module.lf-module-snake { width:calc(50% - 15px); padding:11px; }
+  .lf-module-snake::after { width:17px; }
+  .lf-module-snake.snake-left::after { right:-17px; }
+  .lf-module-snake.snake-right::after { left:-17px; }
+  .lf-module-snake .lf-module-top { grid-template-columns:28px minmax(0,1fr); gap:6px; }
+  .lf-module-snake .lf-module-number { width:28px; height:28px; font-size:10px; }
+  .lf-module-snake h3 { font-size:12px; }
+  .lf-module-snake .lf-eyebrow { font-size:8px; letter-spacing:.08em; }
+  .lf-module-snake .lf-module-top p:last-child { display:none; }
+  .lf-module-snake li { gap:4px; }
+  .lf-module-snake .lf-lesson-check { width:18px; height:18px; }
+  .lf-section-heading { flex-wrap:wrap; }
+}
