@@ -74,7 +74,7 @@ async function callGemini({ apiKey, model, system, history, message }) {
       method: "POST",
       headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
       body,
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(25000),
     });
     if (response.ok) {
       const payload = await response.json();
