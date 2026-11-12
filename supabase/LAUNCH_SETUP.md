@@ -1,32 +1,41 @@
-# Supabase launch setup
+# Supabase launch verification
 
-## Verified project state
+## Current connected project
 
-The connected Supabase project is active in `eu-west-1`. Read-only inspection found no Linguistix application tables and no recorded migrations in the database. The project does have a legacy `public.rls_auto_enable()` SECURITY DEFINER helper reported as directly executable by `anon` and `authenticated`. The security advisor also reports leaked-password protection disabled.
+- Project ref: `sbvedvvdskrwvvnkggte`
+- Region: `eu-west-1`
+- Project status: `ACTIVE_HEALTHY`
+- Database: PostgreSQL 17
 
-## Active v1 migration set
+## Verified database state (2026-11-12)
 
-The Next.js application v1 needs only the following two active migrations:
+Read-only catalog checks confirm:
 
-1. `20261109080500_learner_state.sql` — creates the single per-user JSONB learning snapshot table, enables RLS, and grants only authenticated owner-scoped access.
-2. `20261109080600_security_hardening.sql` — conditionally revokes direct execution of the legacy helper for `PUBLIC`, `anon` and `authenticated`. It is safe on a fresh project where the helper is absent.
+- `public.learner_state` exists.
+- Row-level security is enabled.
+- Four policies restrict SELECT, INSERT, UPDATE and DELETE to the authenticated owner where `user_id = auth.uid()`.
+- Table grants expose CRUD to `authenticated`; no table grants were found for `anon`.
+- The legacy `public.rls_auto_enable()` helper ACL is restricted to `postgres` and `service_role`; it is not executable by `PUBLIC`, `anon` or `authenticated`.
+- Migration history contains `20261109080109 learner_state` and `20261109080524 security_hardening_rls_auto_enable`.
 
-These migrations are drafts and have **not** been applied. Apply them only after explicit owner approval.
+The active migration source files are retained in `supabase/migrations/`. Do not re-run them against the live project without first checking migration history and current schema.
 
-## Archived design drafts
+## Remaining Supabase release checks
 
-The earlier normalized schema, RLS, profile trigger and localStorage import RPC are preserved under `supabase/drafts/legacy-normalized/`. They are not part of the active migration chain and must not be applied for v1. The current app uses `public.learner_state`; adding normalized analytics tables can be considered after launch validation.
+1. Run end-to-end tests with two dedicated test accounts to prove cross-account isolation. Do not use real learner accounts for this test.
+2. Verify signup confirmation, sign-in, password reset and sign-out using the production domain.
+3. Verify Supabase Auth Site URL and allowed redirect URLs include the production callback.
+4. Review the Auth security advisor warning for leaked-password protection. It is currently disabled. Supabase documents this feature as a Pro-and-above capability; do not upgrade the project or incur charges without the owner's explicit decision.
+5. Confirm backups and recovery procedures for the learner-state table.
 
-## Manual Supabase Auth setting
+## Application security contract
 
-Enable leaked-password protection in Supabase Auth security settings. This is an Auth configuration setting, not part of SQL migrations.
+- Browser code uses only the Supabase publishable key.
+- Gemini credentials stay in the Cloudflare Worker secret store and are never sent to browsers.
+- Server API routes verify the current user with `auth.getUser()`.
+- Learner state is stored per authenticated user and validated for shape and size before writes.
+- Cross-account local-state import is blocked by the account-aware sync layer.
 
-## Validation after approved migrations
+## Launch decision
 
-- Confirm `public.learner_state` exists and RLS is enabled.
-- Confirm `anon` has no table privileges.
-- Confirm authenticated users can read/write only rows where `user_id = auth.uid()`.
-- Test two accounts against each other and confirm neither can read or mutate the other's state.
-- Verify `/api/learner-state` rejects unauthenticated requests and invalid/oversized payloads.
-- Confirm the Supabase security advisor no longer reports the legacy public function grant.
-- Confirm leaked-password protection is enabled.
+Deployment, build and lint success are not substitutes for browser-level acceptance tests. Keep the replacement isolated from the legacy Base44 app until the two-account RLS test and production auth/AI/pronunciation tests pass. Do not merge the draft release PR or retire the old runtime until the owner explicitly approves cutover.
