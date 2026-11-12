@@ -39,6 +39,32 @@ Then open **Actions → Cloudflare preview deployment → Run workflow** and use
 
 Cloudflare Preview URLs are explicitly enabled in `cloudflare.config.ts` with `previewUrls: true`. After deployment, configure the Preview Base runtime settings in Cloudflare Dashboard → Workers & Pages → the Linguistix Worker → Settings. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` as Preview variables, and add `GEMINI_API_KEY` as a Preview secret. Do not put `GEMINI_API_KEY` in GitHub variables, source control, or any `NEXT_PUBLIC_*` value. Cloudflare documents that Preview settings do not inherit production settings; configure the Preview Base separately. Add the resulting preview URL to Supabase Auth's allowed redirect URLs/site URL as appropriate, then test signup, email confirmation, password reset, learner-state sync and Kalam AI. Do not promote the preview to production until those checks pass.
 
+## Self-hosted deployment (Docker)
+
+The self-hosted option runs the standard Next.js Node server in Docker. It does not require Cloudflare Workers, but it still uses your configured Supabase project and Gemini API for account sync and Kalam AI.
+
+1. Install Docker Engine/Desktop with the Compose plugin.
+2. From this directory, copy `.env.example` to `.env`.
+3. Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the server-only `GEMINI_API_KEY` in `.env`. Keep `.env` private and out of Git.
+4. Build and start the container:
+
+```bash
+docker compose -f compose.yaml up --build -d
+```
+
+5. Open `http://localhost:3000`. For internet access, put the service behind a TLS-terminating reverse proxy (Caddy, Nginx, or Traefik); do not expose the container directly without HTTPS.
+6. Add your public site URL and `https://YOUR_HOST/auth/callback` to Supabase Auth's site URL / allowed redirect URLs. Configure SMTP for reliable confirmation and password-reset emails.
+7. Check health and logs:
+
+```bash
+docker compose -f compose.yaml ps
+docker compose -f compose.yaml logs --tail=100 linguistix
+```
+
+To update, pull the reviewed branch and run `docker compose -f compose.yaml up --build -d` again. To stop, run `docker compose -f compose.yaml down`. Learning data remains in Supabase; the container itself is stateless. Back up Supabase data separately.
+
+**Self-hosting limitations:** this is a Node/Next.js deployment, not a Cloudflare Worker. Cloudflare-only bindings are not included. Kalam AI still calls Google Gemini, so it is not an offline AI deployment. Supabase remains a hosted dependency unless you separately deploy and configure your own Supabase stack. Never put a Supabase service-role key in this app; the application uses the publishable key plus per-user RLS.
+
 ## Current feature set
 
 - Seven language courses: Arabic, German, Japanese, English, Spanish, French and Portuguese.
