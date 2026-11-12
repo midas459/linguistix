@@ -15,6 +15,16 @@ const QUICK_LOOKUPS = [
   { en:"Where is the bathroom?", values:{ar:["أَيْنَ الحَمَّام؟","ayna al-hammām?","Where is the bathroom?"],de:["Wo ist die Toilette?","voh ist dee toy-let-uh?","Where is the bathroom?"],ja:["トイレはどこですか？","toire wa doko desu ka?","Where is the bathroom?"],es:["¿Dónde está el baño?","dohn-deh es-tah el bah-nyoh?","Where is the bathroom?"],fr:["Où sont les toilettes ?","oo sohn lay twah-let?","Where is the bathroom?"],pt:["Onde fica a casa de banho?","ohn-duh fee-kah ah kah-zah duh bah-nyoo?","Where is the bathroom?"]}}
 ];
 
+function parseLookup(input) {
+  let value = input.trim();
+  let detected = "";
+  const languageNames = { arabic: "ar", german: "de", japanese: "ja", english: "en", spanish: "es", french: "fr", portuguese: "pt" };
+  value = value.replace(/^how\\s+do\\s+i\\s+say\\s+/i, "").replace(/^how\\s+to\\s+say\\s+/i, "").replace(/^translate\\s+/i, "");
+  value = value.replace(/\\s+in\\s+(arabic|german|japanese|english|spanish|french|portuguese)\\s*\\??$/i, (_, name) => { detected = languageNames[name.toLowerCase()]; return ""; });
+  value = value.replace(/[?!.]+$/g, "").trim();
+  return { value, detected };
+}
+
 export default function ResearchPanel({ open, onClose }) {
   const { lang } = useLearn();
   const [query, setQuery] = useState("");
@@ -23,6 +33,8 @@ export default function ResearchPanel({ open, onClose }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef(null);
+  const parsedQuery = parseLookup(query);
+  const effectiveScope = scope === "all" && parsedQuery.detected ? parsedQuery.detected : scope;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -33,22 +45,22 @@ export default function ResearchPanel({ open, onClose }) {
   }, [open, onClose]);
 
   const results = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase();
+    const q = parsedQuery.value.toLocaleLowerCase();
     if (!q) return [];
     return LANGUAGES.flatMap((language) => (FLASHCARDS[language.code] || [])
       .filter((card) => [card.front, card.frontSub, card.translit, card.meaning, card.breakdown, card.example, card.exampleMeaning]
         .filter(Boolean).join(" ").toLocaleLowerCase().includes(q))
       .map((card) => ({ card, language })))
-      .filter((result) => scope === "all" || result.language.code === scope)
+      .filter((result) => effectiveScope === "all" || result.language.code === effectiveScope)
       .slice(0, 30);
-  }, [query, scope]);
+  }, [parsedQuery.value, effectiveScope]);
 
   const quickResults = useMemo(() => {
-    const q=query.trim().toLocaleLowerCase();
+    const q=parsedQuery.value.toLocaleLowerCase();
     if(!q) return [];
     return QUICK_LOOKUPS.filter(item=>item.en.toLowerCase().includes(q)||q.includes(item.en.toLowerCase()))
-      .flatMap(item=>Object.entries(item.values).filter(([code])=>scope==="all"||scope===code).map(([code,value])=>({english:item.en,language:LANGUAGES.find(l=>l.code===code),word:value[0],translit:value[1],meaning:value[2]})));
-  },[query,scope]);
+      .flatMap(item=>Object.entries(item.values).filter(([code])=>effectiveScope==="all"||effectiveScope===code).map(([code,value])=>({english:item.en,language:LANGUAGES.find(l=>l.code===code),word:value[0],translit:value[1],meaning:value[2]})));
+  },[parsedQuery.value,effectiveScope]);
 
   async function speak(text, languageCode) {
     try { setError(""); await speakText(text, languageCode); }
@@ -59,7 +71,7 @@ export default function ResearchPanel({ open, onClose }) {
     event?.preventDefault();
     if(!query.trim()||busy) return;
     setBusy(true); setError(""); setLookup(null);
-    const target=scope==="all"?lang:scope;
+    const target=effectiveScope==="all"?lang:effectiveScope;
     try {
       const response=await fetch("/api/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
         language:target,mode:"breakdown",
@@ -77,7 +89,7 @@ export default function ResearchPanel({ open, onClose }) {
     <div className="lf-research-backdrop" role="presentation" onMouseDown={(event)=>{if(event.target===event.currentTarget)onClose();}}>
       <section className="lf-research-dialog" role="dialog" aria-modal="true" aria-labelledby="lf-research-title">
         <header><div><p className="lf-eyebrow">Linguistix reference library</p><h2 id="lf-research-title">Lugha Research</h2><p>Look up how to say something in a language — not just words in your completed lessons.</p></div><button type="button" onClick={onClose} aria-label="Close research">×</button></header>
-        <form className="lf-research-search" onSubmit={search}><input ref={inputRef} value={query} onChange={(event)=>{setQuery(event.target.value);setLookup(null);setError("");}} placeholder="Try “I understand”, hello, or thank you…" aria-label="Search a word or phrase" /><button className="button" type="submit" disabled={!query.trim()||busy}>{busy?"Looking up…":"Look up phrase"}</button></form>
+        <form className="lf-research-search" onSubmit={search}><input ref={inputRef} value={query} onChange={(event)=>{setQuery(event.target.value);setLookup(null);setError("");}} placeholder="Try “I understand in Arabic”, hello, or thank you…" aria-label="Search a word or phrase" /><button className="button" type="submit" disabled={!query.trim()||busy}>{busy?"Looking up…":"Look up phrase"}</button></form>
         <div className="lf-research-filters"><button type="button" aria-pressed={scope==="all"} onClick={()=>setScope("all")}>All languages</button>{LANGUAGES.map((language)=><button type="button" key={language.code} aria-pressed={scope===language.code} onClick={()=>setScope(language.code)}>{language.emblem} {language.short}</button>)}</div>
         <div className="lf-research-results">
           {!query.trim()&&<p className="lf-empty">Type an English word or phrase to find its translation, pronunciation and examples.</p>}
