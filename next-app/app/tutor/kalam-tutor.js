@@ -30,6 +30,7 @@ function KalamTutorSession({ language, lang }) {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState("");
   const [translation, setTranslation] = useState(true);
   const endRef = useRef(null);
 
@@ -45,6 +46,7 @@ function KalamTutorSession({ language, lang }) {
     setInput("");
     setBusy(true);
     setError("");
+    setErrorCode("");
     try {
       const response = await fetch("/api/tutor", {
         method: "POST",
@@ -52,10 +54,11 @@ function KalamTutorSession({ language, lang }) {
         body: JSON.stringify({ language: lang, mode, scenario, message: value, history }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Kalam AI is unavailable.");
+      if (!response.ok) { const failure = new Error(data.error || "Kalam AI is unavailable."); failure.code = data.code || ""; throw failure; }
       setMessages((previous) => [...previous, { role: "assistant", text: data.reply, translation: data.translation, quiz: data.quiz || [] }]);
     } catch (err) {
       setError(err.message || "Kalam AI could not answer just now.");
+      setErrorCode(err.code || "");
     } finally {
       setBusy(false);
     }
@@ -75,7 +78,7 @@ function KalamTutorSession({ language, lang }) {
           {!messages.length && <div className="lf-tutor-intro"><span className="lf-tutor-avatar">K</span><div><strong>Kalam AI · {language.label}</strong><p>{mode==="quiz"?"Tell me what you have been studying and I will build a three-question mini quiz.":mode==="roleplay"?`Let's practise: ${scenario}. Start whenever you're ready.`:"Paste a word, phrase or sentence and I will break it down with you."}</p><button type="button" onClick={()=>send(({ar:"أَنا طالِب",de:"Der Mann ist Lehrer.",ja:"私は学生です。",en:"I am learning a new language.",es:"Estoy aprendiendo español.",fr:"J'apprends une nouvelle langue.",pt:"Estou a aprender uma língua nova."})[lang])}>Try an example</button></div></div>}
           {messages.map((item,index)=><article className={item.role==="user"?"lf-tutor-message user":"lf-tutor-message"} key={index}><p>{item.text}</p>{item.role==="assistant"&&translation&&item.translation&&<small>{item.translation}</small>}{item.quiz?.length>0&&<ol>{item.quiz.map((q,i)=><li key={i}><strong>{q.question}</strong><details><summary>Reveal answer</summary><p>{q.answer}</p></details></li>)}</ol>}</article>)}
           {busy&&<p className="lf-tutor-status">Kalam is thinking…</p>}
-          {error&&<p className="lf-tutor-error" role="alert">{error}</p>}
+          {error&&<p className="lf-tutor-error" role="alert">{error}{errorCode&&<small className="lf-tutor-error-code">Reference: {errorCode}</small>}</p>}
           <div ref={endRef} />
         </div>
         <form className="lf-tutor-form" onSubmit={(event)=>{event.preventDefault();send(input);}}>
