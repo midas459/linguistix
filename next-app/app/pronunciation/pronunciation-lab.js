@@ -82,8 +82,8 @@ export default function PronunciationLab() {
     setMessage("");
   }
 
-  function speak() {
-    const value = phrase.trim();
+  function speak(valueOverride = phrase) {
+    const value = valueOverride.trim();
     if (!value) {
       setMessage("Enter some text before playing audio.");
       return;
@@ -93,7 +93,9 @@ export default function PronunciationLab() {
       return;
     }
 
-    window.speechSynthesis.cancel();
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    synth.resume();
     const utterance = new SpeechSynthesisUtterance(value);
     utterance.lang = language.speech;
     utterance.rate = Number(rate);
@@ -179,14 +181,14 @@ export default function PronunciationLab() {
 
       <section className="pronunciation-examples" aria-labelledby="pronunciation-examples-title">
         <h2 id="pronunciation-examples-title">Try a sample phrase</h2>
-        <p>Choose a phrase to load it into the practice box, then press play.</p>
+        <p>Choose a phrase to hear it immediately, or edit the text above first.</p>
         <div className="pronunciation-example-list">
           {examples.map((example) => (
             <button
               className="pronunciation-example"
               key={example.text}
               type="button"
-              onClick={() => { stopPlayback(); setPhrase(example.text); }}
+              onClick={() => { setPhrase(example.text); speak(example.text); }}
               aria-label={`Practise ${example.text}: ${example.meaning}`}
             >
               <strong lang={language.speech} dir={language.dir}>{example.text}</strong>
