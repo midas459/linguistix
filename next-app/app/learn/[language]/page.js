@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "../../../lib/supabase/server";
 import { getLanguage, MODULES } from "../../../data/curriculum";
+import LearningPath from "./learning-path";
 
 function SnakeUnit({module,index,code,completed}){
  const lessons=module.lessons;
@@ -23,9 +24,5 @@ export default async function LanguagePage({ params }) {
  if(language.code!==code||!MODULES[code]) notFound();
  const supabase=await createClient(); const {data:{user},error}=await supabase.auth.getUser();
  if(error||!user) redirect("/login");
- return <main className="learn-map-page">
-  <header className="learn-map-hero"><div><p className="eyebrow">{language.native} · {language.label} COURSE</p><h1>Your learning path.</h1><p>Follow the path from your first words to confident conversation. Move at your own pace — every lesson is open.</p><div className="learn-map-hero-actions"><Link className="button" href="/alphabet">Open Alphabet Studio</Link><Link className="button secondary" href="/learn">All languages</Link></div></div><div className="learn-map-hero-mark" lang={language.code} dir={language.dir}>{language.native}</div></header>
-  <div className="learn-map-progress"><span>YOUR COURSE MAP</span><strong>{MODULES[code].reduce((total,module)=>total+module.lessons.length,0)} learning steps</strong><small>Complete lessons in sequence or jump to any topic.</small></div>
-  {MODULES[code].map((module,index)=><SnakeUnit key={module.id} module={module} index={index} code={code} completed={[]}/>)}
- </main>;
+ return <LearningPath language={language} modules={MODULES[code]} code={code} />;
 }
