@@ -44,6 +44,7 @@ export async function speakText(text, language) {
   activeAudio.addEventListener("error", cleanup, { once: true });
   try {
     await activeAudio.play();
+    return activeAudio;
   } catch (error) {
     cleanup();
     throw new Error("Your browser blocked audio playback. Click Play again to allow it.");
