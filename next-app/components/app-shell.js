@@ -67,7 +67,7 @@ export default function AppShell({ children }) {
   const navigation = (
     <>
       <Link className="app-brand" href="/learn" onClick={() => setMenuOpen(false)}>
-        <span className="app-brand-mark"><img src="/linguistix-logo.svg" alt="" /></span>
+        <span className="app-brand-mark"><img src="/icon.svg" alt="" /></span>
         <span><strong>Linguistix</strong><small>{language.label}</small></span>
       </Link>
       <nav className="app-nav" aria-label="Main navigation">
