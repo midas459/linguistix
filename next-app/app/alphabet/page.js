@@ -50,7 +50,7 @@ export default function AlphabetPage() {
             <button className="button" type="button" onClick={() => play(active.front)}>▶ Hear character</button>
           </div>
         </section>
-      ) : <section className="module-card"><h2>Character deck being prepared</h2><p>This language's character set is not available yet. The course vocabulary remains accessible in Flashcards.</p></section>}
+      ) : <section className="module-card"><h2>Character deck being prepared</h2><p>This language&apos;s character set is not available yet. The course vocabulary remains accessible in Flashcards.</p></section>}
       <section className="alphabet-grid-section">
         <div className="alphabet-section-heading"><div><p className="eyebrow">COMPLETE REFERENCE</p><h2>All {cards.length} characters</h2></div><p>Tap any character to inspect its pronunciation, forms and examples.</p></div>
         <div className={"alphabet-grid " + (lang === "ar" ? "arabic-grid" : lang === "ja" ? "kana-grid" : "german-grid")}>
