@@ -54,26 +54,46 @@ const JAPANESE_LETTER_CARDS = [
  ...KATAKANA_SOURCE.map((kana,index)=>({id:"ja-kata-"+String(index+1).padStart(2,"0"),category:"letters",front:kana,frontSub:"Katakana",translit:KANA_ROMAJI[index],meaning:"Katakana character pronounced "+KANA_ROMAJI[index]+".",breakdown:"Basic katakana syllabary, commonly used for loanwords and foreign names.",example:kana,exampleTranslit:KANA_ROMAJI[index],exampleMeaning:"Read this kana as "+KANA_ROMAJI[index]+"."}))
 ];
 
+
+const LATIN_LETTER_SETS = {
+ en: ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
+ es: ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
+ fr: ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","À","Â","Æ","Ç","É","È","Ê","Ë","Î","Ï","Ô","Œ","Ù","Û","Ü","Ÿ"],
+ pt: ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","Á","Â","Ã","À","Ç","É","Ê","Í","Ó","Ô","Õ","Ú"]
+};
+const LATIN_LETTER_CARDS = Object.fromEntries(Object.entries(LATIN_LETTER_SETS).map(([language,letters])=>[
+ language,letters.map((letter,index)=>({
+  id:language+"-letter-"+String(index+1).padStart(2,"0"),category:"letters",front:letter,frontSub:"Letter",translit:letter.toLowerCase(),
+  meaning:"The character "+letter+" in the "+({en:"English",es:"Spanish",fr:"French",pt:"Portuguese"}[language])+" writing system.",
+  breakdown:letter==="Ñ"?"Spanish eñe: a distinct letter pronounced like ny.":letter==="Ç"?"C-cedilla: the cedilla gives c an s sound before a, o or u.":/[ÁÀÂÃÄÉÈÊËÍÎÏÓÔÕÖÚÛÜŸÆŒ]/.test(letter)?"A language-specific accented character or ligature.":"A basic Latin letter. Its sound can change with the surrounding letters and word.",
+  example:letter,exampleTranslit:letter.toLowerCase(),exampleMeaning:"Practice recognizing and pronouncing "+letter+"."
+ }))
+]));
+
 export const FLASHCARDS = {
   en: [
+    ...LATIN_LETTER_CARDS.en,
     { id: "en-c1", category: "expressions", front: "Good morning", frontSub: "Greeting", translit: "good MOR-ning", meaning: "A polite greeting used in the morning", breakdown: "Good + morning; commonly used until midday", example: "Good morning, how are you?", exampleTranslit: "", exampleMeaning: "A friendly morning greeting." },
     { id: "en-c2", category: "expressions", front: "Nice to meet you", frontSub: "First meeting", translit: "nice to MEET you", meaning: "A polite phrase when meeting someone for the first time", breakdown: "Often answered with “Nice to meet you too.”", example: "Hello, I'm Sam. Nice to meet you.", exampleTranslit: "", exampleMeaning: "A simple introduction." },
     { id: "en-c3", category: "verbs", front: "to be", frontSub: "am / is / are", translit: "bee", meaning: "Used for identity, states and descriptions", breakdown: "I am; you are; he/she/it is; we/they are", example: "They are students.", exampleTranslit: "", exampleMeaning: "A present-tense sentence with be." },
     { id: "en-c4", category: "sentences", front: "Where are you from?", frontSub: "Asking about origin", translit: "where are you from", meaning: "Asks which place or country someone comes from", breakdown: "Where + are + you + from?", example: "I'm from Nairobi.", exampleTranslit: "", exampleMeaning: "A possible answer." },
   ],
   es: [
+    ...LATIN_LETTER_CARDS.es,
     { id: "es-c1", category: "expressions", front: "Buenos días", frontSub: "Saludo", translit: "BWE-nos DEE-as", meaning: "Good morning", breakdown: "A polite greeting used in the morning", example: "¡Buenos días! ¿Cómo estás?", exampleTranslit: "BWE-nos DEE-as, KO-mo es-TAS", exampleMeaning: "Good morning! How are you?" },
     { id: "es-c2", category: "expressions", front: "Me llamo…", frontSub: "Presentación", translit: "meh YA-mo", meaning: "My name is…", breakdown: "Literally “I call myself…”", example: "Me llamo Ana.", exampleTranslit: "meh YA-mo A-na", exampleMeaning: "My name is Ana." },
     { id: "es-c3", category: "verbs", front: "ser", frontSub: "soy / eres / es", translit: "ser", meaning: "to be (identity and origin)", breakdown: "yo soy; tú eres; él/ella es", example: "Soy de Kenia.", exampleTranslit: "soy de KE-nya", exampleMeaning: "I am from Kenya." },
     { id: "es-c4", category: "sentences", front: "¿Cómo estás?", frontSub: "Question", translit: "KO-mo es-TAS", meaning: "How are you? (informal)", breakdown: "Cómo = how; estás = you are", example: "Estoy bien, gracias.", exampleTranslit: "es-TOY byen, GRA-syas", exampleMeaning: "I am well, thank you." },
   ],
   fr: [
+    ...LATIN_LETTER_CARDS.fr,
     { id: "fr-c1", category: "expressions", front: "Bonjour", frontSub: "Salutation", translit: "bohn-ZHOOR", meaning: "Hello / good day", breakdown: "Polite greeting used through much of the day", example: "Bonjour, comment allez-vous ?", exampleTranslit: "bohn-ZHOOR, koh-mahn tah-lay VOO", exampleMeaning: "Hello, how are you? (formal)" },
     { id: "fr-c2", category: "expressions", front: "Je m'appelle…", frontSub: "Présentation", translit: "zhuh mah-PELL", meaning: "My name is…", breakdown: "Literally “I call myself…”", example: "Je m'appelle Marie.", exampleTranslit: "zhuh mah-PELL mah-REE", exampleMeaning: "My name is Marie." },
     { id: "fr-c3", category: "verbs", front: "être", frontSub: "suis / es / est", translit: "eh-truh", meaning: "to be", breakdown: "je suis; tu es; il/elle est", example: "Je suis étudiant.", exampleTranslit: "zhuh swee ay-too-DYAHN", exampleMeaning: "I am a student." },
     { id: "fr-c4", category: "sentences", front: "Comment ça va ?", frontSub: "Question", translit: "koh-mahn sah VAH", meaning: "How is it going?", breakdown: "A common everyday question", example: "Ça va bien, merci.", exampleTranslit: "sah vah BYEHN, mehr-SEE", exampleMeaning: "It is going well, thanks." },
   ],
   pt: [
+    ...LATIN_LETTER_CARDS.pt,
     { id: "pt-c1", category: "expressions", front: "Bom dia", frontSub: "Saudação", translit: "bohn JEE-ah", meaning: "Good morning", breakdown: "A common morning greeting", example: "Bom dia! Como está?", exampleTranslit: "bohn JEE-ah, KO-mo es-TAH", exampleMeaning: "Good morning! How are you? (formal)" },
     { id: "pt-c2", category: "expressions", front: "Chamo-me…", frontSub: "Apresentação", translit: "SHAH-moo-muh", meaning: "My name is… (European Portuguese)", breakdown: "A common European Portuguese introduction", example: "Chamo-me Ana.", exampleTranslit: "SHAH-moo-muh AH-nah", exampleMeaning: "My name is Ana." },
     { id: "pt-c3", category: "verbs", front: "ser", frontSub: "sou / és / é", translit: "sehr", meaning: "to be (identity and origin)", breakdown: "eu sou; tu és; ele/ela é", example: "Sou do Quénia.", exampleTranslit: "soh doo KAY-nyah", exampleMeaning: "I am from Kenya." },
