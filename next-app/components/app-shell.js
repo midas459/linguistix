@@ -67,7 +67,7 @@ export default function AppShell({ children }) {
   const navigation = (
     <>
       <Link className="app-brand" href="/learn" onClick={() => setMenuOpen(false)}>
-        <span className="app-brand-mark" aria-hidden="true"><svg viewBox="0 0 128 100"><g stroke="currentColor" strokeWidth="1" opacity=".18"><path d="M12 8V84"/><path d="M25 8V84"/><path d="M38 8V84"/><path d="M51 8V84"/><path d="M64 8V84"/><path d="M77 8V84"/><path d="M90 8V84"/><path d="M103 8V84"/><path d="M116 8V84"/><path d="M12 8H116"/><path d="M12 20H116"/><path d="M12 32H116"/><path d="M12 44H116"/><path d="M12 56H116"/><path d="M12 68H116"/><path d="M12 80H116"/></g><g fill="currentColor"><rect x="14" y="37" width="9" height="22" rx="1"/><rect x="27" y="27" width="9" height="42" rx="1"/><rect x="40" y="17" width="9" height="62" rx="1"/><rect x="53" y="9" width="9" height="78" rx="1"/><rect x="66" y="17" width="9" height="62" rx="1"/><rect x="79" y="27" width="9" height="42" rx="1"/><rect x="92" y="37" width="9" height="22" rx="1"/><rect x="105" y="42" width="9" height="12" rx="1"/></g></svg></span>
+        <span className="app-brand-mark"><img src="/linguistix-logo.svg" alt="" /></span>
         <span><strong>Linguistix</strong><small>{language.label}</small></span>
       </Link>
       <nav className="app-nav" aria-label="Main navigation">
