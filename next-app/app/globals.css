@@ -698,3 +698,148 @@ html[data-theme="midnight"] .lf-research-dialog .lf-research-error { color: #ffa
 .lf-quick-links a { justify-content:flex-start; }
 .lf-quick-links a span { margin-left:auto; }
 .app-research-button,.app-install-button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+
+
+/* Mobile-first refinement: compact controls, readable cards and no squeezed desktop columns. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+button, a, input, select, textarea { touch-action: manipulation; }
+button, .button, .choice-button, .exercise-choice, .alphabet-grid button,
+.alphabet-forms button, .learn-snake-node, .pronunciation-example {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible { outline: 3px solid color-mix(in srgb,var(--accent) 65%,white); outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  main { width: calc(100% - 24px); padding: 28px 0 44px; }
+  .panel { border-radius: 18px; padding: 20px 16px; box-shadow: 0 10px 28px rgb(20 43 59 / 5%); }
+  h1 { font-size: clamp(30px, 9vw, 42px); line-height: 1.04; overflow-wrap: anywhere; }
+  h2 { overflow-wrap: anywhere; }
+  p { line-height: 1.65; }
+  .actions { gap: 9px; margin-top: 20px; }
+  .actions > * { min-height: 44px; }
+  .button { min-height: 44px; padding: 11px 14px; font-size: 13px; }
+  input, select, textarea { min-height: 44px; font-size: 16px; }
+  select { max-width: 100%; }
+  .choice-row { gap: 8px; }
+  .choice-button { min-height: 42px; padding: 9px 11px; font-size: 12px; }
+  .course-grid { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  .course-card { grid-template-columns: 42px minmax(0,1fr); align-items: center; column-gap: 12px; padding: 14px; }
+  .course-card small, .course-card > span:not(.course-emblem) { grid-column: 2; }
+  .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+  .stat-card { min-width: 0; padding: 12px; }
+  .stat-card strong { font-size: 22px; overflow-wrap: anywhere; }
+  .flashcard { gap: 14px; margin: 18px 0; padding: 18px 14px; border-radius: 17px; }
+  .flashcard-face { min-height: 145px; }
+  .flashcard-face h2 { overflow-wrap: anywhere; }
+  .exercise-choices { grid-template-columns: minmax(0,1fr); }
+  .pronunciation-controls { grid-template-columns: minmax(0,1fr); gap: 14px; }
+  .pronunciation-example-list { grid-template-columns: minmax(0,1fr); }
+  .pronunciation-example { min-height: 0; }
+  .settings-grid { gap: 20px; }
+  .theme-choice { min-width: 100%; }
+  .alphabet-page, .learn-map-page, .li-page, .lf-dashboard, .lf-tutor-page {
+    width: calc(100% - 24px);
+    padding-top: 22px;
+    padding-bottom: 48px;
+  }
+  .alphabet-hero, .learn-map-hero { gap: 12px; padding: 20px 16px; border-radius: 19px; }
+  .alphabet-hero h1, .learn-map-hero h1 { font-size: clamp(30px, 8vw, 42px); }
+  .alphabet-toolbar, .alphabet-section-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .alphabet-focus { padding: 15px; }
+  .alphabet-focus-main { align-items: stretch; gap: 13px; }
+  .alphabet-selected { width: 100%; min-height: 108px; font-size: 64px; }
+  .alphabet-forms { gap: 7px; }
+  .alphabet-forms button { min-height: 76px; padding: 10px 6px; }
+  .alphabet-grid { gap: 6px; }
+  .alphabet-grid button { min-height: 68px; padding: 7px 3px; border-radius: 11px; }
+  .alphabet-grid button strong, .arabic-grid button strong { font-size: 28px; }
+  .alphabet-grid button small { font-size: 9px; }
+  .learn-map-unit { padding: 14px; }
+  .learn-snake-node { min-height: 112px; padding: 12px; }
+  .lf-welcome { gap: 18px; padding: 20px 16px; border-radius: 19px; }
+  .lf-welcome h1 { font-size: clamp(28px, 8vw, 40px); }
+  .lf-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .lf-stat { min-width: 0; padding: 12px; border-radius: 15px; }
+  .lf-stat strong { font-size: 22px; overflow-wrap: anywhere; }
+  .lf-stat p { font-size: 11px; }
+  .lf-dashboard-grid { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  .lf-card { min-width: 0; padding: 16px; border-radius: 16px; }
+  .lf-card-heading h2, .lf-section-heading h2 { font-size: 20px; }
+  .lf-chart { gap: 5px; height: 132px; }
+  .lf-chart-value, .lf-chart-label { font-size: 9px; }
+  .lf-path { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  .lf-module { min-width: 0; padding: 14px; border-radius: 15px; }
+  .lf-module-top { gap: 9px; }
+  .lf-module h3 { font-size: 15px; }
+  .lf-badges { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .lf-badge { padding: 12px; }
+  .lf-section { margin-top: 28px; }
+  .lf-section-heading { align-items: flex-start; }
+  .lf-quick-links { grid-template-columns: minmax(0,1fr); }
+  .lf-tutor-layout { grid-template-columns: minmax(0,1fr); }
+  .lf-tutor-chat { min-height: min(68vh,620px); }
+  .lf-tutor-messages { min-height: 300px; max-height: 52vh; }
+  .lf-tutor-message { max-width: 94%; overflow-wrap: anywhere; }
+  .lf-tutor-toolbar { gap: 9px; padding: 12px; }
+  .lf-tutor-modes button, .lf-tutor-scenarios button { min-height: 38px; padding: 8px 10px; }
+  .lf-tutor-form { align-items: stretch; }
+  .lf-tutor-form textarea { min-height: 46px; font-size: 16px; }
+  .lf-tutor-form button { min-width: 66px; }
+  .li-hero { border-radius: 19px; }
+  .li-hero-copy { padding: 24px 18px; }
+  .li-hero h1 { font-size: clamp(42px, 12vw, 58px); }
+  .li-hero-art { min-height: 190px; }
+  .li-routines, .li-dialogue-section { margin-top: 32px; }
+  .li-routine-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .li-routine { min-height: 190px; padding: 13px; border-radius: 15px; }
+  .li-routine strong { font-size: 13px; }
+  .li-routine p { font-size: 10px; }
+  .li-dialogue { min-width: 0; padding: 13px; }
+  .li-bubble { max-width: 94%; padding: 11px; }
+  .li-bubble strong { font-size: 16px; overflow-wrap: anywhere; }
+  .app-page-content > main { width: calc(100% - 24px); padding: 22px 0 48px; }
+  .app-page-content > main.panel { padding: 20px 16px; }
+  .lf-research-backdrop { align-items: end; padding: 8px; }
+  .lf-research-dialog { width: 100%; max-height: 88dvh; border-radius: 20px 20px 12px 12px; padding: 15px; }
+  .lf-research-result { gap: 8px; padding: 11px; }
+  .lf-research-result h3 { font-size: 16px; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 560px) {
+  .app-topbar {
+    display: grid;
+    grid-template-columns: 38px minmax(0,1fr) 34px 36px 36px 36px;
+    min-height: 58px;
+    gap: 6px;
+    padding: 8px 10px;
+  }
+  .app-menu-button { grid-column: 1; grid-row: 1; width: 36px; height: 36px; }
+  .app-language-select { grid-column: 2; grid-row: 1; width: 100%; max-width: none; min-width: 0; }
+  .app-language-select select { width: 100%; max-width: none; min-height: 36px; padding: 7px 5px; font-size: 11px; }
+  .app-topbar-spacer { display: none; }
+  .app-stat-pill[title="Current streak"], .app-xp-pill { display: none; }
+  .app-stat-pill[title="Available hearts"] { grid-column: 3; grid-row: 1; justify-content: center; min-height: 34px; padding: 5px; font-size: 10px; }
+  .app-research-button { grid-column: 4; grid-row: 1; width: 36px; height: 36px; min-height: 36px; }
+  .app-install-button { grid-column: 5; grid-row: 1; width: 36px; height: 36px; min-height: 36px; padding: 0; }
+  .app-install-button span { display: none; }
+  .app-theme-button { grid-column: 6; grid-row: 1; width: 36px; height: 36px; }
+  .app-signout-button { display: none; }
+  .app-mobile-drawer { width: min(330px, 88vw); padding: 20px 16px max(20px,env(safe-area-inset-bottom)); overflow-y: auto; }
+  .app-install-help { top: 58px; margin: 8px 10px 0; }
+}
+
+@media (max-width: 380px) {
+  .app-topbar { grid-template-columns: 34px minmax(0,1fr) 32px 34px 34px 34px; gap: 4px; padding-inline: 7px; }
+  .app-menu-button, .app-theme-button, .app-research-button, .app-install-button { width: 32px; height: 32px; min-height: 32px; }
+  .app-language-select select { font-size: 10px; }
+  .app-stat-pill[title="Available hearts"] { min-height: 32px; font-size: 9px; }
+  .li-routine-grid { grid-template-columns: minmax(0,1fr); }
+  .lf-stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .lf-stat strong { font-size: 20px; }
+  .alphabet-grid button strong, .arabic-grid button strong { font-size: 25px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
