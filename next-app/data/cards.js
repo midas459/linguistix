@@ -5,6 +5,55 @@ export const CARD_CATEGORIES = [
   { id: "expressions", label: "Daily Expressions" },
 ];
 
+
+const ARABIC_LETTER_SOURCE = [
+  ["ا","Alif","ā","ا","ا","ـا","ـا",false],["ب","Bāʾ","b","ب","بـ","ـبـ","ـب",true],
+  ["ت","Tāʾ","t","ت","تـ","ـتـ","ـت",true],["ث","Thāʾ","th","ث","ثـ","ـثـ","ـث",true],
+  ["ج","Jīm","j","ج","جـ","ـجـ","ـج",true],["ح","Ḥāʾ","ḥ","ح","حـ","ـحـ","ـح",true],
+  ["خ","Khāʾ","kh","خ","خـ","ـخـ","ـخ",true],["د","Dāl","d","د","د","ـد","ـد",false],
+  ["ذ","Dhāl","dh","ذ","ذ","ـذ","ـذ",false],["ر","Rāʾ","r","ر","ر","ـر","ـر",false],
+  ["ز","Zāy","z","ز","ز","ـز","ـز",false],["س","Sīn","s","س","سـ","ـسـ","ـس",true],
+  ["ش","Shīn","sh","ش","شـ","ـشـ","ـش",true],["ص","Ṣād","ṣ","ص","صـ","ـصـ","ـص",true],
+  ["ض","Ḍād","ḍ","ض","ضـ","ـضـ","ـض",true],["ط","Ṭāʾ","ṭ","ط","طـ","ـطـ","ـط",true],
+  ["ظ","Ẓāʾ","ẓ","ظ","ظـ","ـظـ","ـظ",true],["ع","ʿAyn","ʿ","ع","عـ","ـعـ","ـع",true],
+  ["غ","Ghayn","gh","غ","غـ","ـغـ","ـغ",true],["ف","Fāʾ","f","ف","فـ","ـفـ","ـف",true],
+  ["ق","Qāf","q","ق","قـ","ـقـ","ـق",true],["ك","Kāf","k","ك","كـ","ـكـ","ـك",true],
+  ["ل","Lām","l","ل","لـ","ـلـ","ـل",true],["م","Mīm","m","م","مـ","ـمـ","ـم",true],
+  ["ن","Nūn","n","ن","نـ","ـنـ","ـن",true],["ه","Hāʾ","h","ه","هـ","ـهـ","ـه",true],
+  ["و","Wāw","w","و","و","ـو","ـو",false],["ي","Yāʾ","y","ي","يـ","ـيـ","ـي",true],
+];
+const ARABIC_LETTER_CARDS = ARABIC_LETTER_SOURCE.map(([letter,name,sound,iso,initial,medial,final,joins],index)=>({
+  id:"ar-letter-"+String(index+1).padStart(2,"0"),category:"letters",front:letter,frontSub:name,translit:sound,
+  meaning:name+" — Arabic letter "+(index+1)+" of 28",
+  breakdown:"Isolated "+iso+" · initial "+initial+" · medial "+medial+" · final "+final+(joins?" · joins on both sides":" · does not join to the following letter"),
+  example:letter+"َ",exampleTranslit:sound+"a",exampleMeaning:"The letter with fathah, a short a-vowel."
+}));
+
+const GERMAN_LETTER_SOURCE = [
+ ["A","ah","Apfel","apple"],["B","beh","Buch","book"],["C","tseh","Computer","computer"],["D","deh","Dom","cathedral"],
+ ["E","eh","Elefant","elephant"],["F","eff","Fenster","window"],["G","geh","Garten","garden"],["H","hah","Haus","house"],
+ ["I","ih","Insel","island"],["J","yot","Jahr","year"],["K","kah","Katze","cat"],["L","ell","Lampe","lamp"],
+ ["M","emm","Mutter","mother"],["N","enn","Nacht","night"],["O","oh","Obst","fruit"],["P","peh","Papier","paper"],
+ ["Q","kuh","Quelle","source"],["R","err","Rot","red"],["S","ess","Sonne","sun"],["T","teh","Tisch","table"],
+ ["U","uh","Uhr","clock"],["V","fau","Vater","father"],["W","weh","Wasser","water"],["X","iks","Xylophon","xylophone"],
+ ["Y","üpsilon","Yoga","yoga"],["Z","tsett","Zeit","time"],["Ä","A-Umlaut","Äpfel","apples"],["Ö","O-Umlaut","Öl","oil"],
+ ["Ü","U-Umlaut","Übung","exercise"],["ß","Eszett","Straße","street"]
+];
+const GERMAN_LETTER_CARDS = GERMAN_LETTER_SOURCE.map(([letter,name,example,meaning],index)=>({
+ id:"de-letter-"+String(index+1).padStart(2,"0"),category:"letters",front:letter,frontSub:name,translit:name,
+ meaning:"German character "+letter+"; example: "+example+" ("+meaning+")",
+ breakdown:letter==="V"?"German V is usually pronounced like English f.":letter==="W"?"German W is pronounced like English v.":letter==="J"?"German J is pronounced like English y.":letter==="Z"?"German Z is pronounced ts.":letter==="ß"?"Eszett represents a sharp s after a long vowel or diphthong.":letter==="Ä"||letter==="Ö"||letter==="Ü"?"A German umlaut: change the vowel quality and keep the written dots.":"Learn the letter in a real German word, not only as an isolated symbol.",
+ example,exampleTranslit:name,exampleMeaning:meaning
+}));
+
+const HIRAGANA_SOURCE = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん".split("");
+const KATAKANA_SOURCE = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン".split("");
+const KANA_ROMAJI = ["a","i","u","e","o","ka","ki","ku","ke","ko","sa","shi","su","se","so","ta","chi","tsu","te","to","na","ni","nu","ne","no","ha","hi","fu","he","ho","ma","mi","mu","me","mo","ya","yu","yo","ra","ri","ru","re","ro","wa","wo","n"];
+const JAPANESE_LETTER_CARDS = [
+ ...HIRAGANA_SOURCE.map((kana,index)=>({id:"ja-hira-"+String(index+1).padStart(2,"0"),category:"letters",front:kana,frontSub:"Hiragana",translit:KANA_ROMAJI[index],meaning:"Hiragana character pronounced "+KANA_ROMAJI[index]+".",breakdown:"Basic hiragana syllabary. Pair this sound with its matching katakana form.",example:kana,exampleTranslit:KANA_ROMAJI[index],exampleMeaning:"Read this kana as "+KANA_ROMAJI[index]+"."})),
+ ...KATAKANA_SOURCE.map((kana,index)=>({id:"ja-kata-"+String(index+1).padStart(2,"0"),category:"letters",front:kana,frontSub:"Katakana",translit:KANA_ROMAJI[index],meaning:"Katakana character pronounced "+KANA_ROMAJI[index]+".",breakdown:"Basic katakana syllabary, commonly used for loanwords and foreign names.",example:kana,exampleTranslit:KANA_ROMAJI[index],exampleMeaning:"Read this kana as "+KANA_ROMAJI[index]+"."}))
+];
+
 export const FLASHCARDS = {
   en: [
     { id: "en-c1", category: "expressions", front: "Good morning", frontSub: "Greeting", translit: "good MOR-ning", meaning: "A polite greeting used in the morning", breakdown: "Good + morning; commonly used until midday", example: "Good morning, how are you?", exampleTranslit: "", exampleMeaning: "A friendly morning greeting." },
@@ -31,8 +80,7 @@ export const FLASHCARDS = {
     { id: "pt-c4", category: "sentences", front: "Como estás?", frontSub: "Pergunta", translit: "KO-moo esh-TASH", meaning: "How are you? (informal)", breakdown: "Como = how; estás = you are", example: "Estou bem, obrigado.", exampleTranslit: "esh-TOH baym, oh-bree-GAH-doo", exampleMeaning: "I am well, thank you. (male speaker)" },
   ],
   ar: [
-    { id: "ar-c1", category: "letters", front: "ب", frontSub: "Bāʾ", translit: "b", meaning: "The second letter of the alphabet", breakdown: "Isolated ب · initial بـ · medial ـبـ · final ـب", example: "بَيت", exampleTranslit: "bayt", exampleMeaning: "house" },
-    { id: "ar-c2", category: "letters", front: "ع", frontSub: "ʿAyn", translit: "ʿ", meaning: "A deep throat sound with no English equal", breakdown: "Isolated ع · initial عـ · medial ـعـ · final ـع", example: "عَين", exampleTranslit: "ʿayn", exampleMeaning: "eye" },
+    ...ARABIC_LETTER_CARDS,
     { id: "ar-c3", category: "verbs", front: "كَتَبَ", frontSub: "Root ك-ت-ب", translit: "kataba", meaning: "he wrote", breakdown: "ك-ت-ب (writing): كِتاب book, مَكتَب desk, كاتِب writer", example: "كَتَبَ الوَلَدُ الدَّرسَ.", exampleTranslit: "kataba al-waladu ad-darsa.", exampleMeaning: "The boy wrote the lesson." },
     { id: "ar-c4", category: "verbs", front: "دَرَسَ", frontSub: "Root د-ر-س", translit: "darasa", meaning: "he studied", breakdown: "د-ر-س (study): مَدرَسة school, دَرس lesson, مُدَرِّس teacher", example: "دَرَسَتِ البِنتُ العَرَبِيَّةَ.", exampleTranslit: "darasa-ti al-bintu al-ʿarabiyya.", exampleMeaning: "The girl studied Arabic." },
     { id: "ar-c5", category: "verbs", front: "ذَهَبَ", frontSub: "Root ذ-ه-ب", translit: "dhahaba", meaning: "he went", breakdown: "ذ-ه-ب (going): ذَهاب departure, مَذهَب viewpoint", example: "ذَهَبَ إِلى السّوقِ.", exampleTranslit: "dhahaba ilā as-sūqi.", exampleMeaning: "He went to the market." },
@@ -43,8 +91,7 @@ export const FLASHCARDS = {
     { id: "ar-c10", category: "expressions", front: "كَم السِعرُ؟", frontSub: "At the shop", translit: "kam as-siʿr?", meaning: "How much is it?", breakdown: "كَم asks “how much”; السِعر = the price.", example: "كَم السِعرُ لِهذا الكِتاب؟", exampleTranslit: "kam as-siʿr li-hādhā al-kitāb?", exampleMeaning: "How much is this book?" },
   ],
   de: [
-    { id: "de-c1", category: "letters", front: "V", frontSub: "Letter name: fau", translit: "f", meaning: "German V sounds like English f", breakdown: "Vater, viel, von — all f-sounds", example: "Vater", exampleTranslit: "fah-ter", exampleMeaning: "father" },
-    { id: "de-c2", category: "letters", front: "ß", frontSub: "Eszett", translit: "ss", meaning: "A sharp s after a long vowel", breakdown: "Never starts a word; follows a long vowel or diphthong", example: "Straße", exampleTranslit: "shtrah-se", exampleMeaning: "street" },
+    ...GERMAN_LETTER_CARDS,
     { id: "de-c3", category: "verbs", front: "machen", frontSub: "ich mache, du machst", translit: "MAH-khen", meaning: "to do, to make", breakdown: "Regular verb: stem mach + ending", example: "Ich mache die Hausaufgaben.", exampleTranslit: "ikh MAH-khe dee HOUS-owf-gah-ben", exampleMeaning: "I do the homework." },
     { id: "de-c4", category: "verbs", front: "gehen", frontSub: "ich gehe, er geht", translit: "GAY-en", meaning: "to go", breakdown: "Stem geh + e/st/t/en", example: "Er geht nach Hause.", exampleTranslit: "air gayt nakh HOW-ze", exampleMeaning: "He goes home." },
     { id: "de-c5", category: "verbs", front: "sprechen", frontSub: "du sprichst, er spricht", translit: "SHPREKH-en", meaning: "to speak", breakdown: "Stem change e → i in du / er", example: "Sprechen Sie Deutsch?", exampleTranslit: "SHPREKH-en zee doitch", exampleMeaning: "Do you speak German?" },
@@ -55,8 +102,7 @@ export const FLASHCARDS = {
     { id: "de-c10", category: "expressions", front: "Ich hätte gern einen Kaffee.", frontSub: "Ordering politely", translit: "ikh HET-te gairn EYE-nen KAF-fay", meaning: "I would like a coffee.", breakdown: "hätte = subjunctive of haben, the polite “would like”", example: "Ich hätte gern ein Wasser.", exampleTranslit: "ikh HET-te gairn ike VAS-ser", exampleMeaning: "I would like a water." },
   ],
   ja: [
-    { id: "ja-c1", category: "letters", front: "あ", frontSub: "Hiragana", translit: "a", meaning: "The first sound — a plain open a", breakdown: "Hiragana あ · katakana ア · three strokes", example: "あさ", exampleTranslit: "asa", exampleMeaning: "morning" },
-    { id: "ja-c2", category: "letters", front: "の", frontSub: "Hiragana particle", translit: "no", meaning: "Possession — “of” or “'s”", breakdown: "Hiragana の · katakana ノ · one stroke", example: "私の本", exampleTranslit: "watashi no hon", exampleMeaning: "my book" },
+    ...JAPANESE_LETTER_CARDS,
     { id: "ja-c3", category: "verbs", front: "食べる", frontSub: "Plain form", translit: "taberu", meaning: "to eat", breakdown: "食べ (kanji 食, kun yomi ta) + る = ichidan verb", example: "すしを食べます。", exampleTranslit: "sushi o tabemasu.", exampleMeaning: "I eat sushi." },
     { id: "ja-c4", category: "verbs", front: "行く", frontSub: "Plain form", translit: "iku", meaning: "to go", breakdown: "Godan verb: 行きます is the polite form", example: "学校に行きます。", exampleTranslit: "gakkō ni ikimasu.", exampleMeaning: "I go to school." },
     { id: "ja-c5", category: "verbs", front: "見る", frontSub: "Plain form", translit: "miru", meaning: "to see, to watch", breakdown: "Ichidan verb: 見ます polite, 見て te-form", example: "映画を見ます。", exampleTranslit: "eiga o mimasu.", exampleMeaning: "I watch a film." },
