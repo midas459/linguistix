@@ -8,6 +8,7 @@ RUN npm ci --no-audit --no-fund
 FROM node:22-bookworm-slim AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV SELF_HOSTED_BUILD=1
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 ARG NEXT_PUBLIC_SUPABASE_URL
