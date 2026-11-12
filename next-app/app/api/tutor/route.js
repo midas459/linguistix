@@ -92,11 +92,20 @@ export async function POST(request) {
   if (authError || !user) return jsonError("Sign in to use Kalam AI.", 401, "AUTH_REQUIRED");
 
   const contentLength = Number(request.headers.get("content-length") || 0);
-  if (contentLength > 16000) return jsonError("Request is too large.", 413, "REQUEST_TOO_LARGE");
+  if (Number.isFinite(contentLength) && contentLength > 16000) {
+    return jsonError("Request is too large.", 413, "REQUEST_TOO_LARGE");
+  }
 
   let body;
-  try { body = await request.json(); }
-  catch { return jsonError("Invalid request body.", 400, "INVALID_JSON"); }
+  try {
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).byteLength > 16000) {
+      return jsonError("Request is too large.", 413, "REQUEST_TOO_LARGE");
+    }
+    body = JSON.parse(raw);
+  } catch {
+    return jsonError("Invalid request body.", 400, "INVALID_JSON");
+  }
 
   const { language, mode, message, history = [], scenario = "" } = body || {};
   if (!Object.hasOwn(LANGUAGES, language) || !Object.hasOwn(MODES, mode)) {
