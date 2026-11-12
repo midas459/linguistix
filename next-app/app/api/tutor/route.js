@@ -12,6 +12,7 @@ const LANGUAGES = {
 };
 
 const MODES = {
+  lookup: "Act as a multilingual dictionary. Translate the learner’s exact word or phrase into the requested target language. Put the native writing system first, then a readable transliteration, a concise English meaning, and one natural example sentence with its English translation. If the input is already in the target language, explain it rather than translating it again. This is a fresh dictionary lookup, not a flashcard search. Never say no matching cards were found. Keep the answer concise and factual.",
   breakdown: "Break down the learner's sentence word by word, explain grammar, then provide a corrected natural version. Keep it under 180 words.",
   quiz: "Create exactly three short quiz questions. Put questions and answers in the quiz array. Do not reveal answers in the reply.",
   roleplay: "Stay in the requested scenario. Reply first in the target language in no more than three short sentences, then provide the English meaning in translation. Correct at most one mistake gently.",
