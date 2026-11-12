@@ -73,8 +73,10 @@ async function callGemini({ apiKey, model, system, history, message }) {
     }
   );
   if (!response.ok) {
-    // Keep upstream status and body private; never send provider diagnostics to the browser.
-    throw new Error("Gemini request failed");
+    // Record only the provider HTTP status; never log keys, prompts, or provider response bodies.
+    const error = new Error("Gemini request failed");
+    error.providerStatus = response.status;
+    throw error;
   }
   const payload = await response.json();
   return parseResult(payload?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n"));
@@ -144,7 +146,25 @@ export async function POST(request) {
       return jsonError("Kalam AI could not create a complete quiz. Please try again.", 502, "INCOMPLETE_QUIZ");
     }
     return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
-  } catch {
-    return jsonError("Kalam AI is temporarily unavailable. Please try again shortly.", 502, "AI_PROVIDER_UNAVAILABLE");
+  } catch (error) {
+    const providerStatus = Number.isInteger(error?.providerStatus) ? error.providerStatus : null;
+    const errorName = typeof error?.name === "string" ? error.name.slice(0, 40) : "UnknownError";
+    console.error("[Kalam AI] Provider request failed", {
+      providerStatus,
+      errorName,
+      errorMessage: errorName === "Error" ? "Gemini upstream request failed" : "Gemini fetch or response processing failed",
+    });
+    const code = providerStatus === 401 || providerStatus === 403
+      ? "AI_PROVIDER_AUTH_FAILED"
+      : providerStatus === 404
+        ? "AI_MODEL_NOT_FOUND"
+        : providerStatus === 429
+          ? "AI_RATE_LIMITED"
+          : providerStatus === 400
+            ? "AI_REQUEST_REJECTED"
+            : errorName === "TimeoutError" || errorName === "AbortError"
+              ? "AI_PROVIDER_TIMEOUT"
+              : "AI_PROVIDER_UNAVAILABLE";
+    return jsonError("Kalam AI is temporarily unavailable. Please try again shortly.", 502, code);
   }
 }
