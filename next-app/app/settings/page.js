@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useLearn } from "../../lib/learn-store";
 
 const THEMES = [
-  ["ocean", "Ocean"], ["forest", "Forest"], ["sunset", "Sunset"],
-  ["lavender", "Lavender"], ["midnight", "Midnight"],
+  ["ocean", "Ocean", "Cool teal, glacier blue and deep water"],
+  ["forest", "Forest", "Emerald, moss and warm ivory"],
+  ["sunset", "Sunset", "Coral, amber and peach"],
+  ["lavender", "Lavender", "Violet, lilac and soft plum"],
+  ["midnight", "Midnight", "Ink navy, crimson and electric violet"],
 ];
 const DAYS = [["Mon",1],["Tue",2],["Wed",3],["Thu",4],["Fri",5],["Sat",6],["Sun",0]];
 
