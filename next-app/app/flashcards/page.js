@@ -37,6 +37,7 @@ export default function FlashcardsPage() {
       <section className="panel">
         <div className="eyebrow">{language.label} · Spaced repetition</div>
         <h1>Flashcards</h1>
+        <div className="actions"><Link className="button secondary" href="/alphabet">See the complete alphabet →</Link></div>
         <p>Review vocabulary and phrases. Your ratings update the existing local spaced-repetition schedule.</p>
         <label htmlFor="category">Deck category</label>
         <select id="category" value={category} onChange={event => { setCategory(event.target.value); setFlipped(false); }}>
