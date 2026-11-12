@@ -91,7 +91,7 @@ export default function DashboardExperience() {
 
       <section className="lf-section">
         <div className="lf-section-heading"><div><p className="lf-eyebrow">Milestones</p><h2>Achievements</h2><p>{unlockedBadges.length} of {badges.length} unlocked</p></div></div>
-        <div className="lf-badges">{badges.slice(0,8).map((badge)=><article className={badge.unlocked?"lf-badge unlocked":"lf-badge"} key={badge.id}><span>{badge.unlocked?"✦":"◇"}</span><strong>{badge.name}</strong><small>{badge.unlocked?"Unlocked":badge.progressLabel}</small><div className="lf-track"><span style={{width:`${badge.ratio*100}%`}} /></div></article>)}</div>
+        <div className="lf-badges">{badges.slice(0,8).map((badge)=><article className={badge.unlocked?"lf-badge unlocked":"lf-badge"} key={badge.id}><span>{badge.unlocked?"🏅":"🔒"}</span><strong>{badge.name}</strong><small>{badge.unlocked?"Unlocked":badge.progressLabel}</small><div className="lf-track"><span style={{width:`${badge.ratio*100}%`}} /></div></article>)}</div>
       </section>
 
       <section className="lf-section">
@@ -102,8 +102,9 @@ export default function DashboardExperience() {
       </section>
 
       <section className="lf-quick-links">
-        <Link href="/flashcards">▤ Review flashcards <span>→</span></Link>
-        <Link href="/pronunciation">◉ Practise pronunciation <span>→</span></Link>
+        <Link href="/flashcards">🗂️ Review flashcards <span>→</span></Link>
+        <Link href="/alphabet">🔤 Explore every letter <span>→</span></Link>
+        <Link href="/pronunciation">🔊 Practise pronunciation <span>→</span></Link>
         <Link href="/settings">⚙ Personalise your learning <span>→</span></Link>
       </section>
       <p className="lf-storage-note">Progress is currently saved in this browser. Account-based cloud sync is not enabled yet.</p>
