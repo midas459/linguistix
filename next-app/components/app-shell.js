@@ -19,7 +19,7 @@ const NAV = [
 ];
 
 const PUBLIC_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
-const THEMES = ["ocean", "forest", "sunset", "lavender", "midnight"];
+const THEMES = ["ocean", "forest", "sunset", "lavender", "midnight", "sakura", "royal", "obsidian"];
 
 export default function AppShell({ children }) {
   const pathname = usePathname();
