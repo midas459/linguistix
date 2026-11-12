@@ -37,13 +37,16 @@ export default function AppShell({ children }) {
   const isPublic = PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/auth/");
 
   useEffect(() => {
-    if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) setAppInstalled(true);
+    const installedCheck = window.requestAnimationFrame(() => {
+      if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) setAppInstalled(true);
+    });
     function onBeforeInstallPrompt(event) { event.preventDefault(); setInstallPrompt(event); }
     function onInstalled() { setAppInstalled(true); setInstallPrompt(null); setInstallHelp(false); }
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
     window.addEventListener("appinstalled", onInstalled);
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
     return () => {
+      window.cancelAnimationFrame(installedCheck);
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       window.removeEventListener("appinstalled", onInstalled);
     };
