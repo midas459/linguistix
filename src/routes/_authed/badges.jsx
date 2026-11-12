@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authed/badges")({
   head: () => ({
     meta: [
-      { title: "Badges — Lisan" },
+      { title: "Badges — Linguistix" },
       { name: "description", content: "Every milestone in your language journey and how close you are to each one." },
     ],
   }),

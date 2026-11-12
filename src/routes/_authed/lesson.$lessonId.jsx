@@ -5,7 +5,7 @@ import { useLearn } from "@/lib/learn-store";
 
 export const Route = createFileRoute("/_authed/lesson/$lessonId")({
   head: () => ({
-    meta: [{ title: "Lesson — Lisan" }],
+    meta: [{ title: "Lesson — Linguistix" }],
   }),
   component: LessonRoute,
 });

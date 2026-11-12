@@ -48,9 +48,9 @@ function sampleProgress(lang) {
 function defaultState() {
   return {
     lang: "ar",
-    theme: "light",
-    progress: { ar: sampleProgress("ar"), de: emptyProgress(), ja: emptyProgress() },
-    srs: { ar: {}, de: {}, ja: {} },
+    theme: "ocean",
+    progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, code === "ar" ? sampleProgress("ar") : emptyProgress()])),
+    srs: Object.fromEntries(LANGUAGES.map(({ code }) => [code, {}])),
     reminders: { enabled: false, time: "19:00", days: [1, 2, 3, 4, 5, 6, 0] },
     lastReminderFired: null,
     hearts: MAX_HEARTS,
@@ -68,6 +68,10 @@ function loadState() {
     return {
       ...base,
       ...parsed,
+      // Migrate the former light/dark preference to the new five-preset system.
+      theme: ["ocean", "forest", "sunset", "lavender", "midnight"].includes(parsed.theme)
+        ? parsed.theme
+        : parsed.theme === "dark" ? "midnight" : "ocean",
       progress: { ...base.progress, ...(parsed.progress || {}) },
       srs: { ...base.srs, ...(parsed.srs || {}) },
       reminders: { ...base.reminders, ...(parsed.reminders || {}) },
@@ -93,19 +97,24 @@ export function LearnProvider({ children }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
-    const dark = state.theme === "dark";
+    const dark = state.theme === "midnight";
     root.classList.toggle("dark", dark);
+    root.dataset.theme = state.theme;
     root.dataset.lang = state.lang;
     root.style.colorScheme = dark ? "dark" : "light";
     const lang = getLanguage(state.lang);
     root.style.setProperty("--lang", dark ? lang.accentDark : lang.accent);
   }, [state.theme, state.lang]);
 
-  const setLang = useCallback((lang) => setState((s) => ({ ...s, lang })), []);
-  const toggleTheme = useCallback(
-    () => setState((s) => ({ ...s, theme: s.theme === "dark" ? "light" : "dark" })),
-    [],
-  );
+  const setLang = useCallback((lang) => {
+    if (!LANGUAGES.some((item) => item.code === lang)) return;
+    setState((s) => ({ ...s, lang }));
+  }, []);
+  const setTheme = useCallback((theme) => {
+    if (!["ocean", "forest", "sunset", "lavender", "midnight"].includes(theme)) return;
+    setState((s) => ({ ...s, theme }));
+  }, []);
+  const toggleTheme = useCallback(() => setState((s) => ({ ...s, theme: s.theme === "midnight" ? "ocean" : "midnight" })), []);
   const setReminders = useCallback(
     (patch) => setState((s) => ({ ...s, reminders: { ...s.reminders, ...patch } })),
     [],
@@ -186,8 +195,8 @@ export function LearnProvider({ children }) {
   const resetProgress = useCallback(() => {
     setState((s) => ({
       ...s,
-      progress: { ar: emptyProgress(), de: emptyProgress(), ja: emptyProgress() },
-      srs: { ar: {}, de: {}, ja: {} },
+      progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, emptyProgress()])),
+      srs: Object.fromEntries(LANGUAGES.map(({ code }) => [code, {}])),
     }));
   }, []);
 
@@ -227,6 +236,7 @@ export function LearnProvider({ children }) {
     unlockedBadges: badges.filter((b) => b.unlocked),
     setLang,
     toggleTheme,
+    setTheme,
     setReminders,
     hearts: heartsToday(state),
     maxHearts: MAX_HEARTS,

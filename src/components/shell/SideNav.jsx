@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export const NAV_ITEMS = [
   { to: "/", label: "Learn Map", icon: Map, hint: "Your path" },
-  { to: "/alphabet", label: "Alphabet Lab", icon: Type, hint: "Scripts & sounds" },
+  { to: "/alphabet", label: "Pronunciation Lab", icon: Type, hint: "Scripts & sounds" },
   { to: "/flashcards", label: "Flashcards", icon: Layers, hint: "Spaced repetition" },
   { to: "/tutor", label: "Kalam AI", icon: MessageCircle, hint: "Tutor & roleplay" },
   { to: "/badges", label: "Badges", icon: Award, hint: "Achievements" },
@@ -26,7 +26,7 @@ export default function SideNav({ onNavigate }) {
           {language.emblem}
         </span>
         <span className="min-w-0">
-          <span className="block font-display text-xl leading-none tracking-tight">Lisan</span>
+          <span className="block font-display text-xl leading-none tracking-tight">Linguistix</span>
           <span className="mt-1 block truncate font-mono-label text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             {language.label}
           </span>

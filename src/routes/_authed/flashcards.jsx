@@ -18,7 +18,7 @@ const RATINGS = [
 export const Route = createFileRoute("/_authed/flashcards")({
   head: () => ({
     meta: [
-      { title: "Flashcards — Lisan" },
+      { title: "Flashcards — Linguistix" },
       { name: "description", content: "Spaced repetition decks for letters, verbs, sentences and expressions." },
     ],
   }),
