@@ -52,7 +52,7 @@ export default function FlashcardsPage() {
           <option value="all">All categories</option>
           {CARD_CATEGORIES.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </select>
-        <p>{now === null ? "Loading review schedule…" : mode === "browse" ? `${allCards.length} cards available · card ${cards.length ? index + 1 : 0} of ${cards.length}` : `${due.length} cards due · card ${cards.length ? index + 1 : 0} of ${cards.length}`}</p>
+        <p>{now === null ? "Loading review schedule…" : mode === "browse" ? `${allCards.length} cards available · card ${cards.length ? activeIndex + 1 : 0} of ${cards.length}` : `${due.length} cards due · card ${cards.length ? activeIndex + 1 : 0} of ${cards.length}`}</p>
         {card ? (
           <div className="flashcard">
             <small>{CARD_CATEGORIES.find(item => item.id === card.category)?.label || "Vocabulary"}</small>
