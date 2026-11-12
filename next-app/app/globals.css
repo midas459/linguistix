@@ -398,7 +398,7 @@ html[data-theme="midnight"] .choice-button[aria-pressed="true"]{border-color:#e1
 
 /* Dedicated Language Improvement area — separate from Lugha Research. */
 .li-page{width:min(1180px,calc(100% - 48px));margin:0 auto;padding:42px 0 84px}
-.li-hero{position:relative;display:grid;grid-template-columns:1.15fr .85fr;min-height:360px;overflow:hidden;border:1px solid var(--border);border-radius:26px;background:linear-gradient(125deg,var(--surface),color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.li-hero{position:relative;display:grid;grid-template-columns:1.15fr .85fr;min-height:360px;overflow:hidden;border:1px solid var(--border);border-radius:26px;background:linear-gradient(125deg,var(--surface),color-mix(in srgb,var(--accent) 8%,var(--surface)))}
 .li-hero-copy{position:relative;z-index:1;align-self:center;padding:clamp(25px,5vw,58px)}
 .li-kicker{margin:0;color:var(--accent);font-size:10px;font-weight:800;letter-spacing:.18em}
 .li-hero h1{margin:16px 0;font-size:clamp(46px,6vw,76px);line-height:.92}
