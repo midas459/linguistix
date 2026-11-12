@@ -88,8 +88,12 @@ export async function POST(request) {
     return jsonError("Authentication is not configured yet.", 503, "AUTH_NOT_CONFIGURED");
   }
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) return jsonError("Sign in to use Kalam AI.", 401, "AUTH_REQUIRED");
+  try {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) return jsonError("Sign in to use Kalam AI.", 401, "AUTH_REQUIRED");
+  } catch {
+    return jsonError("Authentication could not be verified. Please try again.", 503, "AUTH_UNAVAILABLE");
+  }
 
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (Number.isFinite(contentLength) && contentLength > 16000) {
