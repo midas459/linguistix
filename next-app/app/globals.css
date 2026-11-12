@@ -551,3 +551,17 @@ html[data-theme="midnight"] .alphabet-hero,html[data-theme="midnight"] .learn-ma
 .flashcard-letter-gallery .alphabet-grid button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 20%,transparent)}
 .flashcard-letter-gallery .alphabet-grid strong{font-size:28px;line-height:1.15}
 .flashcard-letter-gallery .alphabet-grid small{font-size:10px;color:var(--muted);text-align:center}
+
+html[data-theme="sakura"]{--background:#fff1f3;--surface:#fffafb;--foreground:#3d1827;--muted:#946879;--accent:#c51f4b;--border:#f0c7d2;color-scheme:light}
+html[data-theme="sakura"] body{background:radial-gradient(ellipse at 5% 0%,#ffd4df,transparent 40%),radial-gradient(ellipse at 95% 95%,#ffe3c7,transparent 38%),var(--background)}
+html[data-theme="sakura"] .button{background:linear-gradient(110deg,#b91542,#ed6c83)}
+html[data-theme="royal"]{--background:#f5f0e5;--surface:#fffaf0;--foreground:#2d193b;--muted:#75627d;--accent:#8b5c20;--border:#dfd0ac;color-scheme:light}
+html[data-theme="royal"] body{background:radial-gradient(ellipse at 95% 0%,#e9d8ad,transparent 40%),radial-gradient(ellipse at 0% 100%,#e8d7ef,transparent 42%),var(--background)}
+html[data-theme="royal"] .button{background:linear-gradient(110deg,#4b235d,#b18436)}
+html[data-theme="obsidian"]{--background:#11151b;--surface:#1b222c;--foreground:#edf2f6;--muted:#a0afbd;--accent:#35c5df;--border:#354653;color-scheme:dark}
+html[data-theme="obsidian"] body{background:radial-gradient(ellipse at 10% 0%,rgba(39,178,203,.18),transparent 38%),radial-gradient(ellipse at 100% 100%,rgba(111,94,190,.2),transparent 40%),var(--background)}
+html[data-theme="obsidian"] .button{background:linear-gradient(110deg,#087f9b,#5b72d6)}
+html[data-theme="obsidian"] .button.secondary{background:#26313d;color:#edf2f6;border:1px solid #45596b}
+.theme-swatch-sakura{background:linear-gradient(135deg,#c51f4b 0 38%,#ffc2d1 38% 70%,#fff1e8 70%)}
+.theme-swatch-royal{background:linear-gradient(135deg,#3b1e4b 0 42%,#c29a4b 42% 70%,#f5f0e5 70%)}
+.theme-swatch-obsidian{background:linear-gradient(135deg,#11151b 0 45%,#35c5df 45% 70%,#7585a0 70%)}
