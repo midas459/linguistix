@@ -107,7 +107,7 @@ export default function DashboardExperience() {
         <Link href="/pronunciation">🔊 Practise pronunciation <span>→</span></Link>
         <Link href="/settings">⚙ Personalise your learning <span>→</span></Link>
       </section>
-      <p className="lf-storage-note">Progress is currently saved in this browser. Account-based cloud sync is not enabled yet.</p>
+      <p className="lf-storage-note">Your learning progress is saved in this browser and synced securely to your Linguistix account.</p>
     </main>
   );
 }
