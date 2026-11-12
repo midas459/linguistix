@@ -22,10 +22,14 @@ export async function POST(request) {
     const supabase = await createClient();
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) return NextResponse.json({ error: "Sign in to use pronunciation audio." }, { status: 401 });
-  } catch { return NextResponse.json({ error: "Authentication could not be verified." }, { status: 503 }); }
+  } catch {
+    return NextResponse.json({ error: "Authentication could not be verified." }, { status: 503 });
+  }
 
   let body;
-  try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid request." }, { status: 400 }); }
+  try { body = await request.json(); } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
   const { text, language } = body || {};
   if (!Object.hasOwn(LANGUAGES, language) || typeof text !== "string" || !text.trim() || text.length > 500) {
     return NextResponse.json({ error: "Choose a supported language and enter up to 500 characters." }, { status: 400 });
@@ -38,13 +42,28 @@ export async function POST(request) {
       ? [process.env.GEMINI_TTS_MODEL]
       : ["gemini-3.1-flash-tts-preview", "gemini-2.5-flash-preview-tts"];
     const requestBody = JSON.stringify({
-        contents: [{ parts: [{ text: "Read this text exactly as written. Use natural, clear pronunciation in the requested language. Do not translate or add words: " + text.trim() }] }],
-        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { languageCode: LANGUAGES[language], voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } },
-      }), signal: AbortSignal.timeout(30000),
+      contents: [{ parts: [{ text: "Read this text exactly as written. Use natural, clear pronunciation in the requested language. Do not translate or add words: " + text.trim() }] }],
+      generationConfig: {
+        responseModalities: ["AUDIO"],
+        speechConfig: {
+          languageCode: LANGUAGES[language],
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } },
+        },
+      },
     });
-    if (!response.ok) {
-      console.error("[Linguistix speech] Gemini TTS failed", { status: response.status });
-      return NextResponse.json({ error: response.status === 429 ? "Pronunciation is busy. Please try again in a moment." : "The pronunciation service could not generate audio right now." }, { status: 502 });
+    let response;
+    for (const model of models) {
+      response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
+        method: "POST",
+        headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
+        body: requestBody,
+        signal: AbortSignal.timeout(30000),
+      });
+      if (response.ok || (response.status !== 400 && response.status !== 404)) break;
+    }
+    if (!response || !response.ok) {
+      console.error("[Linguistix speech] Gemini TTS failed", { status: response?.status || 0 });
+      return NextResponse.json({ error: response?.status === 429 ? "Pronunciation is busy. Please try again in a moment." : "The pronunciation service could not generate audio right now." }, { status: 502 });
     }
     const payload = await response.json();
     const audio = payload?.candidates?.[0]?.content?.parts?.find((part) => part.inlineData?.data)?.inlineData;
