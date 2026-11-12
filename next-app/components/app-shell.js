@@ -67,7 +67,7 @@ export default function AppShell({ children }) {
   const navigation = (
     <>
       <Link className="app-brand" href="/learn" onClick={() => setMenuOpen(false)}>
-        <span className="app-brand-mark" aria-hidden="true">L</span>
+        <span className="app-brand-mark" aria-hidden="true"><svg viewBox="0 0 128 128" role="img"><circle cx="64" cy="64" r="49" fill="none" stroke="currentColor" strokeWidth="3"/><circle cx="64" cy="64" r="38" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".55"/><path d="M64 10 76 53 118 64 76 75 64 118 52 75 10 64 52 53Z" fill="currentColor"/><path d="m64 20 6 42-6 2-6-2Z M108 64l-42 6-2-6 2-6Z" fill="#a71936"/><circle cx="64" cy="64" r="9" fill="#a71936" stroke="currentColor" strokeWidth="3"/><path d="M94 20c9-8 19-2 17 7 9 2 11 13 3 18-2 10-14 11-19 3-9 1-13-9-7-16-1-5 1-9 6-12Z" fill="#a71936" stroke="currentColor" strokeWidth="2"/></svg></span>
         <span><strong>Linguistix</strong><small>{language.label}</small></span>
       </Link>
       <nav className="app-nav" aria-label="Main navigation">
