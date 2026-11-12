@@ -1,30 +1,67 @@
 "use client";
+
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { FLASHCARDS } from "../../data/cards";
 import { useLearn } from "../../lib/learn-store";
 import { speakText, stopSpeech } from "../../lib/speech-client";
 
-const ARABIC = [
-["ا","alif","ā","ا","ا","ـا","ـا",false],["ب","baa","b","ب","بـ","ـبـ","ـب",true],["ت","taa","t","ت","تـ","ـتـ","ـت",true],["ث","thaa","th","ث","ثـ","ـثـ","ـث",true],["ج","jiim","j","ج","جـ","ـجـ","ـج",true],["ح","haa","ḥ","ح","حـ","ـحـ","ـح",true],["خ","khaa","kh","خ","خـ","ـخـ","ـخ",true],["د","daal","d","د","د","ـد","ـد",false],["ذ","dhaal","dh","ذ","ذ","ـذ","ـذ",false],["ر","raa","r","ر","ر","ـر","ـر",false],["ز","zaay","z","ز","ز","ـز","ـز",false],["س","siin","s","س","سـ","ـسـ","ـس",true],["ش","shiin","sh","ش","شـ","ـشـ","ـش",true],["ص","saad","ṣ","ص","صـ","ـصـ","ـص",true],["ض","daad","ḍ","ض","ضـ","ـضـ","ـض",true],["ط","taa","ṭ","ط","طـ","ـطـ","ـط",true],["ظ","dhaa","ẓ","ظ","ظـ","ـظـ","ـظ",true],["ع","ayn","ʿ","ع","عـ","ـعـ","ـع",true],["غ","ghayn","gh","غ","غـ","ـغـ","ـغ",true],["ف","faa","f","ف","فـ","ـفـ","ـف",true],["ق","qaaf","q","ق","قـ","ـقـ","ـق",true],["ك","kaaf","k","ك","كـ","ـكـ","ـك",true],["ل","laam","l","ل","لـ","ـلـ","ـل",true],["م","miim","m","م","مـ","ـمـ","ـم",true],["ن","nuun","n","ن","نـ","ـنـ","ـن",true],["ه","haa","h","ه","هـ","ـهـ","ـه",true],["و","waaw","w","و","و","ـو","ـو",false],["ي","yaa","y","ي","يـ","ـيـ","ـي",true]
-].map(([letter,name,sound,iso,initial,medial,final,joins])=>({letter,name,sound,iso,initial,medial,final,joins}));
-const GERMAN = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜß".split("").map(letter=>({letter,name:letter==="Ä"?"A umlaut":letter==="Ö"?"O umlaut":letter==="Ü"?"U umlaut":letter==="ß"?"Eszett":letter,sound:letter==="W"?"v":letter==="V"?"f":letter==="J"?"y":letter.toLowerCase()}));
-const HIRAGANA = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん".split("");
-const KATAKANA = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン".split("");
-const ROMAJI = ["a","i","u","e","o","ka","ki","ku","ke","ko","sa","shi","su","se","so","ta","chi","tsu","te","to","na","ni","nu","ne","no","ha","hi","fu","he","ho","ma","mi","mu","me","mo","ya","yu","yo","ra","ri","ru","re","ro","wa","wo","n"];
-const HARAKAT = [{label:"None",mark:""},{label:"Fathah · a",mark:"َ"},{label:"Kasrah · i",mark:"ِ"},{label:"Dammah · u",mark:"ُ"},{label:"Sukun",mark:"ْ"},{label:"Shaddah",mark:"ّ"}];
-export default function AlphabetPage(){
- const {language,lang}=useLearn(); const [selected,setSelected]=useState(0); const [form,setForm]=useState("iso"); const [harakat,setHarakat]=useState(""); const [status,setStatus]=useState("");
- useEffect(()=>()=>stopSpeech(),[]);
- const arabic=lang==="ar", japanese=lang==="ja";
- const letters=useMemo(()=>arabic?ARABIC:japanese?HIRAGANA:GERMAN,[arabic,japanese]);
- const activeIndex=selected%letters.length; const active=arabic?ARABIC[activeIndex]:letters[activeIndex]; const currentText=arabic?(active?.[form]||"")+harakat:japanese?active:active?.letter;
- async function playSpeech(value){try{setStatus("Generating pronunciation…");await speakText(value,lang);setStatus("Audio playing.");}catch(error){setStatus(error.message||"Pronunciation audio is unavailable.");}}
- return <main className="alphabet-page">
- <header className="alphabet-hero"><div><p className="eyebrow">LINGUISTIX · SCRIPT STUDIO</p><h1>See every letter.<br/><span>Learn the whole system.</span></h1><p>Explore the complete writing system at your own pace. Every character stays visible — no daily two-letter lock.</p></div><div className="alphabet-hero-mark" aria-hidden="true">{arabic?"أ":japanese?"あ":"Ä"}</div></header>
- <div className="alphabet-toolbar"><div><strong>{language.label} alphabet</strong><small>{arabic?"28 Arabic letters":japanese?"Hiragana starter grid · 46 kana":"26 Latin letters + 4 German special characters"}</small></div><span className="alphabet-count">{arabic?28:japanese?46:30} characters</span></div>
- {arabic?<section className="alphabet-focus"><div className="alphabet-focus-main"><div className="alphabet-selected" lang="ar" dir="rtl">{active?.[form]}{harakat}</div><div><p className="eyebrow">{active?.name} · {active?.sound}</p><h2>{active?.letter} <span>/{active?.sound}/</span></h2><p>{active?.joins?"Joins on both sides.":"Does not connect to the following letter."}</p></div><button className="button" type="button" onClick={()=>playSpeech(currentText)}>▶ Hear letter</button></div><div className="alphabet-forms">{[["iso","Isolated"],["initial","Initial"],["medial","Medial"],["final","Final"]].map(([id,label])=><button type="button" key={id} aria-pressed={form===id} onClick={()=>setForm(id)}><span lang="ar" dir="rtl">{active?.[id]}{harakat}</span><small>{label}</small></button>)}</div><div className="alphabet-harakat"><strong>Vowel marks</strong>{HARAKAT.map(item=><button type="button" key={item.label} aria-pressed={harakat===item.mark} onClick={()=>setHarakat(item.mark)}>{item.label}</button>)}</div></section>:<section className="alphabet-focus compact"><div><p className="eyebrow">Selected character</p><div className="alphabet-selected">{japanese?active:active?.letter}</div><h2>{japanese?ROMAJI[activeIndex]:active?.name}</h2><p>{japanese?"Hiragana sound · select a character below":"German letter sound: "+active?.sound}</p></div><button className="button" type="button" onClick={()=>playSpeech(currentText)}>▶ Hear character</button></section>}
- <section className="alphabet-grid-section"><div className="alphabet-section-heading"><div><p className="eyebrow">COMPLETE REFERENCE</p><h2>{arabic?"All 28 Arabic letters":japanese?"Hiragana · all basic kana":"German alphabet"}</h2></div><p>Tap any character to inspect and hear it.</p></div><div className={arabic?"alphabet-grid arabic-grid":japanese?"alphabet-grid kana-grid":"alphabet-grid german-grid"}>{letters.map((item,index)=><button type="button" key={arabic?item.letter:japanese?item:index} aria-pressed={selected===index} onClick={()=>{setSelected(index);setForm("iso");setStatus("");}}><strong lang={arabic?"ar":japanese?"ja":"de"} dir={arabic?"rtl":"ltr"}>{arabic?item.letter:japanese?item:item.letter}</strong><small>{arabic?item.sound:japanese?ROMAJI[index]:item.name}</small></button>)}</div></section>
- {japanese&&<section className="alphabet-grid-section"><div className="alphabet-section-heading"><div><p className="eyebrow">SECOND SYLLABARY</p><h2>Katakana · all basic kana</h2></div><p>Used for loanwords, names and emphasis.</p></div><div className="alphabet-grid kana-grid">{KATAKANA.map((item,index)=><button type="button" key={item} onClick={()=>{setSelected(index);setStatus("");}}><strong lang="ja">{item}</strong><small>{ROMAJI[index]}</small></button>)}</div></section>}
- <p className="alphabet-status" role="status">{status||"All characters are available immediately. Pronunciation is generated by Linguistix — no device voice pack is required."}</p><div className="actions"><Link className="button secondary" href="/learn">Back to Learn map</Link><Link className="button" href="/pronunciation">Pronunciation practice</Link></div>
- </main>;
+export default function AlphabetPage() {
+  const { language, lang } = useLearn();
+  const [selectedId, setSelectedId] = useState("");
+  const [status, setStatus] = useState("");
+  const cards = useMemo(() => (FLASHCARDS[lang] || []).filter(card => card.category === "letters"), [lang]);
+  const active = cards.find(card => card.id === selectedId) || cards[0] || null;
+  useEffect(() => { setSelectedId(""); setStatus(""); }, [lang]);
+  useEffect(() => () => stopSpeech(), []);
+
+  async function play(value) {
+    if (!value) return;
+    try {
+      setStatus("Generating pronunciation…");
+      await speakText(value, lang);
+      setStatus("Audio generated. If playback did not start, check your device volume and try again.");
+    } catch (error) {
+      setStatus(error.message || "Pronunciation audio is unavailable.");
+    }
+  }
+
+  const title = lang === "ja" ? "Japanese writing systems" : lang === "ar" ? "Arabic alphabet" : language.label + " character set";
+  const subtitle = lang === "ja"
+    ? "Hiragana and katakana are both included. Study every basic kana in one complete deck."
+    : lang === "ar"
+      ? "All 28 Arabic letters, including isolated, initial, medial and final forms."
+      : "The complete character set is available immediately, including language-specific letters and accents.";
+
+  return (
+    <main className="alphabet-page">
+      <header className="alphabet-hero">
+        <div><p className="eyebrow">LINGUISTIX · SCRIPT STUDIO</p><h1>See every character.<br/><span>Learn the whole system.</span></h1><p>{subtitle}</p></div>
+        <div className="alphabet-hero-mark" aria-hidden="true">{lang === "ar" ? "أ" : lang === "ja" ? "あ" : "Aa"}</div>
+      </header>
+      <div className="alphabet-toolbar">
+        <div><strong>{title}</strong><small>Every card is unlocked for browsing and study.</small></div>
+        <span className="alphabet-count">{cards.length} characters</span>
+      </div>
+      {active ? (
+        <section className="alphabet-focus">
+          <div className="alphabet-focus-main">
+            <div className="alphabet-selected" lang={language.speech} dir={language.dir}>{active.front}</div>
+            <div><p className="eyebrow">{active.frontSub || "Character"} · {active.translit || ""}</p><h2>{active.meaning}</h2><p>{active.breakdown}</p>{active.example && <p><strong>Example:</strong> {active.example} {active.exampleTranslit ? "· " + active.exampleTranslit : ""}{active.exampleMeaning ? " · " + active.exampleMeaning : ""}</p>}</div>
+            <button className="button" type="button" onClick={() => play(active.front)}>▶ Hear character</button>
+          </div>
+        </section>
+      ) : <section className="module-card"><h2>Character deck being prepared</h2><p>This language's character set is not available yet. The course vocabulary remains accessible in Flashcards.</p></section>}
+      <section className="alphabet-grid-section">
+        <div className="alphabet-section-heading"><div><p className="eyebrow">COMPLETE REFERENCE</p><h2>All {cards.length} characters</h2></div><p>Tap any character to inspect its pronunciation, forms and examples.</p></div>
+        <div className={"alphabet-grid " + (lang === "ar" ? "arabic-grid" : lang === "ja" ? "kana-grid" : "german-grid")}>
+          {cards.map(card => <button type="button" key={card.id} aria-pressed={active?.id === card.id} onClick={() => { setSelectedId(card.id); setStatus(""); }}>
+            <strong lang={language.speech} dir={language.dir}>{card.front}</strong><small>{card.translit || card.frontSub || "Character"}</small>
+          </button>)}
+        </div>
+      </section>
+      <p className="alphabet-status" role="status">{status || "All characters are visible now. Nothing is locked behind a daily limit."}</p>
+      <div className="actions"><Link className="button secondary" href="/learn">Back to Learn map</Link><Link className="button" href="/flashcards">Study these as flashcards</Link><Link className="button secondary" href="/pronunciation">Pronunciation practice</Link></div>
+    </main>
+  );
 }
