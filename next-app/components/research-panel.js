@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FLASHCARDS } from "../data/cards";
 import { LANGUAGES } from "../data/curriculum";
 import { useLearn } from "../lib/learn-store";
+import { speakText } from "../lib/speech-client";
 
 const QUICK_LOOKUPS = [
   { en:"I understand", values:{ar:["أَفْهَمُ","afham","I understand"],de:["Ich verstehe","ikh fershtay-uh","I understand"],ja:["わかります","wakarimasu","I understand"],es:["Entiendo","en-tee-en-doh","I understand"],fr:["Je comprends","zhuh kohm-prahn","I understand"],pt:["Compreendo","kom-preh-en-doo","I understand"]}},
@@ -49,13 +50,9 @@ export default function ResearchPanel({ open, onClose }) {
       .flatMap(item=>Object.entries(item.values).filter(([code])=>scope==="all"||scope===code).map(([code,value])=>({english:item.en,language:LANGUAGES.find(l=>l.code===code),word:value[0],translit:value[1],meaning:value[2]})));
   },[query,scope]);
 
-  function speak(text, locale) {
-    if (!("speechSynthesis" in window)) { setError("Speech playback is not supported by this browser."); return; }
-    const synth=window.speechSynthesis; synth.cancel();
-    const utterance=new SpeechSynthesisUtterance(text); utterance.lang=locale; utterance.rate=0.85;
-    const voice=synth.getVoices().find(item=>item.lang.toLowerCase().startsWith(locale.slice(0,2).toLowerCase()));
-    if(voice) utterance.voice=voice;
-    synth.resume(); synth.speak(utterance);
+  async function speak(text, languageCode) {
+    try { setError(""); await speakText(text, languageCode); }
+    catch (err) { setError(err.message || "Pronunciation audio is unavailable."); }
   }
 
   async function search(event) {
@@ -84,8 +81,8 @@ export default function ResearchPanel({ open, onClose }) {
         <div className="lf-research-filters"><button type="button" aria-pressed={scope==="all"} onClick={()=>setScope("all")}>All languages</button>{LANGUAGES.map((language)=><button type="button" key={language.code} aria-pressed={scope===language.code} onClick={()=>setScope(language.code)}>{language.emblem} {language.short}</button>)}</div>
         <div className="lf-research-results">
           {!query.trim()&&<p className="lf-empty">Type an English word or phrase to find its translation, pronunciation and examples.</p>}
-          {quickResults.map((item,index)=><article className="lf-research-result lf-lookup-result" key={item.language.code+item.english+index}><div><span className="lf-research-language">{item.language.emblem} {item.language.label} · Quick reference</span><h3 lang={item.language.speech} dir={item.language.dir}>{item.word}</h3><small>{item.translit}</small><p><strong>{item.meaning}</strong></p></div><button type="button" onClick={()=>speak(item.word,item.language.speech)} aria-label={"Play pronunciation of "+item.word}>▶</button></article>)}
-          {results.map(({card,language})=><article className="lf-research-result" key={language.code+"-"+card.id}><div><span className="lf-research-language">{language.emblem} {language.label} · Course example</span><h3 lang={language.speech} dir={language.dir}>{card.front}</h3>{card.translit&&<small>{card.translit}</small>}<p><strong>{card.meaning}</strong></p><p>{card.breakdown}</p>{card.example&&<p className="lf-research-example">{card.example} — {card.exampleMeaning}</p>}</div><button type="button" onClick={()=>speak(card.front,language.speech)} aria-label={"Play pronunciation for "+card.front}>▶</button></article>)}
+          {quickResults.map((item,index)=><article className="lf-research-result lf-lookup-result" key={item.language.code+item.english+index}><div><span className="lf-research-language">{item.language.emblem} {item.language.label} · Quick reference</span><h3 lang={item.language.speech} dir={item.language.dir}>{item.word}</h3><small>{item.translit}</small><p><strong>{item.meaning}</strong></p></div><button type="button" onClick={()=>speak(item.word,item.language.code)} aria-label={"Play pronunciation of "+item.word}>▶</button></article>)}
+          {results.map(({card,language})=><article className="lf-research-result" key={language.code+"-"+card.id}><div><span className="lf-research-language">{language.emblem} {language.label} · Course example</span><h3 lang={language.speech} dir={language.dir}>{card.front}</h3>{card.translit&&<small>{card.translit}</small>}<p><strong>{card.meaning}</strong></p><p>{card.breakdown}</p>{card.example&&<p className="lf-research-example">{card.example} — {card.exampleMeaning}</p>}</div><button type="button" onClick={()=>speak(card.front,language.code)} aria-label={"Play pronunciation for "+card.front}>▶</button></article>)}
           {lookup&&<article className="lf-research-result lf-live-lookup"><div><span className="lf-research-language">{lookup.language?.emblem} {lookup.language?.label} · Live lookup</span><h3>{lookup.reply}</h3>{lookup.translation&&<p>{lookup.translation}</p>}</div></article>}
           {error&&<p className="lf-research-error" role="alert">{error}</p>}
           {query.trim()&&!quickResults.length&&!results.length&&!lookup&&!busy&&!error&&<p className="lf-empty">No saved example matched. Press “Look up phrase” for a fresh translation from Kalam AI.</p>}
