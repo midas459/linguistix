@@ -1,42 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500" role="img" aria-labelledby="title desc">
-<title id="title">Linguistix Imperial Cameo</title><desc id="desc">A classical emperor profile with sound waves, set inside a burgundy and antique-gold wax seal, above the Linguistix wordmark.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
+<title id="title">Linguistix — Imperial voice emblem</title>
+<desc id="desc">A refined gold-line classical emperor profile inside a burgundy medallion, paired with the Linguistix wordmark.</desc>
 <defs>
- <linearGradient id="wax" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7f202c"/><stop offset=".48" stop-color="#3c101b"/><stop offset="1" stop-color="#8e2935"/></linearGradient>
- <linearGradient id="gold" x1="0" y1="0" x2="0.9" y2="1"><stop stop-color="#fff0b0"/><stop offset=".35" stop-color="#c99c4c"/><stop offset=".68" stop-color="#7d5426"/><stop offset="1" stop-color="#f1d58b"/></linearGradient>
- <radialGradient id="face" cx=".35" cy=".25" r=".8"><stop stop-color="#f8e7bc"/><stop offset=".65" stop-color="#c99b61"/><stop offset="1" stop-color="#80522f"/></radialGradient>
- <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9"/></filter>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bd"/><stop offset=".48" stop-color="#d7ad62"/><stop offset="1" stop-color="#98703a"/></linearGradient>
+<linearGradient id="wine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#742333"/><stop offset="1" stop-color="#280d17"/></linearGradient>
+<linearGradient id="type" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff0c8"/><stop offset="1" stop-color="#c69b57"/></linearGradient>
 </defs>
-<ellipse cx="360" cy="230" rx="178" ry="185" fill="#1c0a10" opacity=".22" filter="url(#shadow)"/>
-<path d="M360 32 C410 14 440 39 472 52 C520 57 535 89 552 121 C580 157 567 195 590 230 C580 267 578 303 548 330 C533 373 496 389 461 406 C426 440 391 425 360 445 C326 427 291 440 259 410 C218 400 195 372 174 337 C143 306 154 267 132 230 C149 193 139 157 168 127 C182 83 215 67 251 52 C285 20 326 45 360 32Z" fill="url(#wax)" stroke="#4c1720" stroke-width="9"/>
-<path d="M360 48 C406 31 435 57 464 68 C503 73 522 101 535 131 C559 161 550 195 570 230 C555 265 563 295 531 322 C516 358 484 372 451 389 C420 416 389 405 360 426 C330 407 298 418 269 391 C232 382 210 354 190 325 C163 296 174 264 150 230 C169 197 160 164 185 137 C198 101 228 86 260 68 C292 40 330 62 360 48Z" fill="none" stroke="url(#gold)" stroke-width="5"/>
-<circle cx="360" cy="230" r="151" fill="#2c1018" stroke="url(#gold)" stroke-width="8"/>
-<circle cx="360" cy="230" r="139" fill="none" stroke="#e6c77e" stroke-width="1.8" stroke-dasharray="2 7"/>
-<circle cx="360" cy="230" r="128" fill="none" stroke="#9e713b" stroke-width="2"/>
-<!-- laurel and classical cameo -->
-<g fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round">
- <path d="M238 292 Q202 230 247 160 M482 292 Q518 230 473 160"/>
- <path d="M229 264 Q204 250 203 228 M232 237 Q210 218 218 195 M239 207 Q225 183 239 166 M491 264 Q516 250 517 228 M488 237 Q510 218 502 195 M481 207 Q495 183 481 166"/>
+<g transform="translate(18 10)">
+<circle cx="120" cy="120" r="112" fill="#160c12" stroke="url(#gold)" stroke-width="3"/>
+<circle cx="120" cy="120" r="101" fill="url(#wine)" stroke="#8f6939" stroke-width="1.5"/>
+<circle cx="120" cy="120" r="91" fill="none" stroke="#d5ad68" stroke-opacity=".45" stroke-width="1" stroke-dasharray="1 7"/>
+<g fill="none" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round"><path d="M52 169 Q25 111 63 59 M188 169 Q215 111 177 59"/><path d="M47 145 Q31 139 30 122 M48 123 Q34 111 39 94 M56 99 Q46 82 57 69 M193 145 Q209 139 210 122 M192 123 Q206 111 201 94 M184 99 Q194 82 183 69"/></g>
+<path d="M91 57 Q103 39 132 42 Q160 44 170 67 L165 82 Q179 91 173 102 L163 111 Q169 122 158 131 L150 139 Q150 158 136 168 L137 181 L164 194 Q177 201 181 215 L73 215 Q77 198 94 190 L112 180 L109 159 Q91 146 88 126 Q74 117 80 102 Q72 88 86 78Z" fill="#e7c88c" stroke="#7d562e" stroke-width="2.5"/>
+<path d="M82 88 Q76 63 97 49 Q119 32 146 47 Q165 55 173 78 L160 84 Q146 63 124 64 Q105 64 94 91Z" fill="#27151c" stroke="url(#gold)" stroke-width="3"/>
+<path d="M93 53 Q119 34 147 51" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+<g fill="#e4c17d" stroke="#8b6535" stroke-width="1.2"><ellipse cx="103" cy="46" rx="10" ry="5" transform="rotate(-25 103 46)"/><ellipse cx="120" cy="41" rx="10" ry="5" transform="rotate(-7 120 41)"/><ellipse cx="138" cy="45" rx="10" ry="5" transform="rotate(17 138 45)"/><ellipse cx="153" cy="55" rx="9" ry="4.5" transform="rotate(32 153 55)"/></g>
+<path d="M145 99 Q155 94 164 101 M151 121 Q161 125 169 119 M148 143 Q139 149 128 145" fill="none" stroke="#805633" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="150" cy="102" r="2.7" fill="#2b1b1b"/>
+<path d="M114 163 Q131 174 149 163 M111 181 Q127 190 145 180" fill="none" stroke="#a8794a" stroke-width="2"/>
+<g fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"><path d="M181 91 Q197 119 181 147"/><path d="M192 80 Q215 119 192 158"/></g>
 </g>
-<g fill="url(#gold)" stroke="#6e4728" stroke-width="2">
- <path d="M251 158 Q224 143 224 121 Q251 124 262 148Z"/><path d="M246 190 Q215 183 207 160 Q236 155 253 180Z"/><path d="M245 224 Q215 224 201 203 Q230 191 250 214Z"/>
- <path d="M469 158 Q496 143 496 121 Q469 124 458 148Z"/><path d="M474 190 Q505 183 513 160 Q484 155 467 180Z"/><path d="M475 224 Q505 224 519 203 Q490 191 470 214Z"/>
+<g transform="translate(280 0)">
+<text x="0" y="139" fill="url(#type)" font-family="Georgia, 'Times New Roman', serif" font-size="82" letter-spacing="1.5">Linguistix</text>
+<path d="M4 164 H515" stroke="url(#gold)" stroke-width="2"/>
+<text x="5" y="202" fill="#d8bd91" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="6">LANGUAGE  •  VOICE  •  CULTURE</text>
 </g>
-<!-- profile facing right -->
-<path d="M321 137 Q338 105 381 110 Q418 114 431 148 L424 171 Q443 180 438 195 L425 207 Q432 219 421 230 L410 239 Q409 262 391 273 L389 298 L424 315 Q441 325 444 347 L283 347 Q286 321 311 310 L340 296 L337 269 Q314 251 309 225 Q293 211 301 191 Q293 175 309 165Z" fill="url(#face)" stroke="#59351f" stroke-width="4"/>
-<!-- hair, laurel crown and neck detail -->
-<path d="M305 173 Q289 148 309 125 Q334 93 382 104 Q424 111 438 145 L421 153 Q405 133 381 133 Q354 133 338 151 L327 177Z" fill="#38212a" stroke="url(#gold)" stroke-width="4"/>
-<path d="M315 132 Q337 105 375 110 Q402 111 420 132" fill="none" stroke="url(#gold)" stroke-width="7"/>
-<g fill="#d8b66f" stroke="#704829" stroke-width="1.5"><ellipse cx="331" cy="123" rx="13" ry="7" transform="rotate(-28 331 123)"/><ellipse cx="352" cy="113" rx="13" ry="7" transform="rotate(-8 352 113)"/><ellipse cx="374" cy="112" rx="13" ry="7" transform="rotate(8 374 112)"/><ellipse cx="395" cy="119" rx="13" ry="7" transform="rotate(25 395 119)"/></g>
-<path d="M405 183 Q416 177 424 184 M412 211 Q422 215 429 209 M407 236 Q398 243 389 241" fill="none" stroke="#67432d" stroke-width="3" stroke-linecap="round"/>
-<circle cx="408" cy="186" r="3.5" fill="#3a2020"/>
-<path d="M340 271 Q363 283 391 272" fill="none" stroke="#8e5b39" stroke-width="3"/>
-<path d="M338 294 Q356 310 389 299" fill="none" stroke="#f1d39a" stroke-width="3"/>
-<!-- sound waves -->
-<g fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round">
- <path d="M453 178 Q477 208 453 238"/><path d="M470 163 Q506 207 470 253"/><path d="M489 147 Q531 207 489 269"/>
-</g>
-<text x="360" y="373" fill="#f0d79a" text-anchor="middle" font-family="Georgia,serif" font-size="21" letter-spacing="5">LINGUISTIX</text>
-<path d="M275 387 H445" stroke="url(#gold)" stroke-width="2"/>
-<text x="360" y="462" text-anchor="middle" fill="#38131c" font-family="Georgia,serif" font-size="67" font-weight="bold" letter-spacing="1">linguistix</text>
-<text x="360" y="490" text-anchor="middle" fill="#87623c" font-family="Georgia,serif" font-size="13" letter-spacing="6">LANGUAGE • VOICE • CULTURE</text>
 </svg>
