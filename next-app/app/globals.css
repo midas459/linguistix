@@ -541,3 +541,13 @@ html[data-theme="midnight"] .alphabet-hero,html[data-theme="midnight"] .learn-ma
 .alphabet-harakat{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.alphabet-harakat strong{margin-right:5px;font-size:12px}
 .alphabet-harakat button{border:1px solid var(--border);border-radius:99px;padding:7px 11px;background:var(--background);color:var(--foreground);font:inherit;font-size:10px;cursor:pointer}
 .alphabet-harakat button[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface));color:var(--accent);font-weight:800}
+
+.app-brand-mark svg{display:block;width:100%;height:100%;overflow:visible}
+.flashcard-letter-gallery{margin-top:28px;padding-top:24px;border-top:1px solid var(--border)}
+.flashcard-letter-gallery h2{margin-bottom:6px}
+.flashcard-letter-gallery>p{color:var(--muted);font-size:13px;margin-bottom:16px}
+.flashcard-letter-gallery .alphabet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:9px}
+.flashcard-letter-gallery .alphabet-grid button{min-height:82px;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:var(--foreground);display:grid;place-content:center;gap:4px;cursor:pointer}
+.flashcard-letter-gallery .alphabet-grid button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 20%,transparent)}
+.flashcard-letter-gallery .alphabet-grid strong{font-size:28px;line-height:1.15}
+.flashcard-letter-gallery .alphabet-grid small{font-size:10px;color:var(--muted);text-align:center}
