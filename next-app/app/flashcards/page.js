@@ -9,7 +9,7 @@ const RATINGS = [["again", "Again"], ["hard", "Hard"], ["good", "Good"], ["easy"
 
 export default function FlashcardsPage() {
   const { language, lang, srs, rateCard } = useLearn();
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState("letters");
   const [flipped, setFlipped] = useState(false);
   const [mode, setMode] = useState("browse");
   const [index, setIndex] = useState(0);
