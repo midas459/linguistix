@@ -9,6 +9,9 @@ const THEMES = [
   ["sunset", "Sunset", "Coral, amber and peach"],
   ["lavender", "Lavender", "Violet, lilac and soft plum"],
   ["midnight", "Midnight", "Ink navy, crimson and electric violet"],
+  ["sakura", "Sakura", "Porcelain, cherry blossom pink and vermilion"],
+  ["royal", "Imperial", "Deep plum, antique gold and parchment"],
+  ["obsidian", "Obsidian", "Graphite, silver and vivid cyan"],
 ];
 const DAYS = [["Mon",1],["Tue",2],["Wed",3],["Thu",4],["Fri",5],["Sat",6],["Sun",0]];
 
