@@ -54,33 +54,38 @@ function parseResult(raw) {
 }
 
 async function callGemini({ apiKey, model, system, history, message }) {
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-    {
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  const body = JSON.stringify({
+    systemInstruction: { parts: [{ text: system }] },
+    contents: [
+      ...history.map(({ role, content }) => ({
+        role: role === "assistant" ? "model" : "user",
+        parts: [{ text: content }],
+      })),
+      { role: "user", parts: [{ text: message }] },
+    ],
+    generationConfig: { responseMimeType: "application/json" },
+  });
+
+  // Gemini can return transient 429/5xx responses under load. Retry twice,
+  // but never retry authentication, validation, or model-not-found errors.
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents: [
-          ...history.map(({ role, content }) => ({
-            role: role === "assistant" ? "model" : "user",
-            parts: [{ text: content }],
-          })),
-          { role: "user", parts: [{ text: message }] },
-        ],
-        generationConfig: { responseMimeType: "application/json" },
-      }),
-      signal: AbortSignal.timeout(20000),
+      body,
+      signal: AbortSignal.timeout(15000),
+    });
+    if (response.ok) {
+      const payload = await response.json();
+      return parseResult(payload?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n"));
     }
-  );
-  if (!response.ok) {
-    // Record only the provider HTTP status; never log keys, prompts, or provider response bodies.
     const error = new Error("Gemini request failed");
     error.providerStatus = response.status;
-    throw error;
+    if (![429, 500, 502, 503, 504].includes(response.status) || attempt === 2) throw error;
+    await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
   }
-  const payload = await response.json();
-  return parseResult(payload?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n"));
+  return null;
 }
 
 export async function POST(request) {
