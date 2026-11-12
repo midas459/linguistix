@@ -11,6 +11,8 @@ export default function FlashcardsPage() {
   const { language, lang, srs, rateCard } = useLearn();
   const [category, setCategory] = useState("all");
   const [flipped, setFlipped] = useState(false);
+  const [mode, setMode] = useState("browse");
+  const [index, setIndex] = useState(0);
   const [now, setNow] = useState(null);
 
   useEffect(() => {
@@ -19,12 +21,15 @@ export default function FlashcardsPage() {
   }, [lang, srs]);
 
   const deck = FLASHCARDS[lang] || [];
-  const due = deck.filter(card => {
+  const allCards = deck.filter(card => category === "all" || card.category === category);
+  const due = allCards.filter(card => {
     const review = srs[card.id];
-    return (!review || (now !== null && new Date(review.due).getTime() <= now))
-      && (category === "all" || card.category === category);
+    return !review || (now !== null && new Date(review.due).getTime() <= now);
   });
-  const card = due[0];
+  const cards = mode === "browse" ? allCards : due;
+  const card = cards[index] || null;
+
+  useEffect(() => { setIndex(0); setFlipped(false); }, [lang, category, mode]);
 
   function rate(rating) {
     if (!card) return;
@@ -38,13 +43,17 @@ export default function FlashcardsPage() {
         <div className="eyebrow">{language.label} · Spaced repetition</div>
         <h1>Flashcards</h1>
         <div className="actions"><Link className="button secondary" href="/alphabet">See the complete alphabet →</Link></div>
-        <p>Review vocabulary and phrases. Your ratings update the existing local spaced-repetition schedule.</p>
+        <p>Browse every card in the deck whenever you want, or switch to due reviews for spaced repetition. Your ratings update the local review schedule.</p>
+        <div className="choice-row" role="group" aria-label="Flashcard mode">
+          <button className="choice-button" type="button" aria-pressed={mode === "browse"} onClick={() => setMode("browse")}>Browse all cards ({allCards.length})</button>
+          <button className="choice-button" type="button" aria-pressed={mode === "review"} onClick={() => setMode("review")}>Due reviews ({due.length})</button>
+        </div>
         <label htmlFor="category">Deck category</label>
         <select id="category" value={category} onChange={event => { setCategory(event.target.value); setFlipped(false); }}>
           <option value="all">All categories</option>
           {CARD_CATEGORIES.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </select>
-        <p>{now === null ? "Loading review schedule…" : `${due.length} cards due in this category`}</p>
+        <p>{now === null ? "Loading review schedule…" : mode === "browse" ? `${allCards.length} cards available · card ${cards.length ? index + 1 : 0} of ${cards.length}` : `${due.length} cards due · card ${cards.length ? index + 1 : 0} of ${cards.length}`}</p>
         {card ? (
           <div className="flashcard">
             <small>{CARD_CATEGORIES.find(item => item.id === card.category)?.label || "Vocabulary"}</small>
@@ -60,7 +69,7 @@ export default function FlashcardsPage() {
             <button className="button secondary" type="button" onClick={() => setFlipped(value => !value)}>
               {flipped ? "Show prompt" : "Reveal answer"}
             </button>
-            {flipped && <div className="choice-row">
+            {flipped && mode === "review" && <div className="choice-row">
               {RATINGS.map(([value, label]) => (
                 <button className="choice-button" key={value} type="button" onClick={() => rate(value)}>{label}</button>
               ))}
