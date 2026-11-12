@@ -5,7 +5,9 @@ import { useLearn } from "../../../lib/learn-store";
 export default function LearningPath({language,modules,code}){
  const {progress}=useLearn();
  const completed=progress.lessons||[];
- const allLessons=modules.flatMap((module,moduleIndex)=>module.lessons.map((lesson,lessonIndex)=>({...lesson,moduleTitle:module.title,moduleIndex,lessonIndex})));\n const rowCount=Math.ceil(allLessons.length/3);\n const trackPath=Array.from({length:rowCount},(_,row)=>{const y=75+row*142;const end=row%2===0?750:150;return row===0?`M 150 ${y} H ${end}`:`C ${end+(end===750?90:-90)} ${y-114}, ${end+(end===750?90:-90)} ${y-28}, ${end} ${y} H ${end===750?150:750}`;}).join(" ");
+ const allLessons=modules.flatMap((module,moduleIndex)=>module.lessons.map((lesson,lessonIndex)=>({...lesson,moduleTitle:module.title,moduleIndex,lessonIndex})));
+ const rowCount=Math.ceil(allLessons.length/3);
+ const trackPath=Array.from({length:rowCount},(_,row)=>{const y=75+row*142;const end=row%2===0?750:150;return row===0?`M 150 ${y} H ${end}`:`C ${end+(end===750?90:-90)} ${y-114}, ${end+(end===750?90:-90)} ${y-28}, ${end} ${y} H ${end===750?150:750}`;}).join(" ");
  return <main className="learn-map-page">
   <header className="learn-map-hero"><div><p className="eyebrow">{language.native} · {language.label} COURSE</p><h1>Your learning path.</h1><p>Follow the winding route from first words to confident conversation. Every lesson is open — learn at your own pace.</p><div className="learn-map-hero-actions"><Link className="button" href="/alphabet">Open Alphabet Studio</Link><Link className="button secondary" href="/learn">Browse courses</Link></div></div><div className="learn-map-hero-mark" lang={language.code} dir={language.dir}>{language.native}</div></header>
   <div className="learn-map-progress"><span>YOUR COURSE MAP</span><strong>{completed.filter(id=>allLessons.some(lesson=>lesson.id===id)).length} / {allLessons.length} steps completed</strong><small>Start at the beginning or jump to any lesson. The route winds through every unit.</small></div>
