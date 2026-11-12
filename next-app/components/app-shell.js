@@ -8,13 +8,14 @@ import ResearchPanel from "./research-panel";
 import { createClient as createSupabaseClient } from "../lib/supabase/client";
 
 const NAV = [
-  { href: "/learn", label: "Learn map", icon: "⌂" },
-  { href: "/tutor", label: "Kalam AI tutor", icon: "✦" },
-  { href: "/pronunciation", label: "Pronunciation lab", icon: "◉" },
-  { href: "/improve", label: "Language improvement", icon: "✧" },
-  { href: "/flashcards", label: "Flashcards", icon: "▤" },
-  { href: "/dashboard", label: "Dashboard", icon: "▦" },
-  { href: "/settings", label: "Settings", icon: "⚙" },
+  { href: "/learn", label: "Learn map", icon: "🧭" },
+  { href: "/tutor", label: "Kalam AI tutor", icon: "💬" },
+  { href: "/pronunciation", label: "Pronunciation lab", icon: "🔊" },
+  { href: "/alphabet", label: "Alphabet studio", icon: "🔤" },
+  { href: "/improve", label: "Language improvement", icon: "✍️" },
+  { href: "/flashcards", label: "Flashcards", icon: "🗂️" },
+  { href: "/dashboard", label: "Dashboard", icon: "📊" },
+  { href: "/settings", label: "Settings", icon: "⚙️" },
 ];
 
 const PUBLIC_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
@@ -66,7 +67,7 @@ export default function AppShell({ children }) {
   const navigation = (
     <>
       <Link className="app-brand" href="/learn" onClick={() => setMenuOpen(false)}>
-        <span className="app-brand-mark">{language.emblem}</span>
+        <span className="app-brand-mark" aria-hidden="true">L</span>
         <span><strong>Linguistix</strong><small>{language.label}</small></span>
       </Link>
       <nav className="app-nav" aria-label="Main navigation">
