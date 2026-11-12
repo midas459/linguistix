@@ -4,7 +4,7 @@ import { createClient } from "../../../lib/supabase/server";
 export const dynamic = "force-dynamic";
 
 const LANGUAGES = new Set(["ar", "de", "ja", "en", "es", "fr", "pt"]);
-const THEMES = new Set(["ocean", "forest", "sunset", "lavender", "midnight"]);
+const THEMES = new Set(["ocean", "forest", "sunset", "lavender", "midnight", "sakura", "royal", "obsidian"]);
 const MAX_STATE_BYTES = 64 * 1024;
 
 function fail(message, status, code) {
