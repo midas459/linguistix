@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useLearn } from "../../../../lib/learn-store";
+import { speakText } from "../../../../lib/speech-client";
 
 export default function LessonPlayer({ screens, lesson, moduleTitle, languageCode }) {
   const { language, setLang, completeLesson } = useLearn();
@@ -15,6 +16,7 @@ export default function LessonPlayer({ screens, lesson, moduleTitle, languageCod
   const [checked, setChecked] = useState(false);
   const [correct, setCorrect] = useState(false);
   const [done, setDone] = useState(false);
+  const [audioError, setAudioError] = useState("");
 
   const screen = screens[screenIndex];
 
@@ -47,12 +49,10 @@ export default function LessonPlayer({ screens, lesson, moduleTitle, languageCod
     setCorrect(false);
   }
 
-  function speak() {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(screen.audio || screen.stem || "");
-    utterance.lang = language.speech;
-    window.speechSynthesis.speak(utterance);
+  async function speak() {
+    setAudioError("");
+    try { await speakText(screen.audio || screen.stem || "", languageCode); }
+    catch (error) { setAudioError(error.message || "Pronunciation audio is unavailable."); }
   }
 
   if (done) {
@@ -80,7 +80,7 @@ export default function LessonPlayer({ screens, lesson, moduleTitle, languageCod
       {screen.kind === "matrix" && screen.root?.length > 1 && (
         <p className="exercise-hint">Root: {screen.root.join(" · ")} {screen.pattern?.length ? `| Pattern: ${screen.pattern.join(" · ")}` : ""}</p>
       )}
-      {screen.kind === "audio" && <button className="button secondary" type="button" onClick={speak}>Play pronunciation</button>}
+      {screen.kind === "audio" && <><button className="button secondary" type="button" onClick={speak}>Play pronunciation</button>{audioError && <p className="pronunciation-status" role="alert">{audioError}</p>}</>}
       {screen.kind === "wordbank" && <p className="exercise-hint">Build: {screen.translation}</p>}
       {screen.stem && <div className="exercise-stem">{screen.stem}</div>}
       <div className="exercise-choices">
