@@ -80,10 +80,19 @@ async function callGemini({ apiKey, model, system, history, message }) {
       const payload = await response.json();
       return parseResult(payload?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n"));
     }
+    const errorPayload = await response.json().catch(() => null);
     const error = new Error("Gemini request failed");
     error.providerStatus = response.status;
+    const details = errorPayload?.error?.details || [];
+    const retryInfo = details.find((item) => item["@type"]?.endsWith("RetryInfo"));
+    const quotaFailure = details.find((item) => item["@type"]?.endsWith("QuotaFailure"));
+    const retryDelay = retryInfo?.retryDelay;
+    const retrySeconds = typeof retryDelay === "string" ? Number.parseFloat(retryDelay) : NaN;
+    error.retryAfterSeconds = Number.isFinite(retrySeconds) ? Math.min(3600, Math.max(1, Math.ceil(retrySeconds))) : null;
+    error.quotaReason = quotaFailure ? "quota" : "rate";
     if (![429, 500, 502, 503, 504].includes(response.status) || attempt === 2) throw error;
-    await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+    const delay = error.retryAfterSeconds ? Math.min(5000, error.retryAfterSeconds * 1000) : 500 * (attempt + 1);
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
   return null;
 }
@@ -171,6 +180,16 @@ export async function POST(request) {
             : errorName === "TimeoutError" || errorName === "AbortError"
               ? "AI_PROVIDER_TIMEOUT"
               : "AI_PROVIDER_UNAVAILABLE";
+    if (code === "AI_RATE_LIMITED") {
+      const retryAfterSeconds = Number.isInteger(error?.retryAfterSeconds) ? error.retryAfterSeconds : null;
+      const message = retryAfterSeconds
+        ? `Kalam is receiving too many requests. Please try again in about ${retryAfterSeconds} seconds.`
+        : "Kalam has temporarily reached its AI provider limit. Please wait a little before trying again.";
+      return NextResponse.json({ error: message, code, retryAfterSeconds }, {
+        status: 429,
+        headers: { "Cache-Control": "private, no-store", ...(retryAfterSeconds ? { "Retry-After": String(retryAfterSeconds) } : {}) },
+      });
+    }
     return jsonError("Kalam AI is temporarily unavailable. Please try again shortly.", 502, code);
   }
 }
