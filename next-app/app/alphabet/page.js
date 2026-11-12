@@ -12,7 +12,6 @@ export default function AlphabetPage() {
   const [status, setStatus] = useState("");
   const cards = useMemo(() => (FLASHCARDS[lang] || []).filter(card => card.category === "letters"), [lang]);
   const active = cards.find(card => card.id === selectedId) || cards[0] || null;
-  useEffect(() => { setSelectedId(""); setStatus(""); }, [lang]);
   useEffect(() => () => stopSpeech(), []);
 
   async function play(value) {
