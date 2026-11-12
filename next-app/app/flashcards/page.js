@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CARD_CATEGORIES, FLASHCARDS } from "../../data/cards";
-import { useLearn } from "../../lib/learn-store";\nimport { speakText, stopSpeech } from "../../lib/speech-client";
+import { useLearn } from "../../lib/learn-store";
+import { speakText, stopSpeech } from "../../lib/speech-client";
 
 const RATINGS = [["again", "Again"], ["hard", "Hard"], ["good", "Good"], ["easy", "Easy"]];
 
@@ -13,7 +14,8 @@ export default function FlashcardsPage() {
   const [flipped, setFlipped] = useState(false);
   const [mode, setMode] = useState("browse");
   const [index, setIndex] = useState(0);
-  const [now, setNow] = useState(null);\n  const [audioStatus, setAudioStatus] = useState("");
+  const [now, setNow] = useState(null);
+  const [audioStatus, setAudioStatus] = useState("");
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setNow(Date.now()));
@@ -68,7 +70,9 @@ export default function FlashcardsPage() {
             <button className="button secondary" type="button" onClick={() => setFlipped(value => !value)}>
               {flipped ? "Show prompt" : "Reveal answer"}
             </button>
-            <button className="button secondary" type="button" onClick={async () => { try { setAudioStatus("Generating pronunciation…"); await speakText(card.front, lang); setAudioStatus("Playing pronunciation."); } catch (error) { setAudioStatus(error.message); } }}>🔊 Hear this card</button>\n            {audioStatus && <p role="status">{audioStatus}</p>}\n            {flipped && mode === "review" && <div className="choice-row">
+            <button className="button secondary" type="button" onClick={async () => { try { setAudioStatus("Generating pronunciation…"); await speakText(card.front, lang); setAudioStatus("Playing pronunciation."); } catch (error) { setAudioStatus(error.message); } }}>🔊 Hear this card</button>
+            {audioStatus && <p role="status">{audioStatus}</p>}
+            {flipped && mode === "review" && <div className="choice-row">
               {RATINGS.map(([value, label]) => (
                 <button className="choice-button" key={value} type="button" onClick={() => rate(value)}>{label}</button>
               ))}
