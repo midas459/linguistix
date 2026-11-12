@@ -11,27 +11,10 @@ export function emptyProgress() {
   return { xpTotal: 0, cardsTotal: 0, minutesTotal: 0, lessons: [], dayXp: {}, dayMinutes: {}, dayCards: {}, streak: 0, lastDay: null, activity: [], sample: false };
 }
 
-function sampleProgress(lang) {
-  const p = emptyProgress();
-  const now = Date.now();
-  p.sample = true; p.streak = 4; p.xpTotal = 315; p.cardsTotal = 68; p.minutesTotal = 41;
-  p.lessons = [`${lang}-m1-l1`, `${lang}-m1-l2`];
-  [4, 3, 2, 1].forEach((offset, i) => {
-    const key = dayKey(new Date(now - offset * 86400000));
-    p.dayXp[key] = [40, 62, 28, 55][i]; p.dayMinutes[key] = [6, 9, 4, 7][i]; p.dayCards[key] = [9, 14, 6, 11][i];
-  });
-  p.activity = [
-    { id: "seed-2", type: "lesson", title: "Positional shapes", detail: "Alphabet & Script · +20 XP", at: new Date(now - 86400000).toISOString() },
-    { id: "seed-1", type: "cards", title: "14 cards reviewed", detail: "Letters deck · +56 XP", at: new Date(now - 20 * 3600000).toISOString() },
-    { id: "seed-0", type: "badge", title: "First Step unlocked", detail: "You finished your first lesson", at: new Date(now - 26 * 3600000).toISOString() },
-  ];
-  return p;
-}
-
 function defaultState() {
   return {
     lang: "ar", theme: "ocean",
-    progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, code === "ar" ? sampleProgress("ar") : emptyProgress()])),
+    progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, emptyProgress()])),
     srs: Object.fromEntries(LANGUAGES.map(({ code }) => [code, {}])),
     reminders: { enabled: false, time: "19:00", days: [1, 2, 3, 4, 5, 6, 0] },
     lastReminderFired: null, hearts: MAX_HEARTS, heartsDay: null,
