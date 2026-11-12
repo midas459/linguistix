@@ -75,7 +75,7 @@ export default function ResearchPanel({ open, onClose }) {
     try {
       const response=await fetch("/api/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
         language:target,mode:"breakdown",
-        message:"Translate the following English word or phrase into "+(LANGUAGES.find(item=>item.code===target)?.label||target)+". Give the native script, natural transliteration, concise meaning and one short example. The learner's lookup: "+query.trim()
+        message:"Translate the following English word or phrase into "+(LANGUAGES.find(item=>item.code===target)?.label||target)+". Give the native script, natural transliteration, concise meaning and one short example. The learner's lookup: "+parsedQuery.value
       })});
       const data=await response.json();
       if(!response.ok) throw new Error(data.error||"Live lookup is temporarily unavailable.");
