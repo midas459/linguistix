@@ -575,3 +575,96 @@ html[data-theme="obsidian"] .button.secondary{background:#26313d;color:#edf2f6;b
 .alphabet-focus-main>div:nth-child(2){min-width:0}
 .alphabet-selected{font-family:"Noto Sans Arabic","Noto Sans JP",sans-serif}
 .flashcard-face h2[lang="ar"],.flashcard-face h2[lang="ja"]{font-size:clamp(30px,5vw,52px)}
+
+
+/* Lugha Research: enforce readable contrast in every theme. */
+.lf-research-backdrop { color: #172b3a; }
+.lf-research-dialog {
+  color: #172b3a;
+  background: #fffdf9;
+  border: 1px solid #d9cdbd;
+}
+.lf-research-dialog header h2,
+.lf-research-dialog h3,
+.lf-research-dialog strong,
+.lf-research-dialog label { color: #172b3a; }
+.lf-research-dialog header p:not(.lf-eyebrow),
+.lf-research-dialog .lf-empty,
+.lf-research-dialog .lf-research-result p,
+.lf-research-dialog .lf-research-result small { color: #435565; }
+.lf-research-dialog .lf-eyebrow,
+.lf-research-dialog .lf-research-language { color: #80521f; }
+.lf-research-dialog input {
+  color: #172b3a;
+  background: #ffffff;
+  border: 1px solid #9aabb5;
+  caret-color: #172b3a;
+}
+.lf-research-dialog input::placeholder { color: #586b78; opacity: 1; }
+.lf-research-dialog .lf-research-filters button {
+  color: #263c4b;
+  background: #f2eee7;
+  border: 1px solid #c8bdaf;
+}
+.lf-research-dialog .lf-research-filters button[aria-pressed="true"] {
+  color: #ffffff;
+  background: #315d62;
+  border-color: #315d62;
+}
+.lf-research-dialog .lf-research-result {
+  color: #172b3a;
+  background: #ffffff;
+  border: 1px solid #d8dfe2;
+}
+.lf-research-dialog .lf-research-result h3[dir="rtl"],
+.lf-research-dialog .lf-research-result h3[lang="ja"] {
+  color: #172b3a;
+}
+.lf-research-dialog .lf-research-result button {
+  color: #ffffff;
+  background: #315d62;
+}
+.lf-research-dialog .lf-research-error { color: #9b2929; }
+html[data-theme="midnight"] .lf-research-dialog {
+  color: #f3f6f8;
+  background: #17283a;
+  border-color: #41566b;
+}
+html[data-theme="midnight"] .lf-research-dialog header h2,
+html[data-theme="midnight"] .lf-research-dialog h3,
+html[data-theme="midnight"] .lf-research-dialog strong,
+html[data-theme="midnight"] .lf-research-dialog label,
+html[data-theme="midnight"] .lf-research-dialog .lf-research-result,
+html[data-theme="midnight"] .lf-research-dialog .lf-research-result h3[dir="rtl"],
+html[data-theme="midnight"] .lf-research-dialog .lf-research-result h3[lang="ja"] { color: #f3f6f8; }
+html[data-theme="midnight"] .lf-research-dialog header p:not(.lf-eyebrow),
+html[data-theme="midnight"] .lf-research-dialog .lf-empty,
+html[data-theme="midnight"] .lf-research-dialog .lf-research-result p,
+html[data-theme="midnight"] .lf-research-dialog .lf-research-result small { color: #c4d0dc; }
+html[data-theme="midnight"] .lf-research-dialog .lf-eyebrow,
+html[data-theme="midnight"] .lf-research-dialog .lf-research-language { color: #e8c58a; }
+html[data-theme="midnight"] .lf-research-dialog input {
+  color: #f3f6f8;
+  background: #20364c;
+  border-color: #627b91;
+}
+html[data-theme="midnight"] .lf-research-dialog input::placeholder { color: #c1ced9; }
+html[data-theme="midnight"] .lf-research-dialog .lf-research-filters button {
+  color: #e7edf2;
+  background: #263d52;
+  border-color: #50677b;
+}
+html[data-theme="midnight"] .lf-research-dialog .lf-research-filters button[aria-pressed="true"] {
+  color: #10232d;
+  background: #9bd6d4;
+  border-color: #9bd6d4;
+}
+html[data-theme="midnight"] .lf-research-dialog .lf-research-result {
+  background: #20364c;
+  border-color: #405970;
+}
+html[data-theme="midnight"] .lf-research-dialog .lf-research-result button {
+  color: #10232d;
+  background: #9bd6d4;
+}
+html[data-theme="midnight"] .lf-research-dialog .lf-research-error { color: #ffaaa5; }
