@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../lib/supabase/server";
 
+const CLOUDFLARE_MODEL = "@cf/google/gemma-4-26b-a4b-it";
+
 const LANGUAGES = {
   ar: "Modern Standard Arabic. Show Arabic script, transliteration, then English meaning. Explain roots and harakat when useful.",
   de: "German. Include noun articles and grammatical case when relevant. Explain irregular and separable verbs.",
@@ -29,14 +31,14 @@ function buildSystem(language, mode, scenario) {
     MODES[mode],
     mode === "roleplay" && scenario ? `Roleplay scenario: ${scenario}` : "",
     "Be encouraging, concise, accurate and age-appropriate. Do not invent that you can hear the learner.",
-    "Return only valid JSON with keys: reply (string), translation (string), quiz (array of objects with question and answer strings).",
+    "Return only valid JSON, without Markdown fences, with exactly these keys: reply (string), translation (string), quiz (array of objects with question and answer strings).",
     "Use an empty translation when not needed and an empty quiz array outside quiz mode.",
   ].filter(Boolean).join("\n\n");
 }
 
 function parseResult(raw) {
   if (typeof raw !== "string") return null;
-  const cleaned = raw.trim();
+  const cleaned = raw.trim().replace(/^\x60{3}(?:json)?\s*/i, "").replace(/\s*\x60{3}$/, "");
   try {
     const parsed = JSON.parse(cleaned);
     if (!parsed || typeof parsed.reply !== "string" || !parsed.reply.trim()) return null;
@@ -53,48 +55,37 @@ function parseResult(raw) {
   }
 }
 
-async function callGemini({ apiKey, model, system, history, message }) {
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-  const body = JSON.stringify({
-    systemInstruction: { parts: [{ text: system }] },
-    contents: [
-      ...history.map(({ role, content }) => ({
-        role: role === "assistant" ? "model" : "user",
-        parts: [{ text: content }],
-      })),
-      { role: "user", parts: [{ text: message }] },
-    ],
-    generationConfig: { responseMimeType: "application/json" },
+async function callCloudflareAI({ system, history, message }) {
+  // This binding exists in the deployed Cloudflare Worker and in the
+  // Cloudflare/Vite dev runtime. No provider API key is exposed to users.
+  const { env } = await import("cloudflare:workers");
+  if (!env?.AI) {
+    const error = new Error("Workers AI binding is not available in this runtime");
+    error.code = "AI_BINDING_MISSING";
+    throw error;
+  }
+
+  const messages = [
+    { role: "system", content: system },
+    ...history.map(({ role, content }) => ({ role, content })),
+    { role: "user", content: message },
+  ];
+  const result = await env.AI.run(CLOUDFLARE_MODEL, {
+    messages,
+    max_tokens: 1100,
+    temperature: 0.25,
+    chat_template_kwargs: { enable_thinking: false },
   });
 
-  // Gemini can return transient 429/5xx responses under load. Retry twice,
-  // but never retry authentication, validation, or model-not-found errors.
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
-      body,
-      signal: AbortSignal.timeout(25000),
-    });
-    if (response.ok) {
-      const payload = await response.json();
-      return parseResult(payload?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n"));
-    }
-    const errorPayload = await response.json().catch(() => null);
-    const error = new Error("Gemini request failed");
-    error.providerStatus = response.status;
-    const details = errorPayload?.error?.details || [];
-    const retryInfo = details.find((item) => item["@type"]?.endsWith("RetryInfo"));
-    const quotaFailure = details.find((item) => item["@type"]?.endsWith("QuotaFailure"));
-    const retryDelay = retryInfo?.retryDelay;
-    const retrySeconds = typeof retryDelay === "string" ? Number.parseFloat(retryDelay) : NaN;
-    error.retryAfterSeconds = Number.isFinite(retrySeconds) ? Math.min(3600, Math.max(1, Math.ceil(retrySeconds))) : null;
-    error.quotaReason = quotaFailure ? "quota" : "rate";
-    if (![429, 500, 502, 503, 504].includes(response.status) || attempt === 2) throw error;
-    const delay = error.retryAfterSeconds ? Math.min(5000, error.retryAfterSeconds * 1000) : 500 * (attempt + 1);
-    await new Promise((resolve) => setTimeout(resolve, delay));
-  }
-  return null;
+  const raw = typeof result?.response === "string"
+    ? result.response
+    : typeof result?.choices?.[0]?.message?.content === "string"
+      ? result.choices[0].message.content
+      : typeof result?.result?.response === "string"
+        ? result.result.response
+        : null;
+
+  return parseResult(raw);
 }
 
 export async function POST(request) {
@@ -145,51 +136,38 @@ export async function POST(request) {
     return jsonError("Scenario must be 120 characters or fewer.", 400, "INVALID_SCENARIO");
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return jsonError("Kalam AI is not configured yet. Add the server-side GEMINI_API_KEY.", 503, "AI_NOT_CONFIGURED");
-
   try {
-    const result = await callGemini({
-      apiKey,
-      model: "gemini-3.8-flash",
+    const result = await callCloudflareAI({
       system: buildSystem(language, mode, scenario),
       history: history.map(({ role, content }) => ({ role, content: content.trim() })),
       message: message.trim(),
     });
-    if (!result) return jsonError("Kalam AI returned an unreadable response. Please try again.", 502, "INVALID_AI_RESPONSE");
+    if (!result) return jsonError("Kalam returned an unreadable response. Please try again.", 502, "INVALID_AI_RESPONSE");
     if (mode === "quiz" && result.quiz.length !== 3) {
-      return jsonError("Kalam AI could not create a complete quiz. Please try again.", 502, "INCOMPLETE_QUIZ");
+      return jsonError("Kalam could not create a complete quiz. Please try again.", 502, "INCOMPLETE_QUIZ");
     }
     return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    const providerStatus = Number.isInteger(error?.providerStatus) ? error.providerStatus : null;
+    const details = `${error?.message || ""} ${error?.cause?.message || ""}`;
     const errorName = typeof error?.name === "string" ? error.name.slice(0, 40) : "UnknownError";
-    console.error("[Kalam AI] Provider request failed", {
-      providerStatus,
+    console.error("[Kalam AI] Cloudflare Workers AI request failed", {
       errorName,
-      errorMessage: errorName === "Error" ? "Gemini upstream request failed" : "Gemini fetch or response processing failed",
+      bindingMissing: error?.code === "AI_BINDING_MISSING",
+      capacityOrQuota: /429|3040|capacity|rate.?limit|quota/i.test(details),
     });
-    const code = providerStatus === 401 || providerStatus === 403
-      ? "AI_PROVIDER_AUTH_FAILED"
-      : providerStatus === 404
-        ? "AI_MODEL_NOT_FOUND"
-        : providerStatus === 429
-          ? "AI_RATE_LIMITED"
-          : providerStatus === 400
-            ? "AI_REQUEST_REJECTED"
-            : errorName === "TimeoutError" || errorName === "AbortError"
-              ? "AI_PROVIDER_TIMEOUT"
-              : "AI_PROVIDER_UNAVAILABLE";
-    if (code === "AI_RATE_LIMITED") {
-      const retryAfterSeconds = Number.isInteger(error?.retryAfterSeconds) ? error.retryAfterSeconds : null;
-      const message = retryAfterSeconds
-        ? `Kalam is receiving too many requests. Please try again in about ${retryAfterSeconds} seconds.`
-        : "Kalam has temporarily reached its AI provider limit. Please wait a little before trying again.";
-      return NextResponse.json({ error: message, code, retryAfterSeconds }, {
-        status: 429,
-        headers: { "Cache-Control": "private, no-store", ...(retryAfterSeconds ? { "Retry-After": String(retryAfterSeconds) } : {}) },
-      });
+
+    if (error?.code === "AI_BINDING_MISSING") {
+      return jsonError("Kalam AI is not connected to the Cloudflare Worker yet.", 503, "AI_NOT_CONFIGURED");
     }
-    return jsonError("Kalam AI is temporarily unavailable. Please try again shortly.", 502, code);
+    if (/403|5035|paid plan|billing/i.test(details)) {
+      return jsonError("Kalam's selected AI model is unavailable on the current Cloudflare plan.", 503, "AI_PLAN_REQUIRED");
+    }
+    if (/429|3040|capacity|rate.?limit|quota/i.test(details)) {
+      return NextResponse.json({
+        error: "Kalam is temporarily busy or has reached its daily AI allowance. Please try again later.",
+        code: "AI_RATE_LIMITED",
+      }, { status: 429, headers: { "Cache-Control": "private, no-store" } });
+    }
+    return jsonError("Kalam AI is temporarily unavailable. Please try again shortly.", 502, "AI_PROVIDER_UNAVAILABLE");
   }
 }
