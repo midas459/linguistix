@@ -688,3 +688,13 @@ html[data-theme="midnight"] .lf-research-dialog .lf-research-error { color: #ffa
   .app-install-button { min-height: 31px; padding: 5px 9px; font-size: 10px; }
   .app-install-button span { display: inline; }
 }
+
+
+/* Unified feature icon system: consistent stroke, alignment and sizing. */
+.app-nav-icon { display:inline-flex; width:22px; height:22px; flex:0 0 22px; align-items:center; justify-content:center; color:var(--accent); }
+.app-nav-icon svg,.lf-stat-icon svg,.lf-badge>span svg,.lf-activity-item>span svg,.lf-quick-links>a>svg,.app-stat-pill svg,.app-research-button svg,.app-install-button svg { display:block; flex:0 0 auto; }
+.lf-stat-icon { display:flex; align-items:center; justify-content:center; }
+.lf-badge>span,.lf-activity-item>span { display:flex; align-items:center; justify-content:center; }
+.lf-quick-links a { justify-content:flex-start; }
+.lf-quick-links a span { margin-left:auto; }
+.app-research-button,.app-install-button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
