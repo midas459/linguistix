@@ -27,9 +27,8 @@ export default function FlashcardsPage() {
     return !review || (now !== null && new Date(review.due).getTime() <= now);
   });
   const cards = mode === "browse" ? allCards : due;
-  const card = cards[index] || null;
-
-  useEffect(() => { setIndex(0); setFlipped(false); }, [lang, category, mode]);
+  const activeIndex = Math.min(index, Math.max(0, cards.length - 1));
+  const card = cards[activeIndex] || null;
 
   function rate(rating) {
     if (!card) return;
@@ -45,11 +44,11 @@ export default function FlashcardsPage() {
         <div className="actions"><Link className="button secondary" href="/alphabet">See the complete alphabet →</Link></div>
         <p>Browse every card in the deck whenever you want, or switch to due reviews for spaced repetition. Your ratings update the local review schedule.</p>
         <div className="choice-row" role="group" aria-label="Flashcard mode">
-          <button className="choice-button" type="button" aria-pressed={mode === "browse"} onClick={() => setMode("browse")}>Browse all cards ({allCards.length})</button>
-          <button className="choice-button" type="button" aria-pressed={mode === "review"} onClick={() => setMode("review")}>Due reviews ({due.length})</button>
+          <button className="choice-button" type="button" aria-pressed={mode === "browse"} onClick={() => { setMode("browse"); setIndex(0); setFlipped(false); }}>Browse all cards ({allCards.length})</button>
+          <button className="choice-button" type="button" aria-pressed={mode === "review"} onClick={() => { setMode("review"); setIndex(0); setFlipped(false); }}>Due reviews ({due.length})</button>
         </div>
         <label htmlFor="category">Deck category</label>
-        <select id="category" value={category} onChange={event => { setCategory(event.target.value); setFlipped(false); }}>
+        <select id="category" value={category} onChange={event => { setCategory(event.target.value); setIndex(0); setFlipped(false); }}>
           <option value="all">All categories</option>
           {CARD_CATEGORIES.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </select>
