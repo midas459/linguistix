@@ -44,8 +44,12 @@ export default function SettingsPage() {
             <h2>Appearance</h2>
             <p>Choose a theme. Your choice is saved locally in this browser.</p>
             <div className="choice-row">
-              {THEMES.map(([id, label]) => (
-                <button className="choice-button" key={id} type="button" aria-pressed={theme === id} onClick={() => setTheme(id)}>{label}</button>
+              {THEMES.map(([id, label, detail]) => (
+                <button className="theme-choice" key={id} type="button" aria-pressed={theme === id} onClick={() => setTheme(id)}>
+                  <span className={"theme-swatch theme-swatch-" + id} aria-hidden="true" />
+                  <span><strong>{label}</strong><small>{detail}</small></span>
+                  {theme === id && <span className="theme-selected" aria-label="Selected">✓</span>}
+                </button>
               ))}
             </div>
           </section>
