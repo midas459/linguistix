@@ -119,7 +119,7 @@ export default function AppShell({ children }) {
     <aside className="app-sidebar">{navigation}</aside>
     <div className="app-workspace">
       <header className="app-topbar">
-        <button ref={menuButtonRef} className="app-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="app-mobile-drawer" onClick={() => setMenuOpen(true)}>☰</button>
+        <button ref={menuButtonRef} className="app-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="app-mobile-drawer" onClick={() => setMenuOpen(true)}><FeatureIcon name="menu" size={19} /></button>
         <label className="app-language-select"><span className="sr-only">Learning language</span>
           <select value={lang} onChange={(event) => setLang(event.target.value)}>
             {languages.map((item) => <option key={item.code} value={item.code}>{item.emblem} {item.label}</option>)}
@@ -132,7 +132,7 @@ export default function AppShell({ children }) {
         <button className="app-research-button" type="button" onClick={() => setResearchOpen(true)} aria-label="Open Lugha Research"><FeatureIcon name="search" size={16} /> <span>Research</span></button>
         {showInstall && <button className="app-install-button" type="button" onClick={installApp}><FeatureIcon name="download" size={16} /> <span>Download app</span></button>}
         <button className="app-signout-button" type="button" onClick={signOut}>Sign out</button>
-        <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}>{theme === "midnight" ? <span aria-hidden="true">☀</span> : <span aria-hidden="true">◐</span>}</button>
+        <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}><FeatureIcon name={theme === "midnight" || theme === "obsidian" ? "sun" : "moon"} size={17} /></button>
       </header>
       {installHelp && showInstall && <div className="app-install-help" role="status">To install Linguistix, use your browser menu and choose “Install app” or “Add to Home Screen”.</div>}
       <div className="app-page-content">{children}</div>
