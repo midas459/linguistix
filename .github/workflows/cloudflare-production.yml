@@ -72,24 +72,27 @@ jobs:
         run: |
           set -euo pipefail
           response_file="$(mktemp)"
-          status="$(curl --silent --show-error --output "$response_file" --write-out '%{http_code}' \
-            -H "x-goog-api-key: $GEMINI_API_KEY" \
-            -H "Content-Type: application/json" \
-            -X POST \
-            --data '{"contents":[{"parts":[{"text":"Reply with exactly KALAM_SMOKE_OK"}]}],"generationConfig":{"maxOutputTokens":24}}' \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent")"
-          if [ "$status" != "200" ]; then
-            echo "::error::Kalam Gemini smoke test failed with HTTP $status. Provider response is withheld from logs."
-            rm -f "$response_file"
-            exit 1
-          fi
-          if ! jq -e '[.candidates[]?.content.parts[]?.text // ""] | join("") | contains("KALAM_SMOKE_OK")' "$response_file" >/dev/null; then
-            echo "::error::Gemini returned HTTP 200 but did not return the expected smoke-test text."
-            rm -f "$response_file"
-            exit 1
-          fi
+          status="000"
+          for attempt in 1 2 3; do
+            status="$(curl --silent --show-error --output "$response_file" --write-out '%{http_code}' \
+              -H "x-goog-api-key: $GEMINI_API_KEY" \
+              -H "Content-Type: application/json" \
+              -X POST \
+              --data '{"contents":[{"parts":[{"text":"Reply with exactly KALAM_SMOKE_OK"}]}],"generationConfig":{"maxOutputTokens":24}}' \
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent")"
+            if [ "$status" = "200" ] && jq -e '[.candidates[]?.content.parts[]?.text // ""] | join("") | contains("KALAM_SMOKE_OK")' "$response_file" >/dev/null; then
+              rm -f "$response_file"
+              echo "Kalam Gemini model and configured API key passed the smoke test."
+              exit 0
+            fi
+            if [ "$status" != "503" ] && [ "$status" != "429" ]; then break; fi
+            sleep "$((attempt * 5))"
+          done
+          provider_status="$(jq -r '.error.status // "unknown"' "$response_file" 2>/dev/null || echo unknown)"
+          provider_message="$(jq -r '.error.message // "No provider message returned."' "$response_file" 2>/dev/null | cut -c1-240)"
+          echo "::error::Kalam Gemini smoke test failed: HTTP $status; provider status=$provider_status; message=$provider_message"
           rm -f "$response_file"
-          echo "Kalam Gemini model and configured API key passed the smoke test."
+          exit 1
 
       - name: Verify public production site
         shell: bash
