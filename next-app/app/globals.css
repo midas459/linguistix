@@ -537,3 +537,7 @@ html[data-theme="midnight"] .alphabet-hero,html[data-theme="midnight"] .learn-ma
 .theme-swatch-midnight{background:linear-gradient(135deg,#080d18 0 45%,#e34f61 45% 70%,#8c56c7 70%)}
 .learn-snake-unit-label{color:var(--accent);font-size:8px;font-weight:900;letter-spacing:.1em;line-height:1.4}
 .learn-snake-node{overflow:hidden}
+
+.alphabet-harakat{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.alphabet-harakat strong{margin-right:5px;font-size:12px}
+.alphabet-harakat button{border:1px solid var(--border);border-radius:99px;padding:7px 11px;background:var(--background);color:var(--foreground);font:inherit;font-size:10px;cursor:pointer}
+.alphabet-harakat button[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface));color:var(--accent);font-weight:800}
