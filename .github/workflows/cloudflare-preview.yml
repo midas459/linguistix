@@ -1,0 +1,107 @@
+name: Cloudflare preview deployment
+
+on:
+  push:
+    branches:
+      - base44-retirement-cloudflare-supabase
+  workflow_dispatch:
+    inputs:
+      preview_name:
+        description: "Preview identifier"
+        required: true
+        default: "linguistix-launch-check"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linguistix-cloudflare-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: next-app
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_SITE_URL: https://linguistix-launch-check-linguistix.midas-labs.workers.dev
+      PREVIEW_NAME: ${{ inputs.preview_name || 'linguistix-launch-check' }}
+    steps:
+      - name: Check out integration branch
+        uses: actions/checkout@v5
+        with:
+          ref: base44-retirement-cloudflare-supabase
+
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Add CLOUDFLARE_API_TOKEN as a GitHub Actions secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Add CLOUDFLARE_ACCOUNT_ID as a GitHub Actions variable."; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_URL" || { echo "::error::Add NEXT_PUBLIC_SUPABASE_URL as a GitHub Actions variable."; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" || { echo "::error::Add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY as a GitHub Actions variable."; exit 1; }
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: next-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Check vinext compatibility
+        run: npx --yes vinext check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build Cloudflare preview output
+        run: npm run build:vinext
+        env:
+          CLOUDFLARE_PREVIEW_BUILD: "true"
+
+      - name: Deploy isolated Cloudflare Worker Preview
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(npx vinext-cloudflare previews deploy "$PREVIEW_NAME" --skip-build 2>&1)" || {
+            printf '%s\n' "$output"
+            exit 1
+          }
+          printf '%s\n' "$output"
+          preview_url="$(printf '%s\n' "$output" | node -e '
+            const fs = require("node:fs");
+            const s = fs.readFileSync(0, "utf8");
+            const line = s.match(/Preview URL:\s*(https:\/\/[^\s]+)/i);
+            if (line) { process.stdout.write(line[1]); process.exit(0); }
+            const start = s.indexOf("{");
+            if (start < 0) process.exit(0);
+            try {
+              const data = JSON.parse(s.slice(start));
+              const urls = [
+                ...(data.preview_urls || []),
+                ...(data.deployment_urls || []),
+                ...(data.urls || []),
+              ];
+              const candidate = urls.find((value) => typeof value === "string" && value.startsWith("https://"));
+              if (candidate) process.stdout.write(candidate);
+              else if (typeof data.url === "string" && data.url.startsWith("https://")) process.stdout.write(data.url);
+            } catch {}
+          ')"
+          if [ -z "$preview_url" ]; then
+            echo "::error::Cloudflare did not return a Preview URL. Check that workers.dev Preview hosting is enabled for the Worker and rerun."
+            exit 1
+          fi
+          echo "url=$preview_url" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Cloudflare Preview"
+            echo ""
+            echo "$preview_url"
+          } >> "$GITHUB_STEP_SUMMARY"

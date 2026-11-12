@@ -1,0 +1,76 @@
+name: Linguistix production deployment
+
+on:
+  push:
+    branches:
+      - base44-retirement-cloudflare-supabase
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linguistix-production
+  cancel-in-progress: false
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: next-app
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_SITE_URL: https://linguistix.midas-labs.workers.dev
+    steps:
+      - name: Check out release branch
+        uses: actions/checkout@v5
+        with:
+          ref: base44-retirement-cloudflare-supabase
+
+      - name: Validate production configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN GitHub secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID GitHub variable."; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_URL" || { echo "::error::Missing NEXT_PUBLIC_SUPABASE_URL GitHub variable."; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" || { echo "::error::Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY GitHub variable."; exit 1; }
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: next-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Check vinext compatibility
+        run: npx --yes vinext check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Deploy production Worker with Workers AI binding
+        run: npm run deploy:vinext
+
+      - name: Verify public production site
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..12}; do
+            status="$(curl --silent --show-error --location --output /dev/null --write-out '%{http_code}' https://linguistix.midas-labs.workers.dev/ || true)"
+            if [ "$status" = "200" ]; then
+              echo "Production site returned HTTP 200."
+              exit 0
+            fi
+            echo "Waiting for production site (attempt $attempt, HTTP $status)..."
+            sleep 10
+          done
+          echo "::error::Production URL did not return HTTP 200."
+          exit 1

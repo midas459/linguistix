@@ -4,8 +4,14 @@ import Link from "next/link";
 import { useLearn } from "../../lib/learn-store";
 
 const THEMES = [
-  ["ocean", "Ocean"], ["forest", "Forest"], ["sunset", "Sunset"],
-  ["lavender", "Lavender"], ["midnight", "Midnight"],
+  ["ocean", "Ocean", "Cool teal, glacier blue and deep water"],
+  ["forest", "Forest", "Emerald, moss and warm ivory"],
+  ["sunset", "Sunset", "Coral, amber and peach"],
+  ["lavender", "Lavender", "Violet, lilac and soft plum"],
+  ["midnight", "Midnight", "Ink navy, crimson and electric violet"],
+  ["sakura", "Sakura", "Porcelain, cherry blossom pink and vermilion"],
+  ["royal", "Imperial", "Deep plum, antique gold and parchment"],
+  ["obsidian", "Obsidian", "Graphite, silver and vivid cyan"],
 ];
 const DAYS = [["Mon",1],["Tue",2],["Wed",3],["Thu",4],["Fri",5],["Sat",6],["Sun",0]];
 
@@ -41,21 +47,19 @@ export default function SettingsPage() {
             <h2>Appearance</h2>
             <p>Choose a theme. Your choice is saved locally in this browser.</p>
             <div className="choice-row">
-              {THEMES.map(([id, label]) => (
-                <button className="choice-button" key={id} type="button" aria-pressed={theme === id} onClick={() => setTheme(id)}>{label}</button>
+              {THEMES.map(([id, label, detail]) => (
+                <button className="theme-choice" key={id} type="button" aria-pressed={theme === id} onClick={() => setTheme(id)}>
+                  <span className={"theme-swatch theme-swatch-" + id} aria-hidden="true" />
+                  <span><strong>{label}</strong><small>{detail}</small></span>
+                  {theme === id && <span className="theme-selected" aria-label="Selected">✓</span>}
+                </button>
               ))}
             </div>
           </section>
           <section className="lf-ai-settings">
-            <h2>Kalam AI provider setup</h2>
-            <p>Connect a free-tier AI provider for the language tutor. Gemini is tried first; Groq is an optional backup.</p>
-            <div className="actions">
-              <a className="button" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Get Gemini API key ↗</a>
-              <a className="button secondary" href="https://console.groq.com/keys" target="_blank" rel="noreferrer">Get Groq API key ↗</a>
-            </div>
-            <p><strong>Keep your keys private.</strong> Add them to <code>next-app/.env.local</code> on your computer, or to your hosting provider's server environment. Do not paste them into this page, chat, GitHub, or any field in the browser.</p>
-            <pre className="lf-env-example"><code>{"GEMINI_API_KEY=your_key_here\nGROQ_API_KEY=your_backup_key_here"}</code></pre>
-            <p>After saving the file, restart the development server. The tutor uses these keys on the server only.</p>
+            <h2>Kalam AI is included</h2>
+            <p>You do not need to create an account with an AI provider, buy an API key, or configure anything. Linguistix connects to Kalam AI through its secure app-managed server connection.</p>
+            <p>If Kalam AI is temporarily unavailable, that is a service issue we are responsible for fixing — not something you should have to configure.</p>
           </section>
           <section className="lf-reminder-settings">
             <h2>Study reminder preference</h2>
@@ -69,7 +73,7 @@ export default function SettingsPage() {
         </div>
         <div className="actions">
           <Link className="button secondary" href="/dashboard">Dashboard</Link>
-          <Link className="button" href="/learn">Browse courses</Link>
+          <Link className="button" href="/alphabet">Open Alphabet Studio</Link>
         </div>
       </section>
     </main>

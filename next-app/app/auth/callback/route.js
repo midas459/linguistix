@@ -9,10 +9,16 @@ export async function GET(request) {
     ? requestedNext
     : "/dashboard";
 
-  if (code) {
+  if (!code) {
+    return NextResponse.redirect(new URL("/login?error=oauth_callback", origin));
+  }
+
+  try {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(new URL(next, origin));
+  } catch {
+    // Do not leak provider, cookie, or token details into the redirect.
   }
 
   return NextResponse.redirect(new URL("/login?error=oauth_callback", origin));

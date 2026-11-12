@@ -11,30 +11,25 @@ export function emptyProgress() {
   return { xpTotal: 0, cardsTotal: 0, minutesTotal: 0, lessons: [], dayXp: {}, dayMinutes: {}, dayCards: {}, streak: 0, lastDay: null, activity: [], sample: false };
 }
 
-function sampleProgress(lang) {
-  const p = emptyProgress();
-  const now = Date.now();
-  p.sample = true; p.streak = 4; p.xpTotal = 315; p.cardsTotal = 68; p.minutesTotal = 41;
-  p.lessons = [`${lang}-m1-l1`, `${lang}-m1-l2`];
-  [4, 3, 2, 1].forEach((offset, i) => {
-    const key = dayKey(new Date(now - offset * 86400000));
-    p.dayXp[key] = [40, 62, 28, 55][i]; p.dayMinutes[key] = [6, 9, 4, 7][i]; p.dayCards[key] = [9, 14, 6, 11][i];
-  });
-  p.activity = [
-    { id: "seed-2", type: "lesson", title: "Positional shapes", detail: "Alphabet & Script · +20 XP", at: new Date(now - 86400000).toISOString() },
-    { id: "seed-1", type: "cards", title: "14 cards reviewed", detail: "Letters deck · +56 XP", at: new Date(now - 20 * 3600000).toISOString() },
-    { id: "seed-0", type: "badge", title: "First Step unlocked", detail: "You finished your first lesson", at: new Date(now - 26 * 3600000).toISOString() },
-  ];
-  return p;
-}
-
 function defaultState() {
   return {
     lang: "ar", theme: "ocean",
-    progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, code === "ar" ? sampleProgress("ar") : emptyProgress()])),
+    progress: Object.fromEntries(LANGUAGES.map(({ code }) => [code, emptyProgress()])),
     srs: Object.fromEntries(LANGUAGES.map(({ code }) => [code, {}])),
     reminders: { enabled: false, time: "19:00", days: [1, 2, 3, 4, 5, 6, 0] },
     lastReminderFired: null, hearts: MAX_HEARTS, heartsDay: null,
+  };
+}
+
+export function normalizeState(parsed) {
+  const base = defaultState();
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return base;
+  return {
+    ...base, ...parsed,
+    theme: ["ocean", "forest", "sunset", "lavender", "midnight", "sakura", "royal", "obsidian"].includes(parsed.theme) ? parsed.theme : parsed.theme === "dark" ? "midnight" : "ocean",
+    progress: { ...base.progress, ...(parsed.progress || {}) },
+    srs: { ...base.srs, ...(parsed.srs || {}) },
+    reminders: { ...base.reminders, ...(parsed.reminders || {}) },
   };
 }
 
@@ -42,16 +37,7 @@ function loadState() {
   if (typeof window === "undefined") return defaultState();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaultState();
-    const parsed = JSON.parse(raw);
-    const base = defaultState();
-    return {
-      ...base, ...parsed,
-      theme: ["ocean", "forest", "sunset", "lavender", "midnight"].includes(parsed.theme) ? parsed.theme : parsed.theme === "dark" ? "midnight" : "ocean",
-      progress: { ...base.progress, ...(parsed.progress || {}) },
-      srs: { ...base.srs, ...(parsed.srs || {}) },
-      reminders: { ...base.reminders, ...(parsed.reminders || {}) },
-    };
+    return raw ? normalizeState(JSON.parse(raw)) : defaultState();
   } catch { return defaultState(); }
 }
 
@@ -91,7 +77,7 @@ export function LearnProvider({ children }) {
     if (LANGUAGES.some((item) => item.code === lang)) setState((s) => ({ ...s, lang }));
   }, []);
   const setTheme = useCallback((theme) => {
-    if (["ocean", "forest", "sunset", "lavender", "midnight"].includes(theme)) setState((s) => ({ ...s, theme }));
+    if (["ocean", "forest", "sunset", "lavender", "midnight", "sakura", "royal", "obsidian"].includes(theme)) setState((s) => ({ ...s, theme }));
   }, []);
   const toggleTheme = useCallback(() => setState((s) => ({ ...s, theme: s.theme === "midnight" ? "ocean" : "midnight" })), []);
   const setReminders = useCallback((patch) => setState((s) => ({ ...s, reminders: { ...s.reminders, ...patch } })), []);
@@ -151,8 +137,12 @@ export function LearnProvider({ children }) {
   const today = dayKey();
   const todayStats = { xp: progress.dayXp[today] || 0, cards: progress.dayCards[today] || 0, minutes: progress.dayMinutes[today] || 0 };
 
+  const replaceState = useCallback((next) => setState(normalizeState(next)), []);
+  const resetForAccount = useCallback(() => setState(defaultState()), []);
+
   const value = {
-    ...state, language, languages: LANGUAGES, progress, todayStats, badges,
+    ...state, state, hydrated, replaceState, resetForAccount,
+    language, languages: LANGUAGES, progress, todayStats, badges,
     unlockedBadges: badges.filter((b) => b.unlocked),
     setLang, toggleTheme, setTheme, setReminders,
     hearts: heartsToday(state), maxHearts: MAX_HEARTS, loseHeart, refillHearts,

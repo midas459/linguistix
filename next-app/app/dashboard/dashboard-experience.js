@@ -5,8 +5,9 @@ import { useMemo } from "react";
 import { MODULES, XP_GOAL, CARDS_GOAL, MINUTES_GOAL } from "../../data/curriculum";
 import { dayKey, weekDates, formatLongDate, relativeTime } from "../../lib/dates";
 import { useLearn } from "../../lib/learn-store";
+import FeatureIcon from "../../components/feature-icon";
 
-const ACTIVITY_ICONS = { lesson: "▶", cards: "▤", badge: "✦" };
+const ACTIVITY_ICONS = { lesson: "book", cards: "cards", badge: "medal" };
 
 export default function DashboardExperience() {
   const { language, lang, progress, todayStats, badges, unlockedBadges } = useLearn();
@@ -45,10 +46,10 @@ export default function DashboardExperience() {
       </section>
 
       <section className="lf-stats" aria-label="Learning statistics">
-        <article className="lf-stat"><span className="lf-stat-icon">✦</span><p>Total experience</p><strong>{progress.xpTotal.toLocaleString()} <small>XP</small></strong><span>{todayStats.xp} XP earned today</span></article>
-        <article className="lf-stat"><span className="lf-stat-icon">🔥</span><p>Learning streak</p><strong>{progress.streak} <small>days</small></strong><span>Keep showing up daily</span></article>
-        <article className="lf-stat"><span className="lf-stat-icon">▤</span><p>Cards reviewed</p><strong>{progress.cardsTotal.toLocaleString()}</strong><span>{todayStats.cards} reviewed today</span></article>
-        <article className="lf-stat"><span className="lf-stat-icon">◷</span><p>Practice time</p><strong>{progress.minutesTotal} <small>min</small></strong><span>{todayStats.minutes} minutes today</span></article>
+        <article className="lf-stat"><span className="lf-stat-icon"><FeatureIcon name="star" size={19} /></span><p>Total experience</p><strong>{progress.xpTotal.toLocaleString()} <small>XP</small></strong><span>{todayStats.xp} XP earned today</span></article>
+        <article className="lf-stat"><span className="lf-stat-icon"><FeatureIcon name="flame" size={19} /></span><p>Learning streak</p><strong>{progress.streak} <small>days</small></strong><span>Keep showing up daily</span></article>
+        <article className="lf-stat"><span className="lf-stat-icon"><FeatureIcon name="cards" size={19} /></span><p>Cards reviewed</p><strong>{progress.cardsTotal.toLocaleString()}</strong><span>{todayStats.cards} reviewed today</span></article>
+        <article className="lf-stat"><span className="lf-stat-icon"><FeatureIcon name="clock" size={19} /></span><p>Practice time</p><strong>{progress.minutesTotal} <small>min</small></strong><span>{todayStats.minutes} minutes today</span></article>
       </section>
 
       <section className="lf-dashboard-grid">
@@ -75,8 +76,10 @@ export default function DashboardExperience() {
         <div className="lf-path">
           {modules.map((module,index) => {
             const done = module.lessons.filter((lesson)=>progress.lessons.includes(lesson.id)).length;
-            return <article className="lf-module" key={module.id}>
-              <div className="lf-module-top"><span className="lf-module-number">{done===module.lessons.length?"✓":String(index+1).padStart(2,"0")}</span><div><p className="lf-eyebrow">Unit {index+1} · {done}/{module.lessons.length} lessons</p><h3>{module.title}</h3><p>{module.summary}</p></div></div>
+            const complete = done === module.lessons.length;
+            const active = !complete && modules.slice(0,index).every((previous)=>previous.lessons.every((lesson)=>progress.lessons.includes(lesson.id)));
+            return <article className={`lf-module lf-module-snake ${index % 2 === 0 ? "snake-left" : "snake-right"} ${complete ? "is-complete" : active ? "is-current" : "is-locked"}`} key={module.id}>
+              <div className="lf-module-top"><span className="lf-module-number">{complete ? "✓" : String(index+1).padStart(2,"0")}</span><div><p className="lf-eyebrow">STAGE {String(index+1).padStart(2,"0")} · {done}/{module.lessons.length} lessons</p><h3>{module.title}</h3><p>{module.summary}</p></div><span className="lf-stage-state">{complete ? "Completed" : active ? "Current stage" : "Locked"}</span></div>
               <div className="lf-module-progress"><span style={{width:`${done/module.lessons.length*100}%`}} /></div>
               <ul>{module.lessons.map((lesson,li)=>{
                 const isDone=progress.lessons.includes(lesson.id);
@@ -91,22 +94,23 @@ export default function DashboardExperience() {
 
       <section className="lf-section">
         <div className="lf-section-heading"><div><p className="lf-eyebrow">Milestones</p><h2>Achievements</h2><p>{unlockedBadges.length} of {badges.length} unlocked</p></div></div>
-        <div className="lf-badges">{badges.slice(0,8).map((badge)=><article className={badge.unlocked?"lf-badge unlocked":"lf-badge"} key={badge.id}><span>{badge.unlocked?"✦":"◇"}</span><strong>{badge.name}</strong><small>{badge.unlocked?"Unlocked":badge.progressLabel}</small><div className="lf-track"><span style={{width:`${badge.ratio*100}%`}} /></div></article>)}</div>
+        <div className="lf-badges">{badges.slice(0,8).map((badge)=><article className={badge.unlocked?"lf-badge unlocked":"lf-badge"} key={badge.id}><span><FeatureIcon name={badge.unlocked?"medal":"lock"} size={18} /></span><strong>{badge.name}</strong><small>{badge.unlocked?"Unlocked":badge.progressLabel}</small><div className="lf-track"><span style={{width:`${badge.ratio*100}%`}} /></div></article>)}</div>
       </section>
 
       <section className="lf-section">
         <div className="lf-section-heading"><div><p className="lf-eyebrow">Your latest work</p><h2>Recent activity</h2></div></div>
         <div className="lf-card lf-activity">
-          {progress.activity.length ? progress.activity.slice(0,6).map((item)=><div className="lf-activity-item" key={item.id}><span>{ACTIVITY_ICONS[item.type]||"•"}</span><div><strong>{item.title}</strong><small>{item.detail}</small></div><time>{relativeTime(item.at)}</time></div>) : <p className="lf-empty">Complete a lesson or review a flashcard and your activity will appear here.</p>}
+          {progress.activity.length ? progress.activity.slice(0,6).map((item)=><div className="lf-activity-item" key={item.id}><span><FeatureIcon name={ACTIVITY_ICONS[item.type]||"star"} size={18} /></span><div><strong>{item.title}</strong><small>{item.detail}</small></div><time>{relativeTime(item.at)}</time></div>) : <p className="lf-empty">Complete a lesson or review a flashcard and your activity will appear here.</p>}
         </div>
       </section>
 
       <section className="lf-quick-links">
-        <Link href="/flashcards">▤ Review flashcards <span>→</span></Link>
-        <Link href="/pronunciation">◉ Practise pronunciation <span>→</span></Link>
-        <Link href="/settings">⚙ Personalise your learning <span>→</span></Link>
+        <Link href="/flashcards"><FeatureIcon name="cards" size={17} /> Review flashcards <span>→</span></Link>
+        <Link href="/alphabet"><FeatureIcon name="alphabet" size={17} /> Explore every letter <span>→</span></Link>
+        <Link href="/pronunciation"><FeatureIcon name="audio" size={17} /> Practise pronunciation <span>→</span></Link>
+        <Link href="/settings"><FeatureIcon name="settings" size={17} /> Personalise your learning <span>→</span></Link>
       </section>
-      <p className="lf-storage-note">Progress is currently saved in this browser. Account-based cloud sync is not enabled yet.</p>
+      <p className="lf-storage-note">Your learning progress is saved in this browser and synced securely to your Linguistix account.</p>
     </main>
   );
 }

@@ -5,19 +5,22 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLearn } from "../lib/learn-store";
 import ResearchPanel from "./research-panel";
+import FeatureIcon from "./feature-icon";
 import { createClient as createSupabaseClient } from "../lib/supabase/client";
 
 const NAV = [
-  { href: "/learn", label: "Learn map", icon: "⌂" },
-  { href: "/tutor", label: "Kalam AI tutor", icon: "✦" },
-  { href: "/pronunciation", label: "Pronunciation lab", icon: "◉" },
-  { href: "/flashcards", label: "Flashcards", icon: "▤" },
-  { href: "/dashboard", label: "Dashboard", icon: "▦" },
-  { href: "/settings", label: "Settings", icon: "⚙" },
+  { href: "/learn", label: "Learn map", icon: "compass" },
+  { href: "/tutor", label: "Kalam AI tutor", icon: "message" },
+  { href: "/pronunciation", label: "Pronunciation lab", icon: "audio" },
+  { href: "/alphabet", label: "Alphabet studio", icon: "alphabet" },
+  { href: "/improve", label: "Language improvement", icon: "edit" },
+  { href: "/flashcards", label: "Flashcards", icon: "cards" },
+  { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
+  { href: "/settings", label: "Settings", icon: "settings" },
 ];
 
 const PUBLIC_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
-const THEMES = ["ocean", "forest", "sunset", "lavender", "midnight"];
+const THEMES = ["ocean", "forest", "sunset", "lavender", "midnight", "sakura", "royal", "obsidian"];
 
 export default function AppShell({ children }) {
   const pathname = usePathname();
@@ -25,9 +28,37 @@ export default function AppShell({ children }) {
   const { language, languages, lang, setLang, progress, hearts, maxHearts, theme, setTheme, badges, unlockedBadges } = useLearn();
   const [menuOpen, setMenuOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [appInstalled, setAppInstalled] = useState(false);
+  const [installHelp, setInstallHelp] = useState(false);
+  const showInstall = pathname === "/dashboard" && !appInstalled;
   const menuButtonRef = useRef(null);
   const closeButtonRef = useRef(null);
   const isPublic = PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/auth/");
+
+  useEffect(() => {
+    const installedCheck = window.requestAnimationFrame(() => {
+      if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) setAppInstalled(true);
+    });
+    function onBeforeInstallPrompt(event) { event.preventDefault(); setInstallPrompt(event); }
+    function onInstalled() { setAppInstalled(true); setInstallPrompt(null); setInstallHelp(false); }
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onInstalled);
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+    return () => {
+      window.cancelAnimationFrame(installedCheck);
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", onInstalled);
+    };
+  }, []);
+
+  async function installApp() {
+    if (!installPrompt) { setInstallHelp(true); return; }
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    if (choice?.outcome === "accepted") { setAppInstalled(true); setInstallHelp(false); }
+    setInstallPrompt(null);
+  }
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -65,7 +96,7 @@ export default function AppShell({ children }) {
   const navigation = (
     <>
       <Link className="app-brand" href="/learn" onClick={() => setMenuOpen(false)}>
-        <span className="app-brand-mark">{language.emblem}</span>
+        <span className="app-brand-mark"><img src="/icon.svg" alt="" /></span>
         <span><strong>Linguistix</strong><small>{language.label}</small></span>
       </Link>
       <nav className="app-nav" aria-label="Main navigation">
@@ -74,7 +105,7 @@ export default function AppShell({ children }) {
             ? pathname === item.href || pathname.startsWith("/learn/")
             : pathname === item.href || pathname.startsWith(item.href + "/");
           return <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className={active ? "app-nav-link active" : "app-nav-link"} aria-current={active ? "page" : undefined}>
-            <span className="app-nav-icon" aria-hidden="true">{item.icon}</span><span>{item.label}</span>
+            <span className="app-nav-icon"><FeatureIcon name={item.icon} size={19} /></span><span>{item.label}</span>
           </Link>;
         })}
       </nav>
@@ -91,20 +122,22 @@ export default function AppShell({ children }) {
     <aside className="app-sidebar">{navigation}</aside>
     <div className="app-workspace">
       <header className="app-topbar">
-        <button ref={menuButtonRef} className="app-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="app-mobile-drawer" onClick={() => setMenuOpen(true)}>☰</button>
+        <button ref={menuButtonRef} className="app-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="app-mobile-drawer" onClick={() => setMenuOpen(true)}><FeatureIcon name="menu" size={19} /></button>
         <label className="app-language-select"><span className="sr-only">Learning language</span>
           <select value={lang} onChange={(event) => setLang(event.target.value)}>
             {languages.map((item) => <option key={item.code} value={item.code}>{item.emblem} {item.label}</option>)}
           </select>
         </label>
         <div className="app-topbar-spacer" />
-        <span className="app-stat-pill" title="Current streak">🔥 {progress.streak}</span>
-        <span className="app-stat-pill" title="Available hearts">♥ {hearts}/{maxHearts}</span>
-        <span className="app-stat-pill app-xp-pill">★ {progress.xpTotal} XP</span>
-        <button className="app-research-button" type="button" onClick={() => setResearchOpen(true)} aria-label="Open Lugha Research">⌕ <span>Research</span></button>
+        <span className="app-stat-pill" title="Current streak"><FeatureIcon name="flame" size={15} /> {progress.streak}</span>
+        <span className="app-stat-pill" title="Available hearts"><FeatureIcon name="heart" size={15} /> {hearts}/{maxHearts}</span>
+        <span className="app-stat-pill app-xp-pill"><FeatureIcon name="star" size={15} /> {progress.xpTotal} XP</span>
+        <button className="app-research-button" type="button" onClick={() => setResearchOpen(true)} aria-label="Open Lugha Research"><FeatureIcon name="search" size={16} /> <span>Research</span></button>
+        {showInstall && <button className="app-install-button" type="button" onClick={installApp}><FeatureIcon name="download" size={16} /> <span>Download app</span></button>}
         <button className="app-signout-button" type="button" onClick={signOut}>Sign out</button>
-        <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}>{theme === "midnight" ? "☀" : "◐"}</button>
+        <button className="app-theme-button" type="button" onClick={cycleTheme} aria-label={`Change theme; current theme is ${theme}`} title={`Current theme: ${theme}. Activate to cycle themes.`}><FeatureIcon name={theme === "midnight" || theme === "obsidian" ? "sun" : "moon"} size={17} /></button>
       </header>
+      {installHelp && showInstall && <div className="app-install-help" role="status">To install Linguistix, use your browser menu and choose “Install app” or “Add to Home Screen”.</div>}
       <div className="app-page-content">{children}</div>
     </div>
     <ResearchPanel open={researchOpen} onClose={() => setResearchOpen(false)} />

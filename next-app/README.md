@@ -1,64 +1,107 @@
-# Linguistix — Next.js migration workspace
+# Linguistix — Next.js application
 
-This folder is the isolated replacement application. The repository root remains the legacy TanStack Start + Base44 app until the replacement is feature-complete and approved for cutover.
+This is the replacement application for the legacy Base44 runtime. Keep the existing Base44 app untouched until this replacement has passed release verification and the owner explicitly approves cutover.
 
 ## Stack
 
-- Next.js App Router 16
-- React 19
-- Supabase Auth through `@supabase/ssr`
-- JavaScript/JSX
+- Next.js App Router 16 and React 19
+- Supabase Auth using `@supabase/ssr` cookie sessions
+- Supabase Postgres with per-user Row Level Security
+- Cloudflare Workers AI for Kalam AI, accessed through a server-side Workers AI binding
+- Cloudflare Workers through vinext and the Cloudflare Vite plugin
 
-## Setup
+## Local setup
 
-1. Install Node.js 22 LTS or a compatible current LTS.
-2. From this folder, run `npm install`.
+1. Use Node.js 22 LTS.
+2. From `next-app/`, run `npm ci`.
 3. Copy `.env.example` to `.env.local`.
-4. Add the Supabase project URL and publishable key from the Supabase dashboard.
-5. Add a Gemini API key as `GEMINI_API_KEY` in `.env.local` to enable Kalam AI. Optionally add `GROQ_API_KEY` as a fallback. You can also configure the optional OpenAI-compatible fallback.
-6. Run `npm run dev` and open http://localhost:3000.
+4. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from Supabase project settings.
+5. Authenticate the Cloudflare CLI with `npx cf auth login` if you want to run Workers AI locally.
+6. Run `npm run dev:vinext` for the Cloudflare/Vite development runtime. The standard `npm run dev` Next.js Node server does not provide the Cloudflare AI binding.
 
-### AI provider configuration
+Do not add service-role keys or AI provider keys to `NEXT_PUBLIC_*`, client components, source control, or chat. Kalam does not require learners to provide an API key. The connected Supabase project now has the `public.learner_state` table with RLS and four owner-scoped policies. The legacy `public.rls_auto_enable()` helper is no longer executable by `anon` or `authenticated`.
 
-Kalam AI uses server-side providers in this order:
+## Kalam AI
 
-1. **Gemini** — `GEMINI_API_KEY`, model defaults to `gemini-2.5-flash`; override with `GEMINI_MODEL`.
-2. **Groq fallback** — `GROQ_API_KEY`, model defaults to `llama-3.3-70b-versatile`; override with `GROQ_MODEL`.
-3. **Optional OpenAI-compatible fallback** — `OPENAI_API_KEY`, `OPENAI_MODEL`, and `OPENAI_BASE_URL`.
+Kalam calls Cloudflare Workers AI using the `AI` binding declared in `cloudflare.config.ts`. The initial model is `@cf/google/gemma-4-26b-a4b-it`, selected for its multilingual support and availability on the Workers Free plan. The authenticated `/api/tutor` route retains bounded input, history validation, structured response parsing and sanitized errors. The binding is available in the deployed Worker; local Cloudflare/Vite development uses the remote binding.
 
-If a configured provider fails or returns invalid output, the route tries the next configured provider. Provider errors and secrets are not sent to the browser. The route requires an authenticated Supabase user. Without a configured key, the tutor page remains visible and explains that the provider is not configured.
+Workers AI currently includes 10,000 Neurons per day at no charge. The allowance is shared across this Cloudflare account and resets daily; requests can fail after it is exhausted. Monitor usage in the Cloudflare dashboard. Some models require paid access, so do not change the configured model without checking its plan eligibility first.
 
-Get keys from [Google AI Studio](https://aistudio.google.com/apikey) and [Groq Console](https://console.groq.com/keys). Add them only to your local `.env.local` or your hosting provider's server-side environment settings. Never paste keys into chat, browser settings, client-side code, public environment variables, or source control. If a key is accidentally shared, revoke it and create a replacement.
+## Cloudflare preview deployment
 
-Do not put a Supabase secret/service-role key or AI provider key in browser code, public environment variables, or source control.
+The isolated preview is deployed manually from GitHub Actions using `.github/workflows/cloudflare-preview.yml`. It does not deploy the production Worker or merge the pull request.
 
-## Current implementation
+Before running it, add these repository settings in GitHub (**Settings → Secrets and variables → Actions**):
 
-- Next.js App Router root layout and responsive authenticated app shell.
-- Supabase browser and server clients with cookie-based sessions.
-- Next.js 16 `proxy.js` refreshes/validates claims.
-- Email/password sign-in, account registration/email confirmation, password recovery, and Google OAuth start/callback.
-- Server-protected course, dashboard, flashcard, pronunciation and tutor routes.
-- Seven-language curriculum and existing lesson/task/card content retained.
-- Interactive six-screen lesson exercises.
-- Local learning-state store retained under `lisan.state.v2`, with XP, streaks, hearts, activity, achievements and spaced-repetition scheduling.
-- Dashboard with daily goals, weekly XP chart, course progress, achievements and recent activity.
-- Flashcard review with four spaced-repetition ratings.
-- Five themes, seven course choices and local study-reminder preferences.
-- Pronunciation Lab using browser speech synthesis, language-specific sample phrases, voice selection and playback controls.
-- Lugha Research searches flashcard reference content across all seven languages.
-- Kalam AI tutor interface with breakdown, quiz and roleplay modes, backed by an authenticated server route with Gemini-first and optional Groq/OpenAI-compatible fallback.
+**Actions secret**
+- `CLOUDFLARE_API_TOKEN`: Cloudflare API token with the Workers deployment permissions required by the vinext Cloudflare CLI.
 
-## Remaining migration work
+**Actions variables**
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID.
+- `NEXT_PUBLIC_SUPABASE_URL`: the Supabase project URL.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: the Supabase publishable key.
 
-- Persist learning progress, settings, flashcard schedules and activity in Supabase with tested Row Level Security.
-- Implement actual reminder delivery (current settings only store the learner's preference locally).
-- Complete profile/account management, voice recording and pronunciation assessment.
-- Add opt-in, validated migration of legacy local state and verify imported data.
-- Complete accessibility, mobile-browser and end-to-end QA.
+Then open **Actions → Cloudflare preview deployment → Run workflow** and use the default preview name. The workflow runs compatibility checks and lint, builds with `CLOUDFLARE_PREVIEW_BUILD=true`, and deploys an isolated Worker Preview. It prints the preview URL in the deployment logs.
 
-Learning progress and preferences currently remain local to the browser; no Supabase learning tables have been created or used by this Next.js feature layer yet.
+Cloudflare Preview URLs are explicitly enabled in `cloudflare.config.ts` with `previewUrls: true`. Cloudflare bindings, including Workers AI, are declared in the Worker configuration. Preview runtime variables for Supabase must still be configured in Cloudflare Dashboard → Workers & Pages → Linguistix → Settings. Cloudflare Preview settings do not inherit production settings. Add the resulting preview URL to Supabase Auth's allowed redirect URLs/site URL as appropriate, then test signup, email confirmation, password reset, learner-state sync and Kalam AI. Do not promote the preview until those checks pass.
 
-## Data safety
+## Self-hosted deployment (Docker)
 
-The SQL files in the parent `supabase/migrations` folder are drafts. They have not been applied to the connected Supabase project. Keep the Base44 app running until the new app and data migration have passed verification and the owner explicitly approves cutover.
+The self-hosted option runs the standard Next.js Node server in Docker. It does not provide the Cloudflare Workers AI binding, so Kalam AI is available only when deployed to the configured Cloudflare Worker. The Docker option still uses your configured Supabase project for account sync.
+
+1. Install Docker Engine/Desktop with the Compose plugin.
+2. From this directory, copy `.env.example` to `.env`.
+3. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env`. Keep `.env` private and out of Git.
+4. Build and start the container:
+
+```bash
+docker compose -f compose.yaml up --build -d
+```
+
+5. Open `http://localhost:3000`. For internet access, put the service behind a TLS-terminating reverse proxy (Caddy, Nginx, or Traefik); do not expose the container directly without HTTPS.
+6. Add your public site URL and `https://YOUR_HOST/auth/callback` to Supabase Auth's site URL / allowed redirect URLs. Configure SMTP for reliable confirmation and password-reset emails.
+7. Check health and logs:
+
+```bash
+docker compose -f compose.yaml ps
+docker compose -f compose.yaml logs --tail=100 linguistix
+```
+
+To update, pull the reviewed branch and run `docker compose -f compose.yaml up --build -d` again. To stop, run `docker compose -f compose.yaml down`. Learning data remains in Supabase; the container itself is stateless. Back up Supabase data separately.
+
+Never put a Supabase service-role key in this app; the application uses the publishable key plus per-user RLS.
+
+## Current feature set
+
+- Seven language courses: Arabic, German, Japanese, English, Spanish, French and Portuguese.
+- Responsive learning shell, course map, lessons, interactive lesson player, flashcards, pronunciation lab, research panel, dashboard and settings.
+- Eight visual themes, including Sakura, Imperial and Obsidian.
+- Supabase email/password registration and login, email confirmation, password recovery and route-level authentication enforcement.
+- Server-side authenticated Kalam AI route using Cloudflare Workers AI, with bounded input, response parsing and sanitized errors.
+- Local-first learning progress, XP, streaks, activity, hearts, badges, settings and spaced-repetition state.
+- Authenticated `/api/learner-state` GET/PUT endpoint and account-aware background sync. It preserves the existing `lisan.state.v2` local data and avoids importing one account's local state into another account.
+
+## Release blockers
+
+- Supabase table and RLS setup is applied and catalog-verified. Still required: end-to-end tests with two real test accounts to prove cross-account isolation before enabling cloud sync for general users.
+- Supabase Auth leaked-password protection is currently disabled. Supabase documentation says this feature is available on Pro and above; the connected project should remain on its current plan unless the owner separately chooses an upgrade. Earlier normalized schema drafts are archived under `supabase/drafts/legacy-normalized/` and are not required for v1.
+- Existing Base44 accounts/passwords do not automatically transfer. Users will need a new Supabase account or an explicitly planned recovery path.
+- Re-run checks after the latest integration changes. The isolated Cloudflare preview has deployed successfully in earlier revisions; confirm current production deployment and public HTTP health checks. Full browser-level auth, learner-state isolation and live AI/TTS acceptance tests remain outstanding.
+- Test Kalam with Arabic and Japanese prompts, plus all other supported languages, after deployment. A successful homepage HTTP response does not prove that authenticated AI inference works.
+- Study reminder preferences are saved locally; reminder delivery is not implemented.
+- Cloud state currently uses a single versioned JSON snapshot with last-write-wins behavior; concurrent edits from multiple devices need a conflict-resolution policy before heavy use.
+
+## Checks
+
+```bash
+npm ci
+npm run lint
+npm run build
+npm run build:vinext
+```
+
+GitHub Actions runs these checks with the committed lockfile and Node.js 22.
+
+## Cutover safety
+
+No database migration, PR merge, destructive SQL or Base44 retirement is automatic. Keep the old runtime and its data intact until the replacement passes the full release checklist and the owner approves cutover.
