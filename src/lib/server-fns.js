@@ -1,5 +1,7 @@
+import { chat } from "@tanstack/ai";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { generateTutorReply } from "@/lib/ai.server";
 import { requireUser } from "@/lib/auth-middleware";
 
 export const getServerInfo = createServerFn({ method: "GET" }).handler(async () => ({
@@ -21,26 +23,11 @@ const MODE_GUIDE = {
     "Mode: roleplay. Stay in character inside the scenario, reply first in the target language (max 3 short sentences), then give the English meaning in the translation field. Gently correct one mistake at most, inside the reply after the in-character lines.",
 };
 
-const schema = {
-  type: "object",
-  properties: {
-    reply: { type: "string", description: "The tutor's message to the learner, in the requested format." },
-    translation: { type: "string", description: "English meaning of the target-language lines, empty string if not needed." },
-    quiz: {
-      type: "array",
-      description: "Exactly 3 items in quiz mode, otherwise empty.",
-      items: {
-        type: "object",
-        properties: {
-          question: { type: "string" },
-          answer: { type: "string" },
-        },
-        required: ["question", "answer"],
-      },
-    },
-  },
-  required: ["reply", "translation", "quiz"],
-};
+const tutorResponseSchema = z.object({
+  reply: z.string(),
+  translation: z.string(),
+  quiz: z.array(z.object({ question: z.string(), answer: z.string() })),
+});
 
 export const askTutor = createServerFn({ method: "POST" })
   .middleware([requireUser])
@@ -56,8 +43,7 @@ export const askTutor = createServerFn({ method: "POST" })
         .optional(),
     }),
   )
-  .handler(async ({ data, context }) => {
-    const base44 = context.getBase44();
+  .handler(async ({ data }) => {
     const transcript = (data.history || [])
       .map((turn) => `${turn.role === "user" ? "Learner" : "Tutor"}: ${turn.content}`)
       .join("\n");
@@ -74,14 +60,14 @@ export const askTutor = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n\n");
 
-    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt,
-      response_json_schema: schema,
-    });
+    const result = await generateTutorReply(prompt, tutorResponseSchema);
 
     return {
-      reply: String(result?.reply || "").slice(0, 4000),
-      translation: String(result?.translation || "").slice(0, 1200),
-      quiz: Array.isArray(result?.quiz) ? result.quiz.slice(0, 3) : [],
+      reply: result.reply.slice(0, 4000),
+      translation: result.translation.slice(0, 1200),
+      quiz: result.quiz.slice(0, 3).map(({ question, answer }) => ({
+        question: question.slice(0, 600),
+        answer: answer.slice(0, 600),
+      })),
     };
   });

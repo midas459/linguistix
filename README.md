@@ -36,7 +36,9 @@ There is no `index.html`: the HTML document is rendered on the server from `src/
 - **Server-only code** lives in `*.server.js` files (TanStack refuses to bundle them for the browser).
 - **Auth** is resolved client-side after hydration (`useAuth()`); the server is anonymous on a document request, so give per-user pages `ssr: false`.
 - **Sign-in and gated pages** are not wired in the starter: `src/components/auth/` holds the pages (login, register, password reset, MCP consent) and a login gate for `src/routes/_authed/`, to add when the app needs them. See **Adding Authentication** in `AGENTS.md`.
-- **AI**: TanStack AI is installed and runs on the Base44 AI gateway, with no API key and usage billed to the app's AI credits. `gatewayModel(context.getBase44())` in `src/lib/ai.server.js` builds the adapter; `AGENTS.md` has a streaming chat example (a server route plus `useChat`).
+- **AI tutor**: the authenticated tutor server function calls Google's Gemini `generateContent` API. Gemini credentials are read only from the `GEMINI_API_KEY` Base44 server secret through `base44:runtime`; `.env.example` documents the secret name and optional `GEMINI_MODEL` override (default `gemini-3.6-flash`). Obtain a key from [Google AI Studio](https://aistudio.google.com/apikey), then configure it with the Base44 secrets CLI or dashboard. The app reads these settings from Base44 server secrets, not `.env.local`; never put keys in browser-visible `VITE_*` variables or source control. Provider failures are time-limited, validated, and sanitized before reaching the tutor UI.
+- **Tests**: run the Gemini request, response-validation, timeout and sanitized-error tests with `npm test`.
+- **AI**: TanStack AI is installed; `AGENTS.md` has a streaming chat example (a server route plus `useChat`).
 - **Caching**: the platform caches only what a route opts into via `headers()` (`Cache-Control: public, s-maxage=…`). Everything else is served fresh.
 
 
