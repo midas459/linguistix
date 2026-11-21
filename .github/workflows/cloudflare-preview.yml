@@ -69,7 +69,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          output="$(npx vinext-cloudflare previews deploy "${{ inputs.preview_name }}" --skip-build 2>&1)" || {
+          output="$(npx vinext-cloudflare previews deploy "${{ inputs.preview_name || 'linguistix-launch-check' }}" --skip-build 2>&1)" || {
             printf '%s\n' "$output"
             exit 1
           }
